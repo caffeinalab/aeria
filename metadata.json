@@ -2,7 +2,7 @@
     "name": "Aeria",
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
-    "download_url": "https://github.com/CaffeinaLab/aeria/zipball/master/",
+    "download_url": "https://github.com/CaffeinaLab/aeria/archive/1.0.0.zip",
 
     "version": "1.0.0",
     "requires": "3.5",
