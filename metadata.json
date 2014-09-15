@@ -1,0 +1,26 @@
+{
+    "name": "Aeria",
+    "slug": "aeria",
+    "homepage": "http://labs.caffeina.co/tech/aeria",
+    "download_url": "http://w-shadow.com/files/external-update-example/external-update-example.zip",
+
+    "version": "1.0.0",
+    "requires": "3.5",
+    "tested": "4.0",
+    "last_updated": "2012-10-29 11:09:00",
+    "upgrade_notice": "Initial release.",
+
+    "author": "Caffeina",
+    "author_homepage": "http://caffeina.co/",
+
+    "sections": {
+        "description": "(Required) Plugin description. Basic HTML can be used in all sections.",
+        "installation": "(Recommended) Installation instructions.",
+        "changelog": "(Recommended) Changelog. <p>This section will be opened by default when the user clicks 'View version XYZ information'.</p>",
+        "custom_section": "This is a custom section labeled 'Custom Section'."
+    },
+
+    "rating": 100,
+    "num_ratings": 1000,
+    "downloaded": 0
+}
