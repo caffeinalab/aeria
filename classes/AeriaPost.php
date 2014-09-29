@@ -48,6 +48,10 @@ class AeriaPost {
         }
     }
 
+    public static function load($id,$type=null){
+       return new static($id,$type);
+    }
+
     public function update($fields=array()){
         $fields['ID'] = $this->id;
         return $this->id == wp_update_post($fields);
