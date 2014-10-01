@@ -15,6 +15,7 @@ class AeriaPost {
     public      $order          = 0;
     public      $type           = '';
     public      $parent         = null;
+    public      $author         = '';
     protected   $_fields        = null;
     protected   $_fields_cache  = null;
     protected   $_thumbs        = null;
@@ -45,6 +46,7 @@ class AeriaPost {
             $this->permalink    = AERIA_HOME_URL.$t_post->post_type.'/'.$t_post->post_name;
             $this->type         = $type?:$t_post->post_type;
             $this->parent       = ($t_post->post_parent)?new self($t_post->post_parent):null;
+            $this->author       = $t_post->post_author;
         }
     }
 
@@ -381,6 +383,22 @@ class AeriaPost {
         }
         return $post_id;
     }
+    
+    /**
+     * Wordpress get_posts proxy
+     *
+     * @method get_posts
+     *
+     * @param  array    $options the get_posts options (see woordpress codex)
+     *
+     * @return array    The AeriaPost collection
+     */
+    public static function get_posts($options){
+      $results = get_posts($options);
+      if($results) array_walk($results,function(&$item){ $item = new static($item); });
+      return $results;
+    }
+
 
 }
 
