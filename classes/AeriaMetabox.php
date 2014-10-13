@@ -74,10 +74,12 @@ class AeriaMetaBox {
 		});
 	}
 
-	public static function get_attachment_id_from_src ($image_src) {
-
+	public static function get_attachment_id_from_src($image_src) {
 		global $wpdb;
-		$query = "SELECT ID FROM {$wpdb->posts} WHERE guid='$image_src'";
+		// Strip domain
+    $image_src = preg_replace('{^https?://[^/]+}', '', $image_src);
+
+    $query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
 		$id = $wpdb->get_var($query);
 		return $id;
 
@@ -432,24 +434,23 @@ class Meta_Box {
 					$meta_title = '';
 				}
 
+        $background = '';
+        $class_background = 'file';
+
 				switch ($meta_type) {
 					case 'image/jpeg':
-				    case 'image/png':
-				    case 'image/gif':
+				  case 'image/png':
+				  case 'image/gif':
 				     	$background = $meta;
 				     	$class_background = 'image';
 				      break;
-
-					default:
-						$background = '';
-						$class_background = 'file';
-						break;
 				}
+
 				$hidden_class = $meta==''?'display:none;':'';
 				echo '<div class="box-image item_'.$idx.'" style="'.$hidden_class.'">';
 				echo "<div class='image ".$num_class." ".$class_background."' style='background:url(".$background.");'>";
 				if($class_background=='file'){
-					echo "<h4>".wp_trim_words($meta_title,8)."</h4>";
+					echo "<h4>".(wp_trim_words($meta_title,8)?:'<i>Untitled</i>')."</h4>";
 				}
 				echo "</div>";
 				echo "<div class='box-controls'>

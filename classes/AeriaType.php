@@ -30,6 +30,7 @@ class AeriaType {
 				'hierarchical'	=> true,
 				'feeds'     	=> false,
 				'menu_position' => null,
+				'reorder'		=> false,
 				'supports' 		=> false, // 'title', editor', 'author', 'thumbnail', 'excerpt', 'comments',
 			),$type['options']);
 
@@ -62,6 +63,19 @@ class AeriaType {
 
 			register_post_type( $post_type, $options );
 
+			if($options['reorder']){
+				new AeriaReorder(array(
+					'post_type'   => $post_type,
+					'order'       => 'ASC',
+					'heading'     => $options['labels']['singular_name'],
+					'final'       => '',
+					'initial'     => '',
+					'menu_label'  => __( 'Reorder', 'reorder' ),
+					'icon'        => '',
+					'post_status' => 'publish',
+				));
+			  }
+
 			//check and register relations
 
 			$relations = isset($type['relations'])?$type['relations']:false;
@@ -69,10 +83,11 @@ class AeriaType {
 			if($relations) {
 
 				static $inited_ajax = false;
+
 				if(false===$inited_ajax){
 					$inited_ajax = true;
-					add_action( 'wp_ajax_aeria_search', 'aeria_search' );
-					add_action( 'wp_ajax_aeria_search_init', 'aeria_search_init' );
+					add_action( 'wp_ajax_aeria_search', 'AeriaUtils::search' );
+					add_action( 'wp_ajax_aeria_search_init', 'AeriaUtils::search_init' );
 				}
 
 				$meta_fields = [];

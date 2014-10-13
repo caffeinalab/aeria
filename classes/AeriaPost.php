@@ -12,10 +12,9 @@ class AeriaPost {
     public      $data           = '';
     public      $slug           = '';
     public      $permalink      = '';
-    public      $order          = 0;
+    public      $order          = '';
     public      $type           = '';
     public      $parent         = null;
-    public      $author         = '';
     protected   $_fields        = null;
     protected   $_fields_cache  = null;
     protected   $_thumbs        = null;
@@ -42,11 +41,10 @@ class AeriaPost {
             $this->excerpt      = apply_filters('the_excerpt', $t_post->post_excerpt);
             $this->date         = $t_post->post_date;
             $this->slug         = $t_post->post_name;
-            $this->order        = $t_post->menu_order;
+            $this->order        = $t_post->menu_order?:0;
             $this->permalink    = AERIA_HOME_URL.$t_post->post_type.'/'.$t_post->post_name;
             $this->type         = $type?:$t_post->post_type;
             $this->parent       = ($t_post->post_parent)?new self($t_post->post_parent):null;
-            $this->author       = $t_post->post_author;
         }
     }
 
@@ -372,6 +370,7 @@ class AeriaPost {
             'post_status' => 'publish',
             'post_type' => isset($type)?$type:'post',
             'post_author' => 1,
+            'menu_order' => isset($order)?$order:0,
             'post_content' => isset($content)?$content:'',
             'post_category' => isset($category)?$category:array(),
             'post_title' => isset($title)?$title:'',
@@ -383,22 +382,6 @@ class AeriaPost {
         }
         return $post_id;
     }
-    
-    /**
-     * Wordpress get_posts proxy
-     *
-     * @method get_posts
-     *
-     * @param  array    $options the get_posts options (see woordpress codex)
-     *
-     * @return array    The AeriaPost collection
-     */
-    public static function get_posts($options){
-      $results = get_posts($options);
-      if($results) array_walk($results,function(&$item){ $item = new static($item); });
-      return $results;
-    }
-
 
 }
 

@@ -1,0 +1,40 @@
+#post-list {
+	margin-top: 20px;
+}
+#post-list div {
+	padding: 10px;
+	width: 50%;
+	font-weight: bold;
+	background: #f0f0f0; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e7e7e7'); /* for IE 9 or older */
+	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7)); /* for WebKit */
+	background: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7); /* for newer versions of WebKit */
+	background:    -moz-linear-gradient(top, #f7f7f7, #e7e7e7); /* for Firefox 3.6+ */
+	background:      -o-linear-gradient(top, #f7f7f7, #e7e7e7); /* for Opera 11.1+ */
+	background:     -ms-linear-gradient(top, #f7f7f7, #e7e7e7); /* for IE 10+ */
+	cursor: move;
+	border: 1px solid #ddd;
+	border-raidus: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+#post-list ul {
+	padding-left: 40px;
+}
+#post-list div img {
+	vertical-align: middle;
+	margin: 0 12px 0 0;
+	border: 2px solid #ddd;
+}
+.ui-sortable-placeholder {
+	border-radius: 0 !important;
+	background: transparent !important;
+	border: 2px dashed #ddd !important;
+	visibility: visible !important;
+}
+#loading-animation {
+	display: none;
+}
+#post-list .children {
+	display: none;
+}
