@@ -73,6 +73,8 @@ class AeriaType {
 					'menu_label'  => __( 'Reorder', 'reorder' ),
 					'icon'        => '',
 					'post_status' => 'publish',
+					'show_title'  => isset($options['reorder']['show_title'])?$options['reorder']['show_title']:true,
+					'fields'	  => $options['reorder']['fields']?:false
 				));
 			  }
 

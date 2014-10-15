@@ -79,6 +79,20 @@ class AeriaReorder {
 	private $icon;
 
 	/**
+	 * @var $show_title
+	 * @desc Title Label
+	 * @access private
+	 */
+	private $show_title;
+
+	/**
+	 * @var $fields
+	 * @desc Extra fields to show
+	 * @access private
+	 */
+	private $fields;
+
+	/**
 	 * Class constructor
 	 *
 	 * Sets definitions
@@ -103,6 +117,8 @@ class AeriaReorder {
 		);
 		extract( wp_parse_args( $args, $defaults ) );
 
+		($fields)?$fields=explode(',',$fields):false;
+
 		// Set variables
 		$this->post_type   	= $post_type;
 		$this->order       	= $order;
@@ -113,6 +129,8 @@ class AeriaReorder {
 		$this->icon        	= $icon;
 		$this->post_status 	= $post_status;
 		$this->page_hook 	= $post_type . '_page_reorder-video';
+		$this->show_title	= $show_title;
+		$this->fields 		= $fields;
 
 		// Add actions
 		add_action( 'wp_ajax_post_sort',   array( $this, 'ajax_save_post_order'  ) );
@@ -259,8 +277,31 @@ class AeriaReorder {
 		global $post;
 		$post = $the_post;
 		setup_postdata( $post );
+
+		$column = 0 + count($this->fields);
+		if($this->show_title) $column++;
+		$wcolumn = 100/$column;
+
 		?>
-		<li id="list_<?php the_id(); ?>"><div><?php the_title(); ?></div></li>
+		<li id="list_<?php the_id(); ?>">
+			<div>
+				<div class="text">
+					<?php
+						if($this->fields) {
+							$apost = new AeriaPost($post);
+							foreach ($this->fields as $key => $field) {
+								echo "<div style='width:".$wcolumn."%;'>".$apost->fields->{$field}."</div>";
+							}
+						}
+						if($this->show_title) {
+							echo "<div>";
+								the_title();
+							echo "</div>";
+						}
+					?>
+				</div>
+			</div>
+		</li>
 		<?php
 	} //end output_row
 

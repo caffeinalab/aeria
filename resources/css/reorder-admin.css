@@ -1,25 +1,35 @@
 #post-list {
 	margin-top: 20px;
 }
-#post-list div {
+#post-list > li > div {
 	padding: 10px;
 	width: 50%;
 	font-weight: bold;
-	background: #f0f0f0; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e7e7e7'); /* for IE 9 or older */
-	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7)); /* for WebKit */
-	background: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7); /* for newer versions of WebKit */
-	background:    -moz-linear-gradient(top, #f7f7f7, #e7e7e7); /* for Firefox 3.6+ */
-	background:      -o-linear-gradient(top, #f7f7f7, #e7e7e7); /* for Opera 11.1+ */
-	background:     -ms-linear-gradient(top, #f7f7f7, #e7e7e7); /* for IE 10+ */
+	background: #fff; /* for non-css3 browsers */
+	/*
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e7e7e7');
+	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
+	background: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7);
+	background:    -moz-linear-gradient(top, #f7f7f7, #e7e7e7);
+	background:      -o-linear-gradient(top, #f7f7f7, #e7e7e7);
+	background:     -ms-linear-gradient(top, #f7f7f7, #e7e7e7);
+	*/
 	cursor: move;
 	border: 1px solid #ddd;
-	border-raidus: 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
+	position: relative;
+}
+.text {
+	position: relative;
+	display: table;
+	width: 100%;
+}
+.text div {
+	position: relative;
+	padding: 0 30px;
+	display: table-cell;
 }
 #post-list ul {
-	padding-left: 40px;
+	padding-left: 20px;
 }
 #post-list div img {
 	vertical-align: middle;
