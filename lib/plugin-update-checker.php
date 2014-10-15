@@ -86,7 +86,7 @@ class PluginUpdateChecker_1_5 {
      * @return string
      */
     public function rename_github_zip( $source, $remote_source, $thiz ){
-        if(  strpos( $source, self::$repo_slug ) === false )
+        if(  strpos( $source, $this->slug ) === false )
             return $source;
         $path_parts = pathinfo($source);
         $newsource = trailingslashit($path_parts['dirname']). trailingslashit( $this->slug );
