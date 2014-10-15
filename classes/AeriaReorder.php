@@ -135,6 +135,10 @@ class AeriaReorder {
 		// Add actions
 		add_action( 'wp_ajax_post_sort',   array( $this, 'ajax_save_post_order'  ) );
 		add_action( 'admin_menu',          array( $this, 'enable_post_sort' ), 10, 'page' );
+
+		// Add Scripts
+		wp_enqueue_script('list', AERIA_RESOURCE_URL.'js/list.js');
+		wp_enqueue_script('list_main', AERIA_RESOURCE_URL.'js/list-main.js');
 	}
 
 
@@ -289,12 +293,18 @@ class AeriaReorder {
 					<?php
 						if($this->fields) {
 							$apost = new AeriaPost($post);
+
 							foreach ($this->fields as $key => $field) {
-								echo "<div style='width:".$wcolumn."%;'>".$apost->fields->{$field}."</div>";
+								if(isset($apost->fields->{$field})) {
+									$field_name = $apost->fields->{$field};
+								}else{
+									$field_name = '';
+								}
+								echo "<div class='list_field' style='width:".$wcolumn."%;'>".$field_name."</div>";
 							}
 						}
 						if($this->show_title) {
-							echo "<div>";
+							echo "<div class='list_title'>";
 								the_title();
 							echo "</div>";
 						}
@@ -381,7 +391,9 @@ class AeriaReorder {
 			</h2>
 			<div id="reorder-error"></div>
 			<?php echo $this->initial; ?>
-			<ul id="post-list">
+			<div id="list">
+			<input class="search" placeholder="Search" />
+			<ul id="post-list" class="list">
 		<?php
 		if ( is_post_type_hierarchical( $this->post_type ) ) {
 			$pages = get_pages( array(
@@ -429,6 +441,7 @@ class AeriaReorder {
 		}
 		?>
 		</ul>
+		</div>
 		<?php
 		echo $this->final;
 		?>

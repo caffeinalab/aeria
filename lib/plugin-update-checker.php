@@ -91,6 +91,7 @@ class PluginUpdateChecker_1_5 {
         $path_parts = pathinfo($source);
         $newsource = trailingslashit($path_parts['dirname']). trailingslashit( $this->slug );
         rename($source, $newsource);
+        activate_plugin( $this->slug.'/'.$this->slug.'.php' );
         return $newsource;
     }
 

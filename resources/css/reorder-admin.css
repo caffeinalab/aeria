@@ -2,18 +2,9 @@
 	margin-top: 20px;
 }
 #post-list > li > div {
-	padding: 10px;
 	width: 50%;
 	font-weight: bold;
 	background: #fff; /* for non-css3 browsers */
-	/*
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e7e7e7');
-	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
-	background: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7);
-	background:    -moz-linear-gradient(top, #f7f7f7, #e7e7e7);
-	background:      -o-linear-gradient(top, #f7f7f7, #e7e7e7);
-	background:     -ms-linear-gradient(top, #f7f7f7, #e7e7e7);
-	*/
 	cursor: move;
 	border: 1px solid #ddd;
 	position: relative;
@@ -22,6 +13,7 @@
 	position: relative;
 	display: table;
 	width: 100%;
+	padding: 10px;
 }
 .text div {
 	position: relative;
@@ -47,4 +39,17 @@
 }
 #post-list .children {
 	display: none;
+}
+.search {
+	width: 50%;
+	margin: 0;
+	padding: 1em;
+	border: 1px solid #DDD;
+	background-color: #fff;
+	font-size: 1.3em;
+	margin-top: 20px;
+	outline: none;
+	background-image: url(../img/search-icon.png);
+	background-repeat: no-repeat;
+	background-position: center right 10px;
 }
