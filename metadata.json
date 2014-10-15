@@ -2,9 +2,9 @@
     "name": "Aeria",
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
-    "download_url": "https://github.com/CaffeinaLab/aeria/archive/1.0.1.zip",
+    "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
 
-    "version": "1.0.1",
+    "version": "1.0.2",
     "requires": "3.5",
     "tested": "4.0",
     "last_updated": "2014-10-15 11:25:00",
