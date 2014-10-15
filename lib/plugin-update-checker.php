@@ -75,6 +75,25 @@ class PluginUpdateChecker_1_5 {
     $this->installHooks();
   }
 
+ /**
+     * Removes the prefix "-master" when updating from GitHub zip files
+     *
+     * See: https://github.com/YahnisElsts/plugin-update-checker/issues/1
+     *
+     * @param string $source
+     * @param string $remote_source
+     * @param object $thiz
+     * @return string
+     */
+    public function rename_github_zip( $source, $remote_source, $thiz ){
+        if(  strpos( $source, self::$repo_slug ) === false )
+            return $source;
+        $path_parts = pathinfo($source);
+        $newsource = trailingslashit($path_parts['dirname']). trailingslashit( $this->slug );
+        rename($source, $newsource);
+        return $newsource;
+    }
+
   /**
    * Install the hooks required to run periodic update checks and inject update info
    * into WP data structures.
@@ -96,6 +115,8 @@ class PluginUpdateChecker_1_5 {
     //Clear the version number cache when something - anything - is upgraded or WP clears the update cache.
     add_filter('upgrader_post_install', array($this, 'clearCachedVersion'));
     add_action('delete_site_transient_update_plugins', array($this, 'clearCachedVersion'));
+
+    add_filter( 'upgrader_source_selection', array( $this, 'rename_github_zip' ), 1, 3 );
 
     //Set up the periodic update checks
     $this->cronHook = 'check_plugin_updates-' . $this->slug;
