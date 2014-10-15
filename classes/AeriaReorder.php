@@ -393,6 +393,9 @@ class AeriaReorder {
 			<?php echo $this->initial; ?>
 			<div id="list">
 			<input class="search" placeholder="Search" />
+			<div id="message-order" class="updated" style="display:none;">
+	           <p><h3>ATTENZIONE</h3>Il sistema di <b>ordinamento</b> è disabilitato nella lista filtrata. Rimuovere i criteri di ricerca per riabilitare il sistema.</p>
+	        </div>
 			<ul id="post-list" class="list">
 		<?php
 		if ( is_post_type_hierarchical( $this->post_type ) ) {
