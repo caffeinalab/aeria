@@ -4,7 +4,8 @@ jQuery(function($){
 	var $message_order = $('#message-order');
 
 	var options = {
-		valueNames: [ 'list_field' , 'list_title' ]
+		valueNames: [ 'list_field' , 'list_title' ],
+		page: 999
 	};
 
 	var resultList = new List('list', options);

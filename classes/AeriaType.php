@@ -84,14 +84,6 @@ class AeriaType {
 
 			if($relations) {
 
-				static $inited_ajax = false;
-
-				if(false===$inited_ajax){
-					$inited_ajax = true;
-					add_action( 'wp_ajax_aeria_search', 'AeriaUtils::search' );
-					add_action( 'wp_ajax_aeria_search_init', 'AeriaUtils::search_init' );
-				}
-
 				$meta_fields = [];
 
 				foreach ((array)$relations as $key => $relation) {
