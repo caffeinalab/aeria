@@ -24,6 +24,7 @@ define('AERIA_DIR',             rtrim(plugin_dir_path( __FILE__ ),'/').'/');
 define('AERIA_URL',             rtrim(plugins_url( 'aeria' ),'/').'/');
 define('AERIA_HOME_URL',        home_url('/'));
 define('AERIA_RESOURCE_DIR',    AERIA_DIR.'resources/');
+define('AERIA_PLUGINS_URL',     AERIA_DIR.'plugins/');
 define('AERIA_RESOURCE_URL',    AERIA_URL.'resources/');
 define('THEME_DIR',             get_stylesheet_directory().'/');
 
