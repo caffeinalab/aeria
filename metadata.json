@@ -4,11 +4,11 @@
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
 
-    "version": "1.0.8",
+    "version": "1.0.9",
     "requires": "3.5",
     "tested": "4.0",
-    "last_updated": "2014-10-15 11:25:00",
-    "upgrade_notice": "Fix Aeria ajax bug.",
+    "last_updated": "2014-11-26 10:30:00",
+    "upgrade_notice": "Add RootRelativeURLS Plugin",
 
     "author": "Caffeina",
     "author_homepage": "http://caffeina.co/",

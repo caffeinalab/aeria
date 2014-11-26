@@ -5,14 +5,14 @@
  * Author: Caffeina Srl
  * Author URI: http://caffeina.co
  * Plugin URI: http://aeria.vanadio.dev
- * Version: 1.0.8
+ * Version: 1.0.9
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.0.8');
+define('AERIA','1.0.9');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -24,6 +24,7 @@ define('AERIA_DIR',             rtrim(plugin_dir_path( __FILE__ ),'/').'/');
 define('AERIA_URL',             rtrim(plugins_url( 'aeria' ),'/').'/');
 define('AERIA_HOME_URL',        home_url('/'));
 define('AERIA_RESOURCE_DIR',    AERIA_DIR.'resources/');
+define('AERIA_PLUGINS_URL',     AERIA_DIR.'plugins/');
 define('AERIA_RESOURCE_URL',    AERIA_URL.'resources/');
 define('THEME_DIR',             get_stylesheet_directory().'/');
 
