@@ -4,7 +4,7 @@
  * Description: Modular, Fast, Wordpress Framework for advanced theme development.
  * Author: Caffeina Srl
  * Author URI: http://caffeina.co
- * Plugin URI: http://aeria.vanadio.dev
+ * Plugin URI: https://github.com/CaffeinaLab/aeria
  * Version: 1.1.0
  */
 
