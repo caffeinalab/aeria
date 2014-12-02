@@ -18,18 +18,18 @@ class AeriaType {
 		add_action( 'init', function() use ($type,$post_type,$post_name) {
 
 			$options = array_merge_replace(array(
-				'public'        => true,
-				'publicly_queryable' => true,
-				'show_ui'       => true,
-				'show_in_menu' 	=> true,
-				'query_var' 	=> true,
+				'public'        	=> true,
+				'publicly_queryable' 	=> true,
+				'show_ui'       	=> true,
+				'show_in_menu' 		=> true,
+				'query_var' 		=> true,
 				'rewrite' 		=> array( 'slug' => $post_type, 'with_front' => false ),
-				'capability_type' => 'post',
-				'with_front'  	=> false,
-				'has_archive' 	=> true,
-				'hierarchical'	=> true,
-				'feeds'     	=> false,
-				'menu_position' => null,
+				'capability_type' 	=> 'post',
+				'with_front'  		=> false,
+				'has_archive' 		=> true,
+				'hierarchical'		=> true,
+				'feeds'     		=> false,
+				'menu_position' 	=> null,
 				'reorder'		=> false,
 				'supports' 		=> false, // 'title', editor', 'author', 'thumbnail', 'excerpt', 'comments',
 			),$type['options']);
@@ -45,40 +45,40 @@ class AeriaType {
 
 			$options['labels'] = array_merge_replace(array(
 				'name' 				=> $post_name,
-				'singular_name' 	=> $post_name,
+				'singular_name' 		=> $post_name,
 				'add_new' 			=> 'Add new',
-				'add_new_item' 		=> 'Add new Item',
-				'edit_item' 		=> 'Edit',
+				'add_new_item' 			=> 'Add new Item',
+				'edit_item' 			=> 'Edit',
 				'new_item' 			=> 'New',
-				'all_items' 		=> 'Show all',
-				'view_item' 		=> 'Show item',
-				'search_items' 		=> 'Search',
-				'not_found' 		=> 'Not found',
-				'not_found_in_trash' => 'Not found in trash',
-				'parent_item_colon' => '',
-				'taxonomies' 		=> [], // 'category', 'post_tag',
-				'menu_name' 		=> $post_name,
-				'menu_icon' 		=> null,
+				'all_items' 			=> 'Show all',
+				'view_item' 			=> 'Show item',
+				'search_items' 			=> 'Search',
+				'not_found' 			=> 'Not found',
+				'not_found_in_trash' 		=> 'Not found in trash',
+				'parent_item_colon' 		=> '',
+				'taxonomies' 			=> [], // 'category', 'post_tag',
+				'menu_name' 			=> $post_name,
+				'menu_icon' 			=> null,
 			),$type);
 
 			register_post_type( $post_type, $options );
 
 			if($options['reorder']){
 				new AeriaReorder(array(
-					'post_type'   => $post_type,
-					'order'       => 'ASC',
-					'heading'     => $options['labels']['singular_name'],
-					'final'       => '',
-					'initial'     => '',
-					'menu_label'  => __( 'Reorder', 'reorder' ),
-					'icon'        => '',
-					'post_status' => 'publish',
-					'show_title'  => isset($options['reorder']['show_title'])?$options['reorder']['show_title']:true,
-					'fields'	  => $options['reorder']['fields']?:false
+					'post_type'   	=> $post_type,
+					'order'       	=> 'ASC',
+					'heading'     	=> $options['labels']['singular_name'],
+					'final'       	=> '',
+					'initial'     	=> '',
+					'menu_label'  	=> __( 'Reorder', 'reorder' ),
+					'icon'        	=> '',
+					'post_status' 	=> 'publish',
+					'show_title'  	=> isset($options['reorder']['show_title'])?$options['reorder']['show_title']:true,
+					'fields'	=> $options['reorder']['fields']?:false
 				));
 			  }
 
-			//check and register relations
+			// Check and register relations
 
 			$relations = isset($type['relations'])?$type['relations']:false;
 
@@ -91,19 +91,19 @@ class AeriaType {
 					$multiple = isset($relation['multiple'])? $relation['multiple']:false;
 
 					$meta_fields[] = [
-			            'name' => $relation['title'],
-			            'id'   => 'relations_'.$post_type.'_'.$relation['type'],
-			            'type' => 'select_ajax',
-			            'multiple' => $multiple,
-			            'relation' => $relation['type']
-			        ];
+			            		'name' => $relation['title'],
+			        		'id'   => 'relations_'.$post_type.'_'.$relation['type'],
+			            		'type' => 'select_ajax',
+			            		'multiple' => $multiple,
+			            		'relation' => $relation['type']
+			        	];
 				}
 
 				AeriaMetaBox::register([
-				    'id' => 'relations_'.$post_type,
-				    'title' => 'Relations '.$options['labels']['name'],
-				    'pages' => [$post_type],
-				    'fields' => $meta_fields
+				    'id' 	=> 'relations_'.$post_type,
+				    'title' 	=> 'Relations '.$options['labels']['name'],
+				    'pages' 	=> [$post_type],
+				    'fields' 	=> $meta_fields
 				]);
 			}
 
