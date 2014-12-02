@@ -44,22 +44,22 @@ class AeriaType {
 
 
 			$options['labels'] = array_merge_replace(array(
-				'name' 				=> $post_name,
-				'singular_name' 		=> $post_name,
-				'add_new' 			=> 'Add new',
-				'add_new_item' 			=> 'Add new Item',
-				'edit_item' 			=> 'Edit',
-				'new_item' 			=> 'New',
-				'all_items' 			=> 'Show all',
-				'view_item' 			=> 'Show item',
-				'search_items' 			=> 'Search',
-				'not_found' 			=> 'Not found',
-				'not_found_in_trash' 		=> 'Not found in trash',
-				'parent_item_colon' 		=> '',
-				'taxonomies' 			=> [], // 'category', 'post_tag',
-				'menu_name' 			=> $post_name,
-				'menu_icon' 			=> null,
-			),$type);
+				'name' 			=> $post_name,
+				'singular_name' 	=> $post_name,
+				'add_new' 		=> 'Add new',
+				'add_new_item' 		=> 'Add new Item',
+				'edit_item' 		=> 'Edit',
+				'new_item' 		=> 'New',
+				'all_items' 		=> 'Show all',
+				'view_item' 		=> 'Show item',
+				'search_items' 		=> 'Search',
+				'not_found' 		=> 'Not found',
+				'not_found_in_trash' 	=> 'Not found in trash',
+				'parent_item_colon' 	=> '',
+				'taxonomies' 		=> [], // 'category', 'post_tag',
+				'menu_name' 		=> $post_name,
+				'menu_icon' 		=> null,
+			), $type);
 
 			register_post_type( $post_type, $options );
 
