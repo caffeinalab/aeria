@@ -299,6 +299,10 @@ class Meta_Box {
 	// Callback function to show fields in meta box
 	function show() {
 		global $post;
+		if (isset($this->_meta_box['slug']) && $this->_meta_box['slug'] !== $post->post_name) {
+			echo '<style>.postbox#'.$this->_meta_box['id'].'{display:none;}</style>';
+			return;
+		}
 		wp_nonce_field(basename(__FILE__), 'mbox_meta_box_nonce');
 		echo '<table class="form-table ">';
 		foreach ($this->_fields as &$field) {
