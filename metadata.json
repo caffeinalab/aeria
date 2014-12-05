@@ -4,20 +4,17 @@
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
 
-    "version": "1.1.1",
+    "version": "1.2.0",
     "requires": "3.5",
     "tested": "4.0",
-    "last_updated": "2014-12-04 10:00:00",
-    "upgrade_notice": "Aeria Branding and Aeria Dashboard",
+    "last_updated": "2014-12-05 11:00:00",
+    "upgrade_notice": "[New] User Profile upload photo",
 
     "author": "Caffeina",
     "author_homepage": "http://caffeina.co/",
 
     "sections": {
-        "description": "(Required) Plugin description. Basic HTML can be used in all sections.",
-        "installation": "(Recommended) Installation instructions.",
-        "changelog": "(Recommended) Changelog. <p>This section will be opened by default when the user clicks 'View version XYZ information'.</p>",
-        "custom_section": "This is a custom section labeled 'Custom Section'."
+        "description": "Modular, Fast, Wordpress Framework for advanced theme development.",
     },
 
     "rating": 100,
