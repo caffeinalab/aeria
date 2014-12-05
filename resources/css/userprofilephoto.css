@@ -1,0 +1,103 @@
+/*
+	Title: 3five Admin CUPP Styles
+	Author: Vincent Listrani
+	Description: Styles for WP Admin user page.
+*/
+#cupp_container* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	box-sizing:         border-box;
+}
+
+#cupp_container{
+	background: #fcfcfc;
+	padding: 10px;
+	margin-top: 20px;
+}
+
+/* Current Profile Image Styles */
+#current_img{
+	position: relative;
+	width: 160px;
+	height: auto;
+	text-align: right;
+	margin-bottom: 10px;
+}
+
+.cupp-current-img{
+	display: block;
+	max-width: 150px;
+	max-height: 150px;
+	width: 100%;
+	height: auto;
+	padding: 4px;
+	background: #fefefe;
+	border: 1px solid #e5e5e5;
+}
+
+.edit_options{
+	display: block;
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	max-width: 160px;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.25);
+}
+.edit_options .remove_img, .edit_options .edit_img{
+	float: left;
+	position: relative;
+	color: #444;
+	font-size: 13px;
+	width: 50%;
+	height: 100%;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+}
+.edit_options span{
+	display: block;
+	position: relative;
+	top: 50%;
+	margin-top: -10px;
+}
+
+.edit_options .remove_img{
+	color: #fff;
+	background-color: rgb(214, 14, 14);
+	background-color: rgba(214, 14, 14, 0.50);
+}
+
+.edit_options.single .remove_img{
+	width: 100%;
+}
+
+.edit_options .remove_img:hover, .edit_options .remove_img:focus{
+	background-color: #ff0000;
+	background-color: rgba(214, 14, 14, 0.75);
+}
+
+.edit_options .edit_img{
+	color: #fff;
+	background-color: rgb(50, 50, 50);
+	background-color: rgba(50, 50, 50, 0.50);
+}
+
+.edit_options .edit_img:hover, .edit_options .edit_img:focus{
+	background-color: rgb(25, 25, 25);
+	background-color: rgba(50, 50, 50, 0.75);
+}
+
+/* Radio Button Styles */
+#cupp_options{
+	margin-bottom: 10px;
+}
+
+#cupp_external{
+	display: none;
+}
