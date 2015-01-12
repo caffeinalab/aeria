@@ -2,6 +2,17 @@
 // Exit if accessed directly.
 if( false === defined('AERIA') ) exit;
 
+wp_enqueue_script('aeria.social', AERIA_URL.'resources/js/aeria.social.js', ['jquery']);
+wp_enqueue_style('aeria.social', AERIA_URL.'resources/css/aeria.social.css');
+
+AeriaAJAX::register('aeriasocial.get', function(){
+	if (!isset($_REQUEST['uri'])) {
+		die(json_encode([ 'error' => 'Please provide a URI' ]));
+	}
+
+	die(json_encode(AeriaSocial::getCount($_REQUEST['uri'])));
+});
+
 class AeriaSocial {
 
 	public static $services = [];
@@ -21,18 +32,9 @@ class AeriaSocial {
 		if (is_array($config)) static::$config = array_merge(static::$config, $config);
 		static::$services = array_keys(static::$config['services']);
 
-		add_action('wp_enqueue_scripts', function(){
-			wp_enqueue_script('aeria.social', AERIA_URL.'/scripts/aeria.social.js');
-			wp_enqueue_style('aeria.social', AERIA_URL.'/resources/css/aeria.social.css');
-			if (isset(static::$config['apiurl'])) {
-				echo '<script>window.AERIA_SOCIAL_API_URI = "' . static::$config['apiurl'] . '";</script>';
-			}
-		});
-
-		AeriaAJAX::register('aeriasocial.get', function(){
-			if (!isset($_REQUEST['uri'])) die(json_encode([ 'error' => 'Please provide a URI' ]));
-			die(json_encode(static::getCount($_REQUEST['uri'])));
-		});
+		if (isset(static::$config['apiurl'])) {
+			wp_localize_script('aeria.social', 'AERIA_SOCIAL', [ 'URL' => static::$config['apiurl'] ]);
+		}
 	}
 
 	public static function widget($uri, $info=[], $opt=[]) {
@@ -57,7 +59,7 @@ class AeriaSocial {
 			if ( ! isset($opt['nocount'])) {
 				$r .= '<span class="aeriasocial-count"><i></i><u></u>';
 					$r .= '<span data-aeriasocial-count>';
-						if (!is_null($stats)) $r .= $parsed_stats['services'][$service];
+						if (!is_null($stats)) $r .= (string)$stats['services'][$service];
 					$r .= '</span>';
 				$r .= '</span>';
 			}

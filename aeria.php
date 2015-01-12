@@ -5,7 +5,7 @@
  * Author: Caffeina Srl
  * Author URI: http://caffeina.co
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.2.0
+ * Version: 1.3.0
  */
 
 // Exit if accessed directly
