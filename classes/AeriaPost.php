@@ -112,6 +112,8 @@ class AeriaPost {
         if($att = get_post_thumbnail_id($this->id)){
             $imgdata = wp_get_attachment_image_src($att,'full');
             $results['big'] = $imgdata[0];
+            $imgdata = wp_get_attachment_image_src($att,'medium');
+            $results['medium'] = $imgdata[0];
             $imgdata = wp_get_attachment_image_src($att,'thumbnail');
             $results['small'] = $imgdata[0];
         }
