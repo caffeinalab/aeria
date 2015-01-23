@@ -438,8 +438,8 @@ class Meta_Box {
 					$meta_title = '';
 				}
 
-        $background = '';
-        $class_background = 'file';
+        		$background = '';
+        		$class_background = 'file';
 
 				switch ($meta_type) {
 					case 'image/jpeg':

@@ -9,14 +9,6 @@ window.aeria_setup_media_upload_fields = function(){
 
     event.preventDefault();
 
-    /*
-      // If the media frame already exists, reopen it.
-      if ( file_frame ) {
-        file_frame.open();
-        return;
-      }
-    */
-
       // Create the media frame.
       file_frame = wp.media.frames.file_frame = wp.media({
         title: jQuery( this ).data( 'uploader_title' ),
@@ -58,7 +50,7 @@ window.aeria_setup_media_gallery_fields = function(){
         button: {
           text: jQuery( this ).data( 'uploader_button_text' )
         },
-        multiple: false  // Set to true to allow multiple files to be selected
+        multiple: true  // Set to true to allow multiple files to be selected
       });
 
       // When an image is selected, run a callback.
@@ -85,7 +77,7 @@ window.aeria_init_select2 = function(){
         if( ! $this.data("select2")){
           $this.select2({
              formatResult: formatRes,
-             minimumInputLength: $this.data('minimum'),             
+             minimumInputLength: $this.data('minimum'),
              formatSelection: formatSel || undefined,
              escapeMarkup: function(m) { return m; }
           }).on('select2-loaded',function(){
