@@ -3,7 +3,7 @@
  * @Author: Graziano Vincini <graziano.vincini@caffeinalab.com>
  * @Date:   2015-02-04 16:18:04
  * @Last Modified by:   Graziano Vincini
- * @Last Modified time: 2015-02-04 16:22:12
+ * @Last Modified time: 2015-02-04 16:23:59
  */
 
 // Exit if accessed directly.
@@ -59,5 +59,15 @@ add_action('init',function(){
     add_action('do_feed_atom',          '__disable_feed', 1);
     add_action('do_feed_rss2_comments', '__disable_feed', 1);
     add_action('do_feed_atom_comments', '__disable_feed', 1);
+
+    // optimize_rewrites
+	add_filter('rewrite_rules_array', function($rules){
+	    foreach ($rules as $rule => $rewrite) {
+	        if ( preg_match('(feed|rss2|atom|comment|attachment|trackback|/page)i',$rule) ) {
+	            unset($rules[$rule]);
+	        }
+	    }
+	    return $rules;
+	});
 
 });
