@@ -302,7 +302,7 @@ class Meta_Box {
 	// Callback function to show fields in meta box
 	function show() {
 		global $post;
-		if (isset($this->_meta_box['slug']) && $this->_meta_box['slug'] !== $post->post_name) {
+		if (isset($this->_meta_box['slug']) && !in_array($post->post_name,(array)$this->_meta_box['slug']) ) {
 			echo '<style>.postbox#'.$this->_meta_box['id'].'{display:none;}</style>';
 			return;
 		}
