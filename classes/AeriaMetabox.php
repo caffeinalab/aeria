@@ -213,7 +213,7 @@ class Meta_Box {
 
 	/******************** END UPLOAD **********************/
 
-	/******************** DATETIME **********************/
+/******************** DATETIME **********************/
 
 	function check_field_datetime() {
 		if ($this->has_field('datetime') && $this->is_edit_page()) {
@@ -232,6 +232,7 @@ class Meta_Box {
 						$start = isset($field['start'])?$field['start']:'-Infinity';
 						$end = isset($field['end'])?$field['end']:'Infinity';
 
+						echo "if($('#{$id}_field').length){";
 						echo "$('#{$id}_field').datetimepicker({
 						    language: \"it\",
 						    maskInput: true,
@@ -241,6 +242,7 @@ class Meta_Box {
 			  	          	endDate: $end,
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
+						echo "}";
 					}
 				}
 				echo '});</script>';
@@ -262,7 +264,7 @@ class Meta_Box {
 				foreach ($this->_fields as $field) {
 					if ('daterange' == $field['type']) {
 						$id = $field['id'];
-
+						echo "if($('#{$id}_field_start').length){";
 						echo "$('#{$id}_field_start').datetimepicker({
 						    language: \"it\",
 						    maskInput: true,
@@ -278,6 +280,7 @@ class Meta_Box {
 			  	          	pickTime: true,
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
+						echo "}";
 					}
 				}
 				echo '});</script>';
