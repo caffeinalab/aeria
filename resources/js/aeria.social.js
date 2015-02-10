@@ -38,17 +38,16 @@ Aeria.social = (function(){
 	}
 
 	function popup($t) {
-		var $p = $t.parents('[data-aeriasocial-uri]');
-
-		var uri = $p.length > 0 ? encodeURIComponent($p.data('aeriasocial-uri')) : location.href;
 		var service = $t.data('aeriasocial-service');
-		var text = encodeURIComponent($t.data('aeriasocial-text')) || '';
+
+		var $p = $t.parents('[data-aeriasocial-uri]');
+		var uri = ($p.length > 0 && $p.data('aeriasocial-uri')) ? encodeURIComponent($p.data('aeriasocial-uri')) : location.href;
+		var text = $t.data('aeriasocial-text') ? encodeURIComponent($t.data('aeriasocial-text')) : document.title;
 
 		if (service === 'facebook') {
 			popupJS('http://facebook.com/sharer/sharer.php?u=' + uri);
 		} else if (service === 'twitter') {
-			var via = encodeURIComponent($t.data('aeriasocial-via')) || '';
-			popupJS('https://twitter.com/intent/tweet?url=' + uri + '&text=' + text + '&via=' + via);
+			popupJS('https://twitter.com/intent/tweet?url=' + uri + '&text=' + text + ($t.data('aeriasocial-via') ? '&via=' + encodeURIComponent($t.data('aeriasocial-via')) : '') );
 		} else if (service === 'linkedin') {
 			popupJS('http://www.linkedin.com/shareArticle?mini=true&url=' + uri);
 		} else if (service === 'gplus') {
