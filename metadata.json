@@ -4,11 +4,11 @@
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
 
-    "version": "1.3.3",
+    "version": "1.3.4",
     "requires": "3.5",
     "tested": "4.0",
-    "last_updated": "2015-02-04 16:00:00",
-    "upgrade_notice": "[New] Aeria Galley Multi Upload",
+    "last_updated": "2015-02-10 11:30:00",
+    "upgrade_notice": "[Fix] Aeria DateRange",
 
     "author": "Caffeina",
     "author_homepage": "http://caffeina.co/",
