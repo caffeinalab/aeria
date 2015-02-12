@@ -213,7 +213,7 @@ class Meta_Box {
 
 	/******************** END UPLOAD **********************/
 
-/******************** DATETIME **********************/
+	/******************** DATETIME **********************/
 
 	function check_field_datetime() {
 		if ($this->has_field('datetime') && $this->is_edit_page()) {
@@ -260,6 +260,13 @@ class Meta_Box {
 			AeriaMetaBox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
+
+				$pickTime = 'false';
+
+				if (isset($this->_fields['time']) && $this->_fields['time']===true) {
+					$pickTime = 'true';
+				}
+
 				echo '<script type="text/javascript">jQuery(document).ready(function($){';
 				foreach ($this->_fields as $field) {
 					if ('daterange' == $field['type']) {
@@ -269,7 +276,7 @@ class Meta_Box {
 						    language: \"it\",
 						    maskInput: true,
 			  	          	pickDate: true,
-			  	          	pickTime: true,
+			  	          	pickTime: ".$pickTime.",
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
 
@@ -277,7 +284,7 @@ class Meta_Box {
 						    language: \"it\",
 						    maskInput: true,
 			  	          	pickDate: true,
-			  	          	pickTime: true,
+			  	          	pickTime: ".$pickTime.",
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
 						echo "}";
@@ -302,7 +309,7 @@ class Meta_Box {
 	// Callback function to show fields in meta box
 	function show() {
 		global $post;
-		if (isset($this->_meta_box['slug']) && !in_array($post->post_name,(array)$this->_meta_box['slug']) ) {
+		if (isset($this->_meta_box['slug']) && $this->_meta_box['slug'] !== $post->post_name) {
 			echo '<style>.postbox#'.$this->_meta_box['id'].'{display:none;}</style>';
 			return;
 		}
