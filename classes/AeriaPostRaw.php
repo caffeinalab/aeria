@@ -2,7 +2,7 @@
 
 if( false === defined('AERIA') ) exit;
 
-class AeriaPostRaw {
+class AeriaPostRaw extends AeriaPost {
     public function __construct($id,$type=null){
         if($id){
             if(is_a($id,'WP_Post')){
@@ -25,7 +25,7 @@ class AeriaPostRaw {
             $this->parent       = ($t_post->post_parent)?new self($t_post->post_parent):null;
         }
     }
-    
+
     public function loadAsPage($id){
         if($id){
             if(is_a($id,'WP_Post')){
@@ -33,7 +33,7 @@ class AeriaPostRaw {
             } else {
                 $t_post         = is_numeric($id)?get_page($id):get_page_by_path($id);
             }
-            
+
             $this->id           = $t_post->ID;
             $this->title        = $t_post->post_title;
             $this->content      = $t_post->post_content;
