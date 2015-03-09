@@ -72,3 +72,6 @@ AeriaMetabox::add_script_select();
 // Run Ajax Relations
 add_action( 'wp_ajax_aeria_search', 'AeriaUtils::search' );
 add_action( 'wp_ajax_aeria_search_init', 'AeriaUtils::search_init' );
+
+// Run Aeria-dependent plugins
+do_action( 'aeria_init' );
