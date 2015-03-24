@@ -2,8 +2,10 @@
 // Exit if accessed directly.
 if( false === defined('AERIA') ) exit;
 
-wp_enqueue_script('aeria.ajax', AERIA_URL.'resources/js/aeria.ajax.js');
-wp_localize_script('aeria.ajax', 'AERIA_AJAX', [ 'URL' => AERIA_HOME_URL.'index.php' ]);
+add_action('init', function(){
+	wp_enqueue_script('aeria.ajax', AERIA_URL.'resources/js/aeria.ajax.js');
+	wp_localize_script('aeria.ajax', 'AERIA_AJAX', [ 'URL' => AERIA_HOME_URL.'index.php' ]);
+});
 
 // Install Ajax Handler
 add_filter('query_vars',function($vars) {
