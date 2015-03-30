@@ -48,7 +48,7 @@ class AeriaSES {
 		add_action('phpmailer_init', function(&$phpmailer) {
 
 			if (static::$client == null) {
-				require_once __DIR__.'/../vendor/aws.phar';
+				require __DIR__.'/../vendor/aws.phar';
 				static::$client = Aws\Ses\SesClient::factory(static::$config);
 			}
 
