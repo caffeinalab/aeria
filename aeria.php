@@ -12,7 +12,7 @@
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.4.0');
+define('AERIA','1.4.1');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
