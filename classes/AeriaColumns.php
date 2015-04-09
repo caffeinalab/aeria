@@ -62,17 +62,21 @@ class AeriaColumns {
         add_action('manage_'.$type.'_posts_custom_column', function($column,$post_id) use ($type,$_columns) {
             if(isset($_columns['add'][$column])) {
 				$call = $_columns['add'][$column]['render'];
-				$row_post = new AeriaPost($post_id,$type);
+				$row_post = new AeriaPostRaw($post_id,$type);
 				if(is_callable($call)){
 					$call($row_post);
 				} else {
-					$value = $row_post->fields[$call];
-					foreach (AeriaType::$types[$type]['metabox']['fields'] as $this_field) {
+					foreach (array_merge([['id'=>'featured','type'=>'featured']],(array)AeriaType::$types[$type]['metabox']['fields']) as $this_field) {
 						if($this_field['id']===$call){
 							switch ($this_field['type']) {
+								case 'featured':
+									if($value=$row_post->featuredURL()){
+										echo '<div style="width:150px;height:150px;display:block;margin:0 auto;background:url('.$value.') center center no-repeat; background-size: cover;box-shadow: 1px 1px 5px rgba(0,0,0,.6);">';
+									}
+									break;
 								case 'media':
-									if($value){
-										echo '<img src="http://static.appcaffeina.com/assets/i/150x150/',$value,'" style="box-shadow: 1px 1px 5px rgba(0,0,0,.6);">';
+									if($value = current((array)$row_post->fields->$call)){
+										echo '<div style="width:150px;height:150px;display:block;margin:0 auto;background:url('.$value.') center center no-repeat; background-size: cover;box-shadow: 1px 1px 5px rgba(0,0,0,.6);">';
 									}
 									break;
 								/*
@@ -85,7 +89,7 @@ class AeriaColumns {
 									break;
 								*/
 								default:
-									echo $value;
+									echo current((array)$row_post->fields->$call);
 									break;
 							};
 							return;
