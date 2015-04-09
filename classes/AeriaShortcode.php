@@ -6,11 +6,11 @@ class AeriaShortcode {
 
   static public function register($name,$callback,$default_params=array()){
     add_shortcode($name, function($atts,$content='') use (&$callback,&$default_params){
-        $pars = wp_parse_args((array)$default_params,$atts);
+        $pars = wp_parse_args($atts,(array)$default_params);
         ob_start();
         call_user_func_array($callback, [$pars,empty($content)?'':($content)]);
         $buffer = ob_get_contents();
-          ob_end_clean();
+        ob_end_clean();
         return $buffer;
     });
   }
