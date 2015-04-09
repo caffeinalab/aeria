@@ -5,14 +5,14 @@
  * Author: Caffeina Srl
  * Author URI: http://caffeina.co
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.4.0
+ * Version: 1.3.8
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.4.1');
+define('AERIA','1.3.8');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -70,7 +70,7 @@ function icon($name){
 AeriaMetabox::add_script_select();
 
 // Run Ajax Relations
-add_action( 'wp_ajax_aeria_search', 'AeriaUtils::search' );
+add_action( 'wp_ajax_aeria_search', 	 'AeriaUtils::search' );
 add_action( 'wp_ajax_aeria_search_init', 'AeriaUtils::search_init' );
 
 // Run Aeria-dependent plugins

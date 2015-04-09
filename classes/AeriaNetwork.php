@@ -35,6 +35,7 @@ class AeriaNetwork {
 			if (empty($content)) throw new Exception("Empty response");
 		} catch (Exception $e) {
 			curl_close($ch);
+			AeriaDebug::exception($e);
 			static::$errors[] = $e->getMessage();
 			return null;
 		}
