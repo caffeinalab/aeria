@@ -63,7 +63,7 @@ window.aeria_init_select2_ajax = function(){
 						allowClear: true,
 						multiple: multiple,
 						ajax: {
-							url: "/wp/wp-admin/admin-ajax.php",
+							url: window.ajaxurl,
 							dataType: 'json',
 							quietMillis: 300,
 							data: function (term, page) {
@@ -85,7 +85,7 @@ window.aeria_init_select2_ajax = function(){
 							var id=$this.val();
 							if (id!=''||id!='-') {
 
-							    jQuery.ajax("/wp/wp-admin/admin-ajax.php", {
+							    jQuery.ajax(window.ajaxurl, {
 							        data: {
 							            id : id,
 							            action : 'aeria_search_init',
