@@ -3,13 +3,11 @@
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
-
-    "version": "1.3.8",
+    "version": "1.4.2",
     "requires": "3.5",
     "tested": "4.0",
-    "last_updated": "2015-04-06 12:30:00",
-    "upgrade_notice": "[NEW] AeriaColumns",
-
+    "last_updated": "2015-03-17 12:30:00",
+    "upgrade_notice": "[FIX] AeriaColumns",
     "author": "Caffeina",
     "author_homepage": "http://caffeina.co/",
 
