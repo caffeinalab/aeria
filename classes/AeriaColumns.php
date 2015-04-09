@@ -20,17 +20,17 @@ class AeriaColumns {
       unset($old_columns['cb']);
 
           foreach($_columns['add'] as $column => $desc){
-        if(isset($desc['position'])){
-          if($desc['position']=='first'){
-            $first[$column] = $desc['title'];
-          } elseif($desc['position']=='last') {
-            $last[$column] = $desc['title'];
-          } else {
-            $center_columns[$column] = $desc['title'];
-          }
-        } else {
-          $center_columns[$column] = $desc['title'];
-        }
+            if(isset($desc['position'])){
+              if($desc['position']=='first'){
+                $first[$column] = $desc['title'];
+              } elseif($desc['position']=='last') {
+                $last[$column] = $desc['title'];
+              } else {
+                $center_columns[$column] = $desc['title'];
+              }
+            } else {
+              $center_columns[$column] = $desc['title'];
+            }
           }
 
           foreach($_columns['remove'] as $column){
@@ -41,64 +41,79 @@ class AeriaColumns {
 
 
           foreach ($first as $key => $col) {
-        $results[$key] = $col;
+            $results[$key] = $col;
           }
 
           foreach ($old_columns as $key => $col) {
-        $results[$key] = $col;
+            $results[$key] = $col;
           }
 
           foreach ($center_columns as $key => $col) {
-        $results[$key] = $col;
+            $results[$key] = $col;
           }
           foreach ($last as $key => $col) {
-        $results[$key] = $col;
+            $results[$key] = $col;
           }
 
       return $results;
     });
 
+    if (!empty($_columns['notice'])) {
+      add_action('admin_notices',function() use ($type,$_columns){
+          if($_GET['post_type'] == $type){
+              $notice = $_columns['notice']; 
+              echo '<div class="updated"><p>',(is_callable($notice)?$notice():$notice),'</p></div>';
+          }
+      });
+    }
         // Display
         add_action('manage_'.$type.'_posts_custom_column', function($column,$post_id) use ($type,$_columns) {
             if(isset($_columns['add'][$column])) {
-        $call = $_columns['add'][$column]['render'];
-        $row_post = new AeriaPostRaw($post_id,$type);
-        if(is_callable($call)){
-          $call($row_post);
-        } else {
-          foreach (array_merge([['id'=>'featured','type'=>'featured']],(array)AeriaType::$types[$type]['metabox']['fields']) as $this_field) {
-            if($this_field['id']===$call){
-              switch ($this_field['type']) {
-                case 'featured':
-                  if($value=$row_post->featuredURL()){
-                    echo '<div style="width:150px;height:150px;display:block;margin:0 auto;background:url('.$value.') center center no-repeat; background-size: cover;box-shadow: 1px 1px 5px rgba(0,0,0,.6);">';
+            $column_def = $_columns['add'][$column];
+            $call = $column_def['render'];
+            $row_post = new AeriaPostRaw($post_id,$type);
+            if(is_callable($call)){
+              $call($row_post);
+            } else {
+              foreach (array_merge([['id'=>'featured','type'=>'featured']],(array)AeriaType::$types[$type]['metabox']['fields']) as $this_field) {
+                if($this_field['id']===$call){
+                  switch ($this_field['type']) {
+                    case 'featured':
+                      if($value=$row_post->featuredURL()){
+                        $w = @$column_def['width']?:'150px';
+                        $h = @$column_def['height']?:'150px';
+                        $s = @$column_def['shadow']?:'1px 1px 5px rgba(0,0,0,.6)';
+                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.';">';
+                      }
+                      break;
+                    case 'media':
+                      if($value = current((array)$row_post->fields->$call)){
+                        $w = @$column_def['width']?:'150px';
+                        $h = @$column_def['height']?:'150px';
+                        $s = @$column_def['shadow']?:'1px 1px 5px rgba(0,0,0,.6)';
+                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.'">';
+                      }
+                      break;
+                    default:
+                      if (empty($column_def['relation'])){
+                        echo current((array)$row_post->fields->$call);
+                      } else {
+                        // Relation field
+                        $results = [];
+                        foreach (explode(',',$row_post->fields->$call) as $sid) {
+                            $tmp = new AeriaPost($sid);
+                            $results[] = "<a href=\"".admin_edit_url_for_id($tmp->id)."\" target=\"_blank\">".$tmp->title."</a>";
+                            unset($tmp);
+                        }
+                        echo implode('<br>',$results);
+                      }
+                      break;
                   }
-                  break;
-                case 'media':
-                  if($value = current((array)$row_post->fields->$call)){
-                    echo '<div style="width:150px;height:150px;display:block;margin:0 auto;background:url('.$value.') center center no-repeat; background-size: cover;box-shadow: 1px 1px 5px rgba(0,0,0,.6);">';
-                  }
-                  break;
-                default:
-                  if (empty($this_field['relation'])){
-                    echo current((array)$row_post->fields->$call);
-                  } else {
-                    // Relation field
-                    $results = [];
-                    foreach (explode(',',$row_post->fields->$call) as $sid) {
-                        $tmp = new AeriaPost($sid);
-                        $results[] = "<a href=\"".admin_edit_url_for_id($tmp->id)."\" target=\"_blank\">".$tmp->title."</a>";
-                        unset($tmp);
-                    }
-                    echo implode('<br>',$results);
-                  }
-                  break;
-              };
-              return;
+                  return;
+                }
+              }
             }
           }
-        }
-      }
         },10,2);
 
         // Widths
