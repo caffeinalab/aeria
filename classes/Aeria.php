@@ -4,7 +4,21 @@ if( false === defined('AERIA') ) exit;
 
 class Aeria {
 
-	private static $eventHandlers = array();
+	private static $eventHandlers = [];
+	private static $holder = [];
+
+	public static function get($key){
+		return @static::$holder[$key]?:null;
+	}
+
+	public static function set($key,$value){
+		return static::$holder[$key] = $value;
+	}
+
+	public static function delete($key){
+		unset(static::$holder[$key]);
+	}
+
 
 	public static function on($name,$callback){
 		static::$eventHandlers[$name][] = $callback;
@@ -19,7 +33,7 @@ class Aeria {
 		return static::$eventHandlers;
 	}
 
-	public static function trigger($name,array $params=array()){
+	public static function trigger($name,array $params=[]){
 		if(isset(static::$eventHandlers[$name])) {
 			foreach ( static::$eventHandlers[$name] as $handler ) {
 				return call_user_func_array($handler,$params);
