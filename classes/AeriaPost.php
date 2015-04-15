@@ -353,6 +353,21 @@ class AeriaPost {
     }
 
     /**
+     * fieldAsPost function.
+     *
+     * @access public
+     * @param mixed $field_name
+     * @return void
+     */
+    function fieldAsPost($field_name){
+        $res = [];
+        if(isset($this->fields->$field_name)) foreach($this->fields->$field_name as $_id){
+            $res[] = new static($_id);
+        };
+        return empty($res)?false:(count($res)>1?$res:$res[0]);
+    }
+
+    /**
      * fieldAsURL function.
      *
      * @access public
