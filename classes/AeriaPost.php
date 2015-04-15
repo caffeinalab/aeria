@@ -14,6 +14,7 @@ class AeriaPost {
     public      $permalink      = '';
     public      $order          = '';
     public      $type           = '';
+    public      $post_author    = '';
     public      $parent         = null;
     protected   $_fields        = null;
     protected   $_fields_cache  = null;
@@ -37,6 +38,7 @@ class AeriaPost {
             $this->id           = $t_post->ID;
             $this->title        = apply_filters('the_title', $t_post->post_title);
             $this->raw_content  = $t_post->post_content;
+            $this->post_author  = $t_post->post_author;
             $this->content      = do_shortcode(apply_filters('the_content', $t_post->post_content));
             $this->excerpt      = apply_filters('the_excerpt', $t_post->post_excerpt);
             $this->date         = $t_post->post_date;
