@@ -232,6 +232,7 @@ class Meta_Box {
 						$start = isset($field['start'])?$field['start']:'-Infinity';
 						$end = isset($field['end'])?$field['end']:'Infinity';
 
+						echo "if($('#{$id}_field').length){";
 						echo "$('#{$id}_field').datetimepicker({
 						    language: \"it\",
 						    maskInput: true,
@@ -241,6 +242,7 @@ class Meta_Box {
 			  	          	endDate: $end,
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
+						echo "}";
 					}
 				}
 				echo '});</script>';
@@ -258,16 +260,23 @@ class Meta_Box {
 			AeriaMetaBox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
+
+				$pickTime = 'false';
+
+				if (isset($this->_fields['time']) && $this->_fields['time']===true) {
+					$pickTime = 'true';
+				}
+
 				echo '<script type="text/javascript">jQuery(document).ready(function($){';
 				foreach ($this->_fields as $field) {
 					if ('daterange' == $field['type']) {
 						$id = $field['id'];
-
+						echo "if($('#{$id}_field_start').length){";
 						echo "$('#{$id}_field_start').datetimepicker({
 						    language: \"it\",
 						    maskInput: true,
 			  	          	pickDate: true,
-			  	          	pickTime: true,
+			  	          	pickTime: ".$pickTime.",
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
 
@@ -275,9 +284,10 @@ class Meta_Box {
 						    language: \"it\",
 						    maskInput: true,
 			  	          	pickDate: true,
-			  	          	pickTime: true,
+			  	          	pickTime: ".$pickTime.",
 			  	          	pick12HourFormat: false
 						}).data('DateTimePicker').widget.wrap('<div class=\"aeria-container\"></div>');";
+						echo "}";
 					}
 				}
 				echo '});</script>';
@@ -438,8 +448,8 @@ class Meta_Box {
 					$meta_title = '';
 				}
 
-        $background = '';
-        $class_background = 'file';
+        		$background = '';
+        		$class_background = 'file';
 
 				switch ($meta_type) {
 					case 'image/jpeg':

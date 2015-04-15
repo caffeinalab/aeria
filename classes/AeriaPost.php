@@ -57,7 +57,6 @@ class AeriaPost {
         return $this->id == wp_update_post($fields);
     }
 
-
     public function loadAsPage($id){
         if($id){
             $t_post             = is_numeric($id)?get_page($id):get_page_by_path($id);
@@ -112,21 +111,28 @@ class AeriaPost {
         if($att = get_post_thumbnail_id($this->id)){
             $imgdata = wp_get_attachment_image_src($att,'full');
             $results['big'] = $imgdata[0];
+            $imgdata = wp_get_attachment_image_src($att,'medium');
+            $results['medium'] = $imgdata[0];
             $imgdata = wp_get_attachment_image_src($att,'thumbnail');
             $results['small'] = $imgdata[0];
         }
         return (object)$results;
     }
 
-    public function featuredURL(){
-        if(null===$this->_featured){
-            if (has_post_thumbnail($this->id)) {
-                $this->_featured = wp_get_attachment_thumb_url(get_post_thumbnail_id($this->id));
-            }else{
-             $this->_featured = false;
+    public function featuredURL($full=false){
+        if ($full) {
+            $th = $this->get_thumbs();
+            return $th->big;
+        } else {
+            if(null===$this->_featured){
+                if (has_post_thumbnail($this->id)) {
+                    $this->_featured = wp_get_attachment_thumb_url(get_post_thumbnail_id($this->id));
+                }else{
+                 $this->_featured = false;
+                }
             }
+            return $this->_featured;
         }
-        return $this->_featured;
     }
 
     public function taxonomy($taxname){

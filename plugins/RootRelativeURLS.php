@@ -78,6 +78,8 @@ class MP_WP_Root_Relative_URLS {
 
         //massage global post object
         global $post;
+        if (!$post) return;
+
         $post->post_content = self::massage_external_content($post->post_content);
         $post->post_excerpt= self::massage_external_content($post->post_excerpt);
     }
