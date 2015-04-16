@@ -90,17 +90,14 @@ class AeriaPost {
         if(!empty($terms)){
             if(!is_wp_error($terms)){
                 foreach($terms as $key=>$term){
-
-                    if($key[0]!='_'){
-                        if(count($term)>1){
-                            $temp = [];
-                            foreach ($term as $value) {
-                                $temp[] = is_serialized($value)?unserialize($value):$value;
-                            }
-                            $results[$key] = $temp;
-                        } else {
-                            $results[$key] = is_serialized($term[0])?unserialize($term[0]):$term[0];
+                    if(count($term)>1){
+                        $temp = [];
+                        foreach ($term as $value) {
+                            $temp[] = is_serialized($value)?unserialize($value):$value;
                         }
+                        $results[$key] = $temp;
+                    } else {
+                        $results[$key] = is_serialized($term[0])?unserialize($term[0]):$term[0];
                     }
                 }
             }
