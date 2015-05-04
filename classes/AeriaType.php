@@ -17,16 +17,24 @@ class AeriaType {
 
 
     if(false===empty($type['metabox'])){
-      if (empty($type['metabox']['pages'])) $type['metabox']['pages'] = [$post_type];
-      if (!in_array($post_type, $type['metabox']['pages'])) $type['metabox']['pages'][] = $post_type;
-      AeriaMetaBox::register($type['metabox']);
+      // Support one or multiple metabox definitions
+      if (isset($type['metabox']['id'])) $type['metabox'] = [$type['metabox']];
+      foreach($type['metabox'] as $mbox){
+        if (empty($mbox['pages'])) $mbox['pages'] = [$post_type];
+        if (!in_array($post_type, $mbox['pages'])) $mbox['pages'][] = $post_type;
+        AeriaMetaBox::register($mbox);
+      }
       unset($type['metabox']);
     }
 
     if(false===empty($type['taxonomy'])){
-      if (empty($type['taxonomy']['types'])) $type['taxonomy']['types'] = [$post_type];
-      if (!in_array($post_type, $type['taxonomy']['types'])) $type['taxonomy']['types'][] = $post_type;
-      AeriaTaxonomy::register($type['taxonomy']);
+      // Support one or multiple taxonomy definitions
+      if (isset($type['taxonomy']['id'])) $type['taxonomy'] = [$type['taxonomy']];
+      foreach($type['taxonomy'] as $tax){
+        if (empty($tax['types'])) $tax['types'] = [$post_type];
+        if (!in_array($post_type, $tax['types'])) $tax['types'][] = $post_type;
+        AeriaTaxonomy::register($tax);
+      }
       unset($type['taxonomy']);
     }
 
