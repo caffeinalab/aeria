@@ -28,7 +28,7 @@ class AeriaPost {
 
     public function __construct($id,$type=null){
         if($id){
-            if(is_a($id,'WP_Post')){
+            if(is_object($id) && (is_a($id,'WP_Post')||is_a($id,'AeriaPost'))){
                 $t_post         = $id;
             } else {
                 $fld = is_numeric($id)?'id':'name';
