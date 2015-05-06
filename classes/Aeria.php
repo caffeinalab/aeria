@@ -4,11 +4,11 @@ if( false === defined('AERIA') ) exit;
 
 class Aeria {
 
-	private static $eventHandlers = [];
-	private static $holder = [];
+	private static $eventHandlers = [],
+		       $holder 	      = [];
 
-	public static function get($key){
-		return @static::$holder[$key]?:null;
+	public static function get($key,$default=null){
+		return @static::$holder[$key]?:(is_callable($default)?call_user_func($default):$default);
 	}
 
 	public static function set($key,$value){
