@@ -4,22 +4,26 @@ if( false === defined('AERIA') ) exit;
 
 class AeriaMetaBox {
 
-	protected static $groups = array();
+	protected static $groups = [],
+					 $defs   = [];
 
 	public static function register($metabox){
 		if(false===is_array($metabox)) exit;
+
 		if(empty($metabox['id'])){
 			foreach($metabox as $meta_id => $meta){
-				static::$groups[$meta_id] = new Meta_Box($meta);
+				static::$defs[$meta_id]		= $meta;
+				static::$groups[$meta_id] 	= new Meta_Box($meta);
 			}
 		} else {
+			static::$defs[$metabox['id']]	= $metabox;
 			static::$groups[$metabox['id']] = new Meta_Box($metabox);
 		}
 	}
 
 	public static function infoForField($post_type,$field_name){
-		foreach (static::boxesForType($post_type) as $box){
-			foreach ($box->_fields as $field) {
+		foreach (static::defsForType($post_type) as $def){
+			foreach ($def['fields'] as $field) {
 				if($field['id']==$field_name){
 					return $field;
 				}
@@ -30,11 +34,18 @@ class AeriaMetaBox {
 	public static function boxesForType($post_type){
 		$res = [];
 		foreach (static::$groups as $id => $box) {
-			if(in_array($post_type, $box->_meta_box['pages'])) $res[] = $box;
+			if(in_array($post_type, (array)$box->_meta_box['pages'])) $res[] = $box;
 		}
 		return $res;
 	}
 
+	public static function defsForType($post_type){
+		$res = [];
+		foreach (static::$defs as $id => $def) {
+			if(in_array($post_type, (array)$def['pages'])) $res[] = $def;
+		}
+		return $res;
+	}
 
 
 	public static function add_script_date(){

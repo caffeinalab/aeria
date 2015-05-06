@@ -349,6 +349,18 @@ class AeriaPost {
         }
     }
 
+    function fieldInfo($field_name){
+        return AeriaMetaBox::infoForField($this->type,$field_name);
+    }
+
+    function fieldDisplayValue($field_name){
+        $info = $this->fieldInfo($field_name);
+        $raw  = $this->fields->$field_name;
+        if (empty($info['options'])) return $raw;
+        $value = is_callable($info['options']) ? call_user_func($info['options']) : $info['options'];
+        return is_array($value) && isset($value[$raw]) ? $value[$raw] : $raw;
+    }
+
     /**
      * fieldAsPost function.
      *
@@ -359,7 +371,7 @@ class AeriaPost {
     function fieldAsPost($field_name){
         $res = [];
         if(isset($this->fields->$field_name)) foreach(preg_split('/\s*,\s*/',$this->fields->$field_name) as $_id){
-            $res[] = new static($_id);
+            $res[] = new self($_id);
         };
         return empty($res)?false:(count($res)>1?$res:$res[0]);
     }
