@@ -25,11 +25,17 @@ class AeriaPost {
     protected   $_tax_cache     = null;
     protected   $_featured      = null;
 
-
     public function __construct($id,$type=null){
         if($id){
-            if(is_object($id) && (is_a($id,'WP_Post')||is_a($id,'AeriaPost'))){
-                $t_post         = $id;
+            if(is_object($id)){
+                if (is_a($id,'WP_Post')){
+                    $t_post         = $id;
+                } else if (is_a($id,'AeriaPost')) {
+                    foreach ($id as $key => $value) {
+                        $this->$key = $value;
+                    }
+                    return;
+                }
             } else {
                 $fld = is_numeric($id)?'id':'name';
                 $q = $type?array($fld=>$id,'post_type'=>$type):array($fld=>$id);
