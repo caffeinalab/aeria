@@ -5,14 +5,14 @@
  * Author: Caffeina
  * Author URI: http://caffeina.it
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.7.0
+ * Version: 1.7.1
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.7.0');
+define('AERIA','1.7.1');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -44,6 +44,11 @@ spl_autoload_register(function($class){
 	return is_file($class_file = AERIA_DIR.'classes/' . $class . '.php')?include($class_file):false;
 });
 
+// Tools: Icon
+function icon($name){
+	return strpos($name,'http')===0 ? $name : AERIA_RESOURCE_URL.'icons/'.$name.'.png';
+}
+
 // Enqueue Admin Scripts
 if(IS_ADMIN){
 	
@@ -67,11 +72,6 @@ if(IS_ADMIN){
 		$existing_mimes['svg'] = 'image/svg+xml';
 		return $existing_mimes;
 	});
-
-	// Tools: Icon
-	function icon($name){
-		return strpos($name,'http')===0 ? $name : AERIA_RESOURCE_URL.'icons/'.$name.'.png';
-	}
 
 	// Tools: Admin edit URL for post ID
 	function admin_edit_url_for_id($id){
