@@ -2,7 +2,7 @@
 
 if( false === defined('AERIA') ) exit;
 
-class AeriaMetaBox {
+class AeriaMetabox {
 
 	protected static $groups = [],
 					 $defs   = [];
@@ -229,7 +229,7 @@ class Meta_Box {
 	function check_field_datetime() {
 		if ($this->has_field('datetime') && $this->is_edit_page()) {
 
-			AeriaMetaBox::add_script_date();
+			AeriaMetabox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
 				echo '<script type="text/javascript">jQuery(document).ready(function($){';
@@ -268,7 +268,7 @@ class Meta_Box {
 	function check_field_daterange() {
 		if ($this->has_field('daterange') && $this->is_edit_page()) {
 
-			AeriaMetaBox::add_script_date();
+			AeriaMetabox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
 
@@ -437,7 +437,7 @@ class Meta_Box {
 		}
 		if($layout=='preview') {
 
-			if(!$single) AeriaMetaBox::add_script_sortable();
+			if(!$single) AeriaMetabox::add_script_sortable();
 			if($single) {
 				$num_class='single';
 			}else{
@@ -447,7 +447,7 @@ class Meta_Box {
 			echo '<div class="aeria-media-gallery-'.$field['id'].'">';
 
 			foreach ((array)$metas as $meta) {
-				$media_id = AeriaMetaBox::get_attachment_id_from_src($meta);
+				$media_id = AeriaMetabox::get_attachment_id_from_src($meta);
 
 				if($media_id){
 					$url_edit = 'post.php?post='.$media_id.'&action=edit';

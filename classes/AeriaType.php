@@ -22,7 +22,7 @@ class AeriaType {
       foreach($type['metabox'] as $mbox){
         if (empty($mbox['pages'])) $mbox['pages'] = [$post_type];
         if (!in_array($post_type, $mbox['pages'])) $mbox['pages'][] = $post_type;
-        AeriaMetaBox::register($mbox);
+        AeriaMetabox::register($mbox);
       }
       unset($type['metabox']);
     }
@@ -128,7 +128,7 @@ class AeriaType {
           ];
         }
 
-        AeriaMetaBox::register([
+        AeriaMetabox::register([
           'id'      => 'relations_'.$post_type,
           'title'   => 'Relations '.$options['labels']['name'],
           'pages'   => [$post_type],

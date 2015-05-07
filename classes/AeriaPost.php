@@ -356,7 +356,7 @@ class AeriaPost {
     }
 
     function fieldInfo($field_name){
-        return AeriaMetaBox::infoForField($this->type,$field_name);
+        return AeriaMetabox::infoForField($this->type,$field_name);
     }
 
     function fieldDisplayValue($field_name){
