@@ -63,7 +63,7 @@ add_action('init',function(){
     // optimize_rewrites
 	add_filter('rewrite_rules_array', function($rules){
 	    foreach ($rules as $rule => $rewrite) {
-	        if ( preg_match('(feed|rss2|atom|comment|attachment|trackback|/page)i',$rule) ) {
+	        if ( preg_match('(feed|rss2|atom|comment|attachment|trackback)i',$rule) ) {
 	            unset($rules[$rule]);
 	        }
 	    }
