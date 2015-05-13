@@ -358,7 +358,7 @@ class Meta_Box {
 	function show_field_text($field, $meta) {
 		$this->show_field_begin($field, $meta);
 		$input_type = ($_=&$field['input_type']?:'text');
-		echo "<input type='{$input_type}' name='{$field['id']}' id='{$field['id']}' value='$meta'/>";
+		echo "<input type=\"{$input_type}\" name=\"{$field['id']}\" id=\"{$field['id']}\" value=\"".addslashes($meta)."\"/>";
 		$this->show_field_end($field, $meta);
 	}
 
@@ -377,7 +377,7 @@ class Meta_Box {
 		<span class="twbootstrap">
 		<div class="form-group" style="margin:0;">
 			<div class="input-group date" id="'.$field['id'].'_field">
-				<input type="text" class="form-control" id="'.$field['id'].'" name="'.$field['id'].'" value="'.$meta.'" />
+				<input type="text" class="form-control" id="'.$field['id'].'" name="'.$field['id'].'" value="'.addslashes($meta).'" />
 				<span class="input-group-addon"><span class="glyphicon glyphicon-'.$icon.'"></span></span>
 			</div>
 		</div>
@@ -426,7 +426,7 @@ class Meta_Box {
 		if($layout=='list') {
 				foreach ((array)$metas as $meta) {
 				echo "<table class=\"media aeria-media-gallery-".$field['id']." item_".$idx."\" width=\"100%\"><tr><td><img id='".$field['id'].'_'.$idx."_image' src='".$meta."'/>";
-				echo "</td><td><input type='text' name='".$field['id']."[]' id='".$field['id'].'_'.$idx."' value='".$meta."'/>";
+				echo "</td><td><input type='text' name='".$field['id']."[]' id='".$field['id'].'_'.$idx."' value='".addslashes($meta)."'/>";
 				echo "<a class='button button-primary data-type='list' aeria_upload_media_gallery_button' id='".$field['id']."_button' data-target='#".$field['id'].'_'.$idx."'>Select</a>";
 				echo "<a class='button button-secondary' onclick=\"jQuery('.aeria-media-gallery-".$field['id'].".item_".$idx."').remove();\">Remove</a>";
 				echo "</td></tr></table>";
@@ -482,7 +482,7 @@ class Meta_Box {
 						<a class='button button-remove'><i class='glyphicon glyphicon-trash'></i></a>
 						<a class='button button-edit' target='_blank' href='".$url_edit."'><i class='glyphicon glyphicon-pencil'></i></a>
 					</div>";
-				echo "<input type='hidden' name='".$field['id']."[]' value='".$meta."'/>";
+				echo "<input type='hidden' name='".$field['id']."[]' value='".addslashes($meta)."'/>";
 				echo '</div>';
 				$idx++;
 			}
@@ -547,9 +547,9 @@ class Meta_Box {
 
 	function show_field_select_ajax($field, $meta) {
 		if (!is_array($meta)) $meta = (array) $meta;
-		$meta_value = empty($meta)?'':$meta[0];
+		$meta_value = addslashes(empty($meta)?'':$meta[0]);
 		$this->show_field_begin($field, $meta);
-		echo "<input type='hidden' value='{$meta_value}' name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
+		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
 		$this->show_field_end($field, $meta);
 	}
 
