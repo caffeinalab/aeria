@@ -21,7 +21,6 @@ class SesClientProxyForPHPMailer {
 			]);
 		} catch (Exception $e) {
 			// wp_mail() catch only phpmailerException
-			trigger_error($e->getMessage(), E_WARNING);
 			throw new phpmailerException($e->getMessage(), $e->getCode());
 		}
 	}
