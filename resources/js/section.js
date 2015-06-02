@@ -8,7 +8,7 @@ jQuery(function($){
             var last_section = $('.box-sections > .box-section').last();
             var ncol = $('#ncol').val();
 
-            $.post('/wp-admin/admin-ajax.php', { action: 'add_section', section : parseInt(last_section.data('section-num'))+1, ncol : parseInt(ncol) }, function(response) {
+            $.post(window.ajaxurl, { action: 'add_section', section : parseInt(last_section.data('section-num'))+1, ncol : parseInt(ncol) }, function(response) {
                 $('.box-sections').append(response);
                 engineSelectBg();
             });
@@ -52,7 +52,7 @@ jQuery(function($){
             order.push($(el).data('section-id'));
         });
 
-        $.post('/wp-admin/admin-ajax.php', { action: 'sort_section', order : order, post_id : post_id  }, function(response) {
+        $.post(window.ajaxurl, { action: 'sort_section', order : order, post_id : post_id  }, function(response) {
             location.reload();
         });
     });
