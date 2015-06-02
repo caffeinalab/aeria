@@ -1,0 +1,88 @@
+.box-controls {
+	padding: 15px;
+}
+.box-controls button, .box-controls #ncol  {
+	float: left;
+	margin-right: 5px !important;
+}
+.box-controls .dashicons, .box-reorder .dashicons  {
+	margin-top: 3px;
+}
+.box-section, .box-reorder {
+	margin: 1rem 0;
+	background-color: #F1F1F1;
+	border: 1px dashed #C7C7C7;
+}
+.box-section .body-section {
+	margin: 15px;
+	display: none;
+}
+.box-section .body-section h2 {
+	padding: 10px 0 !important;
+	margin-left: 0;
+	margin-right: 0;
+	border-bottom: 1px dashed #C7C7C7;
+}
+.box-section .header-section {
+	text-transform: uppercase;
+	background-color: #FFF;
+	display: table;
+	width: 100%;
+}
+.box-section .header-section .background {
+	width: 20%;
+	height: 100px;
+	background-size: cover;
+	display: table-cell;
+	cursor: pointer;
+	position: relative;
+	background-color: #363B3F;
+}
+.box-section .header-section .background:before {
+	content: "\f472";
+	font-family: "dashicons";
+	font-size: 3rem;
+	position: absolute;
+	top: 44px;
+	left: 65px;
+	color: rgba(255, 255, 255, 0.4);
+}
+.box-section .header-section .post_section_title {
+	font-size: 1.5rem;
+	border: none;
+	box-shadow: none;
+	width: 100%;
+}
+.box-section .header-section .title {
+	width: 60%;
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 15px;
+}
+.box-section .header-section .controls {
+	width: 20%;
+	display: table-cell;
+	vertical-align: middle;
+}
+.box-section .header-section .controls button {
+	float: right;
+	display: block;
+  	position: relative;
+  	margin-right: 15px;
+}
+.box-reorder {
+	display: none;
+	padding: 0.5rem 1rem;
+}
+.box-reorder ul li {
+	background: #fff;
+	border: 1px dashed #C7C7C7;
+	padding: 1rem;
+	cursor: move;
+}
+.box-reorder ul li button {
+	float: right;
+}
+.box-reorder ul li .dashicons {
+	margin-top: 0;
+}
