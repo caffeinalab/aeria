@@ -43,6 +43,13 @@ class AeriaType {
       unset($type['columns']);
     }
 
+    if(false===empty($type['sections'])){
+      AeriaSection::register([
+        'type' => $post_type
+      ]);
+      unset($type['sections']);
+    }
+
 
     add_action( 'init', function() use ($type,$post_type,$post_name) {
 

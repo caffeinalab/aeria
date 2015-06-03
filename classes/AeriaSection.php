@@ -8,7 +8,7 @@ class AeriaSection {
 
 		if(empty($type['type'])) die("AeriaSection: You must define a post_type id");
 
-		add_action('add_meta_boxes', function(){
+		add_action('add_meta_boxes', function() use ($type){
 			add_meta_box(
 				'aeria_section',
 				'Sections',
