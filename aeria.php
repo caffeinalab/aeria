@@ -5,14 +5,14 @@
  * Author: Caffeina
  * Author URI: http://caffeina.it
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.7.3
+ * Version: 1.8
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.7.3');
+define('AERIA','1.8');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -51,7 +51,7 @@ function icon($name){
 
 // Enqueue Admin Scripts
 if(IS_ADMIN){
-	
+
 	// Register filters
 	add_filter( 'posts_where', 'AeriaUtils::title_like_posts_where', 10, 2 );
 
