@@ -1,10 +1,21 @@
 <?php
-// Exit if accessed directly.
+
+/**
+ * Aeria
+ *
+ * https://github.com/CaffeinaLab/aeria
+ *
+ * Caffeina srl (http://caffeina.it)
+ * Copyright 2015 - MIT License
+ */
+
+namespace Aeria;
+
 if( false === defined('AERIA') ) exit;
 
 add_action('init', function(){
-	wp_enqueue_script('aeria.ajax', AERIA_URL.'resources/js/aeria.ajax.js');
-	wp_localize_script('aeria.ajax', 'AERIA_AJAX', [ 'URL' => AERIA_HOME_URL.'index.php' ]);
+	wp_enqueue_script('aeria.ajax', AERIA_URL . 'resources/js/aeria.ajax.js');
+	wp_localize_script('aeria.ajax', 'AERIA_AJAX', [ 'URL' => AERIA_HOME_URL . 'index.php' ]);
 });
 
 // Install Ajax Handler
@@ -27,15 +38,15 @@ add_action('template_redirect', function() {
 		$args = $_REQUEST;
 		$user_logged = is_user_logged_in();
 
-		$privateHook = 'AERIA_AJAX_HANDLER_private_'.$action;
-		$publicHook = 'AERIA_AJAX_HANDLER_public_'.$action;
+		$privateHook 	= 'AERIA_AJAX_HANDLER_private_'.$action;
+		$publicHook 	= 'AERIA_AJAX_HANDLER_public_'.$action;
 
 		unset($args['ajax']);
 		ob_end_clean();
 
-		if ($user_logged && AeriaAJAX::existsPrivate($action)) {
+		if ($user_logged && AJAX::existsPrivate($action)) {
 			do_action($privateHook,$args);
-		} elseif (AeriaAJAX::exists($action)) {
+		} elseif (AJAX::exists($action)) {
 			do_action($publicHook,$args);
 		}
 
@@ -43,7 +54,7 @@ add_action('template_redirect', function() {
 	}
 });
 
-class AeriaAJAX {
+class AJAX {
 
 	public static $registry = array();
 

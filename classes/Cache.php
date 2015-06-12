@@ -1,11 +1,22 @@
 <?php
-// Exit if accessed directly.
+
+/**
+ * Aeria
+ *
+ * https://github.com/CaffeinaLab/aeria
+ *
+ * Caffeina srl (http://caffeina.it)
+ * Copyright 2015 - MIT License
+ */
+
+namespace Aeria;
+
 if( false === defined('AERIA') ) exit;
 
 
-class AeriaCache {
+class Cache {
 	static $cache_hashes = [];
-	public static $driver = 'AeriaCacheBypass';
+	public static $driver = 'Aeria\\CacheBypass';
 
 	public static function hash($key){
 		return (is_object($key)||is_array($key))?sha1(serialize($key)):$key;
@@ -44,7 +55,7 @@ class AeriaCache {
 	}
 
 	public static function setDriver($new_driver){
-		$c = 'AeriaCache' . $new_driver;
+		$c = 'Aeria\\Cache' . $new_driver;
 		if (class_exists($c)) {
 			static::$driver = $c;
 		}
@@ -52,7 +63,7 @@ class AeriaCache {
 
 }
 
-class AeriaCacheWordPress {
+class CacheWordPress {
 	public static function get($key,$group='',$default=null) {
 		if(null===($v=get_transient($key)) && $default){
 			$v = is_callable($default)?call_user_func($default):$default;
@@ -66,10 +77,8 @@ class AeriaCacheWordPress {
 	public static function delete($key,$group='') {
 		return delete_transient($key);
 	}
-	public static function clear() {
-	}
-	public static function deleteGroup($group) {
-	}
+	public static function clear() {}
+	public static function deleteGroup($group) {}
 }
 
 function & redis(){
@@ -81,11 +90,11 @@ function & redis(){
 	try {
 		return new Predis\Client('tcp://127.0.0.1:6379');
 	} catch(Exception $e){
-		die('AeriaCacheRedis Error: '.$e->getMessage());
+		die('Aeria\\CacheRedis Error: '.$e->getMessage());
 	}
 }
 
-class AeriaCacheRedis {
+class CacheRedis {
 
 	public static function & redis() {
 		return redis();
@@ -149,16 +158,12 @@ class AeriaCacheRedis {
 }
 
 
-class AeriaCacheBypass {
+class CacheBypass {
 
 	public static function get($key,$group='') { return false; }
-
 	public static function set($data,$key,$group='',$expire=0) {}
-
 	public static function delete($key,$group='') {}
-
 	public static function deleteGroup($group) {}
-
 	public static function clear() {}
 
 }

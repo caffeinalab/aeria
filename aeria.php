@@ -5,14 +5,14 @@
  * Author: Caffeina
  * Author URI: http://caffeina.it
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.8
+ * Version: 2.0.0
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.8');
+define('AERIA','2.0.0');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -32,16 +32,21 @@ define('THEME_DIR',             get_stylesheet_directory().'/');
 include(AERIA_DIR.'lib/legacy.php');
 
 // Autoupdate
-include __DIR__.'/lib/plugin-update-checker.php';
-PucFactory::buildUpdateChecker(
-    'https://raw.githubusercontent.com/CaffeinaLab/aeria/master/metadata.json',
-    __FILE__,
-    'aeria'
+include __DIR__.'/plugin-updates/plugin-update-checker.php';
+$className = PucFactory::getLatestClassVersion('PucGitHubChecker');
+new $className(
+	'https://github.com/CaffeinaLab/aeria/',
+	__FILE__,
+	'2.0.0'
 );
 
 // Register autoloader
 spl_autoload_register(function($class){
-	return is_file($class_file = AERIA_DIR.'classes/' . $class . '.php')?include($class_file):false;
+	if (substr($class,0,6)=='Aeria\\'){
+		$class = str_replace("\\", "/", substr($class,6));
+		die($class);
+		return is_file($class_file = AERIA_DIR . 'classes/' . $class . '.php') ? include($class_file) : false;
+	} else return false;
 });
 
 // Tools: Icon
@@ -79,11 +84,11 @@ if(IS_ADMIN){
 	}
 
 	// Add Script Select
-	AeriaMetabox::add_script_select();
+	Aeria\Metabox::add_script_select();
 
 	// Run Ajax Relations
-	add_action( 'wp_ajax_aeria_search', 		 'AeriaUtils::search' );
-	add_action( 'wp_ajax_aeria_search_init', 'AeriaUtils::search_init' );
+	add_action( 'wp_ajax_aeria_search', 		 'Aeria\\Utils::search' );
+	add_action( 'wp_ajax_aeria_search_init', 'Aeria\\Utils::search_init' );
 
 	// Run Aeria-dependent plugins
 	do_action( 'aeria_init' );

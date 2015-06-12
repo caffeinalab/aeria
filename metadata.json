@@ -2,14 +2,14 @@
     "name": "Aeria",
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
-    "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
-    "version": "1.8",
+    "download_url": "https://github.com/CaffeinaLab/aeria/archive/2.0.0.zip",
+    "version": "2.0.0",
     "requires": "4.0",
     "tested": "4.2",
-    "last_updated": "2015-06-08 12:30:00",
-    "upgrade_notice": "[New] AeriaSection",
+    "last_updated": "2015-06-12 12:30:00",
+    "upgrade_notice": "Aeria 2",
     "author": "Caffeina",
-    "author_homepage": "http://caffeina.co/",
+    "author_homepage": "http://caffeina.it/",
 
     "sections": {
         "description": "Modular, Fast, Wordpress Framework for advanced theme development."

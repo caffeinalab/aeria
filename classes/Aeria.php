@@ -1,40 +1,93 @@
 <?php
 
+/**
+ * Aeria
+ *
+ * https://github.com/CaffeinaLab/aeria
+ *
+ * Caffeina srl (http://caffeina.it)
+ * Copyright 2015 - MIT License
+ */
+
+namespace Aeria;
+
 if( false === defined('AERIA') ) exit;
 
 class Aeria {
 
-	private static $eventHandlers = [],
-		       $holder 	      = [];
+	private static 	$eventHandlers = [],
+									$dataHolder		 = [];
 
-	public static function get($key,$default=null){
-		return @static::$holder[$key]?:(is_callable($default)?call_user_func($default):$default);
+	/**
+	 * Repository : Get value
+	 * @param  string $key    The key of value
+	 * @param  mixed $default The default value (if a callable is passed it will be executed and return value used)
+	 * @return mixed          The value associated with $key
+	 */
+	public static function get($key, $default=null){
+		if ( isset(static::$dataHolder[$key]) ) {
+			return static::$dataHolder[$key];
+		} else {
+			return static::$dataHolder[$key] = (is_callable($default) ? call_user_func($default) : $default);
+		}
 	}
 
-	public static function set($key,$value){
-		return static::$holder[$key] = $value;
+	/**
+	 * Repository : Set value
+	 * @param  string $key    The key of value
+	 * @param  mixed $value 	The value associated with $key
+	 * @return mixed          The value setted
+	 */
+	public static function set($key, $value){
+		return static::$dataHolder[$key] = $value;
 	}
 
+	/**
+	 * Repository : Delete a value
+	 * @param  string $key    The key of value
+	 * @return void
+	 */
 	public static function delete($key){
-		unset(static::$holder[$key]);
+		unset(static::$dataHolder[$key]);
 	}
 
-
-	public static function on($name,$callback){
+	/**
+	 * Events : bind
+	 * @param  string $name The event name
+	 * @param  callable $callback The event listener
+	 * @return void
+	 */
+	public static function on($name, $callback){
 		static::$eventHandlers[$name][] = $callback;
 	}
 
+	/**
+	 * Events : unbind
+	 * @param  string $name The event name
+	 * @return void
+	 */
 	public static function off($name){
-		if(isset(static::$eventHandlers[$name]))
+		if (isset(static::$eventHandlers[$name])){
 			unset(static::$eventHandlers[$name]);
+		}
 	}
 
+	/**
+	 * Events : get all binded events
+	 * @return array
+	 */
 	public static function bindedEvents(){
 		return static::$eventHandlers;
 	}
 
+	/**
+	 * Events : Trigger
+	 * @param  string $name   The event name
+	 * @param  array  $params Optional parameters passed to event listeners
+	 * @return mixed
+	 */
 	public static function trigger($name,array $params=[]){
-		if(isset(static::$eventHandlers[$name])) {
+		if (isset(static::$eventHandlers[$name])) {
 			foreach ( static::$eventHandlers[$name] as $handler ) {
 				return call_user_func_array($handler,$params);
 			}
@@ -42,42 +95,4 @@ class Aeria {
 		return null;
 	}
 
-
-	public static function get_posts($options,$force_refresh=false){
-		global $wpdb;
-
-		if ( !$results ){
-
-			if(empty($options['posts_per_page'])&&empty($options['numberposts']))
-				$options['posts_per_page'] = -1;
-
-			if($called_fields = (empty($options['fields'])?false:(array)$options['fields'])){
-				$options['fields'] = 'ids';
-				$ids = [];
-		    	$ids = get_posts($options);
-		    	if($ids){
-		    		$ids = array_map('intval',$ids);
-		    		$results = $wpdb->get_results("SELECT ID,".implode(',',$called_fields)." FROM $wpdb->posts WHERE ID IN (".implode(',',$ids).');');
-		    	} else {
-		    		$results = [];
-		    	}
-
-		    } else {
-		    	$results = get_posts($options);
-		    }
-		}
-
-		return $results;
-	}
-
-	public static function get_tags($options,$force_refresh=false){
-		global $wpdb;
-
-		$hash = sha1(serialize($options));
-
-		if (!$results){
-    		$results = get_tags($options);
-    	}
-	    return $results;
-	}
 }

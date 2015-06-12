@@ -4,7 +4,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/CaffeinaLab/aeria/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/CaffeinaLab/aeria/?branch=master)
 
-> Aeria is a modular, lightweight, fast WordPress Application development kit.
+> Aeria 2 is a modular, lightweight, fast WordPress Application development kit.
 
 
 ## Documentation
