@@ -5,14 +5,14 @@
  * Author: Caffeina
  * Author URI: http://caffeina.it
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.8
+ * Version: 1.8.2
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.8');
+define('AERIA','1.8.2');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
