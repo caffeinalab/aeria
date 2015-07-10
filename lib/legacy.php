@@ -1,5 +1,8 @@
 <?php
 
+// Fix case mismatch bug on AeriaMetabox
+class_alias('AeriaMetabox','AeriaMetaBox',false);
+
 if(!function_exists('array_merge_replace')) {
 	function array_merge_replace () {
 		$arrays = func_get_args();
