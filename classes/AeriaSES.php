@@ -13,7 +13,7 @@ class SesClientProxyForPHPMailer {
 		// Build the raw email
 		$this->phpmailer->preSend();
 		try {
-			return AeriaSES::$client->sendRawEmail([
+			return AeriaSES::getClient()->sendRawEmail([
 				'RawMessage' => [
 					// Get the builded RAW email (comprensive of headers)
 					'Data' => base64_encode($this->phpmailer->getSentMIMEMessage())
@@ -39,11 +39,16 @@ class AeriaSES {
 		);
 	}
 
+	public static function getClient() {
+		if (static::$client == null) {
+			static::$client = Aws\Ses\SesClient::factory(static::$config);
+		}
+		return static::$client;
+	}
+
 	public static function enable() {
 		add_action('phpmailer_init', function(&$phpmailer) {
-			if (static::$client == null) {
-				static::$client = Aws\Ses\SesClient::factory(static::$config);
-			}
+			static::getClient();
 			$phpmailer = new SesClientProxyForPHPMailer($phpmailer);
 		});
 	}
