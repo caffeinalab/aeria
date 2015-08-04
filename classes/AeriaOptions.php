@@ -45,14 +45,14 @@ class AeriaOptions {
 			                foreach ($options as $id => $label) {
 			                ?>
 			                     <tr valign="top">
+			                    	<td>
+			                            <input type="checkbox" id="<?= $id ?>" name="<?= $id ?>" value="on" <?php if(self::get($id) === 'on'): ?>checked="checked"<?php endif; ?>>
+			                        </td>
 			                        <th scope="row">
 			                            <label for="<?= $id ?>">
 			                               <?= $label ?>
 			                            </label>
 			                        </th>
-			                        <td>
-			                            <input type="checkbox" id="<?= $id ?>" name="<?= $id ?>" value="on" <?php if(self::get($id) === 'on'): ?>checked="checked"<?php endif; ?>>
-			                        </td>
 			                    </tr>
 			                <?php
 			                }
