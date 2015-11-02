@@ -4,16 +4,19 @@ if( false === defined('AERIA') ) exit;
 
 class AeriaSection {
 
-	public static function register($type){
+	public static function register($args){
 
-		if(empty($type['type'])) die("AeriaSection: You must define a post_type id");
+		if(empty($args['type'])) die("AeriaSection: You must define a post_type id");
 
-		add_action('add_meta_boxes', function() use ($type){
+		add_action('add_meta_boxes', function() use ($args){
 			add_meta_box(
 				'aeria_section',
 				'Sections',
-				'register_section',
-				$type['type']
+				function($post) use ($args){
+					AeriaSection::render_controls();
+					AeriaSection::render_sections($post->ID,$args);
+				},
+				$args['type']
 			);
 		});
 
@@ -63,8 +66,6 @@ class AeriaSection {
 				$s++;
 			}
 
-
-
 			update_post_meta( $post_id, 'post_sections', addslashes(serialize($sections)) );
 
 		});
@@ -89,13 +90,6 @@ class AeriaSection {
 		add_action( 'wp_ajax_sort_section', function(){
 			AeriaSection::sort_section($_POST['order'], $_POST['post_id']); exit;
 		});
-
-		if(!function_exists(register_section)){
-			function register_section($post){
-				AeriaSection::render_controls();
-				AeriaSection::render_sections($post->ID);
-			}
-		}
 
 	}
 
@@ -134,8 +128,7 @@ class AeriaSection {
 		<?php
 	}
 
-	public static function render_sections($post_id){
-
+	public static function render_sections($post_id, $args){
 		$sections = unserialize(get_post_meta( $post_id, 'post_sections', true ));
 		wp_nonce_field( 'section_metabox', 'section_metabox_nonce' );
 
@@ -158,6 +151,9 @@ class AeriaSection {
 		</div>
 		<div class="box-sections">
 			<?php
+
+				if(isset($args['description']) && !empty($args['description'])) echo '<p>'.$args['description'].'</p>';
+
 				if($sections){
 					$s = 0;
 					foreach ($sections as $key => $section) {
@@ -166,22 +162,30 @@ class AeriaSection {
 					}
 				}else{
 					// Default Section (First)
-					AeriaSection::render_section();
+					AeriaSection::render_section([],0,1,$args);
 				}
 			?>
 		</div>
 		<?php
 	}
 
-	public static function render_section($section = [], $key = 0, $ncol = 1){
-		if(empty($section)) $section = [
-			'columns' => $ncol,
-			'title' => '',
-			'background' => '',
-			'content' => [
-				'column_1' => ''
-			]
-		];
+	public static function render_section($section = [], $key = 0, $ncol = 1, $args = []){
+		if(empty($section)) {
+			$section = [
+				'columns' => $ncol,
+				'title' => '',
+				'background' => '',
+				'content' => [
+					'column_1' => ''
+				]
+			];
+
+			if(!empty($args['fields'])){
+				$section['fields'] = $args['fields'];
+			}
+
+		}
+
 	?>
 		<div class="box-section" data-section-num=<?= $key ?>>
 			<input type="hidden" data-section-columns name="post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
@@ -199,6 +203,13 @@ class AeriaSection {
 			</div>
 			<div class="body-section">
 				<?php
+
+					if(isset($section['fields']) && !empty($section['fields'])){
+						foreach ($section['fields'] as $field) {
+							var_dump($field);
+						}
+					}
+
 					for ($i=1; $i <= $section['columns']; $i++) {
 						if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
 					 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );

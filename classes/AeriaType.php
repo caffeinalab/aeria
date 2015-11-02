@@ -44,9 +44,14 @@ class AeriaType {
     }
 
     if(false===empty($type['sections'])){
-      AeriaSection::register([
+      $sections_args = [
         'type' => $post_type
-      ]);
+      ];
+      if(isset($type['sections']['fields'])) $sections_args['fields'] = $type['sections']['fields'];
+      if(isset($type['sections']['description'])) $sections_args['description'] = $type['sections']['description'];
+
+      AeriaSection::register($sections_args);
+
       unset($type['sections']);
     }
 

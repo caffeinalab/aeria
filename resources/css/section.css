@@ -44,7 +44,8 @@
 	font-size: 3rem;
 	position: absolute;
 	top: 44px;
-	left: 65px;
+	left: 50%;
+	margin-left: -22px;
 	color: rgba(255, 255, 255, 0.4);
 }
 .box-section .header-section .post_section_title {
