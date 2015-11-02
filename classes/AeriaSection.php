@@ -90,9 +90,11 @@ class AeriaSection {
 			AeriaSection::sort_section($_POST['order'], $_POST['post_id']); exit;
 		});
 
-		function register_section($post){
-			AeriaSection::render_controls();
-			AeriaSection::render_sections($post->ID);
+		if(!function_exists(register_section)){
+			function register_section($post){
+				AeriaSection::render_controls();
+				AeriaSection::render_sections($post->ID);
+			}
 		}
 
 	}
