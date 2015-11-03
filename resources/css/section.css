@@ -87,3 +87,18 @@
 .box-reorder ul li .dashicons {
 	margin-top: 0;
 }
+.box-section .row-field {
+	padding: 10px 0;
+	border-bottom: 1px dashed rgba(0,0,0,0.1);
+}
+.box-section .row-field select {
+	min-width: 250px;
+}
+.box-section .row-field label {
+	display: inline-block;
+	position: relative;
+	width: 20%;
+}
+.box-section .wp-editor-wrap{
+	margin-top: 10px;
+}

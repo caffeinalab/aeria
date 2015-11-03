@@ -169,6 +169,26 @@ class AeriaSection {
 		<?php
 	}
 
+	public static function render_field($field=null){
+		if(!$field) return;
+
+		echo '<div class="row-field">';
+		switch ($field['type']) {
+			case 'select':
+				echo '<label for="'.$field['id'].'">'.$field['name'].'</label><select id="'.$field['id'].'" name="'.$field['id'].'">';
+				foreach ($field['options'] as $key => $value) {
+					echo '<option value="'.$key.'">'.$value.'</option>';
+				}
+				echo '</select>';
+				break;
+
+			default:
+				return null;
+				break;
+		};
+		echo '</div>';
+	}
+
 	public static function render_section($section = [], $key = 0, $ncol = 1, $args = []){
 		if(empty($section)) {
 			$section = [
@@ -206,7 +226,7 @@ class AeriaSection {
 
 					if(isset($section['fields']) && !empty($section['fields'])){
 						foreach ($section['fields'] as $field) {
-							var_dump($field);
+							AeriaSection::render_field($field);
 						}
 					}
 
