@@ -90,6 +90,16 @@
 .box-section .row-field {
 	padding: 10px 0;
 	border-bottom: 1px dashed rgba(0,0,0,0.1);
+	width: 50%;
+	display: inline-block;
+	min-height: 45px;
+}
+@media(max-width: 1480px){
+	.box-section .row-field {
+		border-bottom: 1px dashed rgba(0,0,0,0.1);
+		width: 100%;
+		display: block;
+	}
 }
 .box-section .row-field select {
 	min-width: 250px;
