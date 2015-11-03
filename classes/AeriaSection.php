@@ -21,7 +21,7 @@ class AeriaSection {
 		});
 
 
-		add_action('save_post', function($post_id){
+		add_action('save_post', function($post_id) use($args) {
 
 			if (!isset($_POST['section_metabox_nonce'])){
 				return;
@@ -63,6 +63,13 @@ class AeriaSection {
 					'background' => $_POST['post_section_background_'.$s],
 					'content' => $content
 				];
+
+				if(isset($args['fields']) && !empty($args['fields'])){
+					foreach ($args['fields'] as $field) {
+						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
+					}
+				}
+
 				$s++;
 			}
 
@@ -157,7 +164,7 @@ class AeriaSection {
 				if($sections){
 					$s = 0;
 					foreach ($sections as $key => $section) {
-						AeriaSection::render_section($section,$s);
+						AeriaSection::render_section($section,$s,$section['columns'],$args);
 						$s++;
 					}
 				}else{
@@ -169,17 +176,25 @@ class AeriaSection {
 		<?php
 	}
 
-	public static function render_field($field=null){
+	public static function render_field($field=null,$key=0,$val=''){
 		if(!$field) return;
 
 		echo '<div class="row-field">';
+
+		echo '<label for="'.$field['id'].'_'.$key.'">'.$field['name'].'</label>';
+
 		switch ($field['type']) {
 			case 'select':
-				echo '<label for="'.$field['id'].'">'.$field['name'].'</label><select id="'.$field['id'].'" name="'.$field['id'].'">';
-				foreach ($field['options'] as $key => $value) {
-					echo '<option value="'.$key.'">'.$value.'</option>';
+				echo '<select id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'">';
+				foreach ($field['options'] as $k => $value) {
+					$selected = ($val == $k)?'selected="selected"':'';
+					echo '<option value="'.$k.'" '.$selected.'>'.$value.'</option>';
 				}
 				echo '</select>';
+				break;
+
+			case 'text':
+				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.$val.'">';
 				break;
 
 			default:
@@ -189,8 +204,9 @@ class AeriaSection {
 		echo '</div>';
 	}
 
-	public static function render_section($section = [], $key = 0, $ncol = 1, $args = []){
-		if(empty($section)) {
+	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
+
+		if(empty($section_passed)) {
 			$section = [
 				'columns' => $ncol,
 				'title' => '',
@@ -200,10 +216,20 @@ class AeriaSection {
 				]
 			];
 
-			if(!empty($args['fields'])){
-				$section['fields'] = $args['fields'];
+		}else{
+			$section = [
+				'columns' => $section_passed['columns'],
+				'title' => $section_passed['title'],
+				'background' => $section_passed['background'],
+			];
+
+			for ($i=1; $i <= $section_passed['columns']; $i++) {
+				$section['content']['column_'.$i] = $section_passed['content']['column_'.$i];
 			}
 
+			if(!empty($section_passed['fields'])){
+				$section['fields'] = $section_passed['fields'];
+			}
 		}
 
 	?>
@@ -224,9 +250,10 @@ class AeriaSection {
 			<div class="body-section">
 				<?php
 
-					if(isset($section['fields']) && !empty($section['fields'])){
-						foreach ($section['fields'] as $field) {
-							AeriaSection::render_field($field);
+					if(isset($args['fields']) && !empty($args['fields'])){
+						foreach ($args['fields'] as $field) {
+							$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
+							AeriaSection::render_field($field,$key,$value);
 						}
 					}
 

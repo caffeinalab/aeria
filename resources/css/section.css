@@ -94,6 +94,9 @@
 .box-section .row-field select {
 	min-width: 250px;
 }
+.box-section .row-field input[type="text"] {
+	min-width: 250px;
+}
 .box-section .row-field label {
 	display: inline-block;
 	position: relative;
