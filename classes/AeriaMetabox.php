@@ -475,7 +475,7 @@ class Meta_Box {
 
 				$hidden_class = $meta==''?'display:none;':'';
 				echo '<div class="box-image item_'.$idx.'" style="'.$hidden_class.'">';
-				echo "<div class='image ".$num_class." ".$class_background."' style='background:url(".$background.");'>";
+				echo "<div class='image ".$num_class." ".$class_background."' style='background-image:url(".$background.");'>";
 				if($class_background=='file'){
 					echo "<h4>".(wp_trim_words($meta_title,8)?:'<i>Untitled</i>')."</h4>";
 				}
