@@ -21,7 +21,7 @@ window.aeria_setup_media_gallery_fields = function(){
 	    	button: {
 	    		text: jQuery( this ).data( 'uploader_button_text' )
 	    	},
-	    	multiple: true
+	    	multiple: (num_class=='multi')
 	    });
 
 	    file_frame.on( 'select', function() {
@@ -39,13 +39,25 @@ window.aeria_setup_media_gallery_fields = function(){
 	    		 jQuery.each(attachments, function(i,attachment) {
 
 					var box_count = ($container.children('.box-image').length)-1;
-					var $box_to_copy = jQuery($container).find('.box-image').eq(0);
+					var $box_to_copy = $container.find('.box-image').eq(0);
+
+					if($box_to_copy.hasClass('aeria_upload_media_gallery_button')){
+						//not found box to clone
+
+						if(num_class =='multi'){
+							$container.prepend('<div class="box-image item_0" style="display: none;"><div class="image multi file" style="background-image:url();"></div><div class="box-controls"><a class="button button-remove"><i class="glyphicon glyphicon-trash"></i></a></div><input type="hidden" name="gallery[]" value=""></div>');
+						}else{
+							$container.prepend('<div class="box-image item_0" style="display:none;"><div class="image single file" style="background-image:url();"></div><div class="box-controls"><a class="button button-remove"><i class="glyphicon glyphicon-trash"></i></a></div><input type="hidden" name="image[]" value=""></div>');
+						}
+						$box_to_copy = $container.find('.box-image').eq(0);
+					}
+
 					var $box_copy = $box_to_copy.clone().attr('style','display:inline-block;');
 
 	    		 	if(attachment.type=='application') {
-		    			$box_copy.find('.image').css('background','none').addClass('file').html('<h4>'+attachment.title+'</h4>');
+		    			$box_copy.find('.image').css('background-image','none').addClass('file').html('<h4>'+attachment.title+'</h4>');
 		    		}else{
-		    			$box_copy.find('.image').css('background','url("'+attachment.url+'")').removeClass('file').empty();
+		    			$box_copy.find('.image').css('background-image','url("'+attachment.url+'")').removeClass('file').empty();
 		    		}
 
 		    		$box_copy.find('input').val(attachment.url);
