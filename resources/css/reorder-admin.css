@@ -1,19 +1,30 @@
 #post-list {
 	margin-top: 20px;
 }
-#post-list > li > div {
+#post-list > li > .ui-sortable-handle,
+#post-list > li > .children > li > div {
 	width: 50%;
 	font-weight: bold;
 	background: #fff; /* for non-css3 browsers */
 	cursor: move;
 	border: 1px solid #ddd;
 	position: relative;
+	padding: 1em;
+}
+#post-list > li > .ui-sortable-handle a {
+	text-transform: uppercase;
+	text-decoration: none;
+	background-color: #ddd;
+	padding: 0 3px;
+	color: #000;
+}
+#post-list > li > .children > li > div:nth-child(1) {
+	margin-top: 5px;
 }
 .text {
 	position: relative;
 	display: table;
 	width: 100%;
-	padding: 10px;
 }
 .text div {
 	position: relative;
