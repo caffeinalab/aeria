@@ -645,7 +645,7 @@ class Meta_Box {
 		|| (!in_array($_POST['post_type'], $this->_meta_box['pages']))        			// check if current post type is supported
 		|| (!check_admin_referer(basename(__FILE__), 'mbox_meta_box_nonce'))  	// verify nonce
 		|| (!current_user_can($post_type_object->cap->edit_post, $post_id))) {	// check permission
-		                                                                      	return $post_id;
+		return $post_id;
 		}
 
 		foreach ($this->_fields as $field) {
@@ -670,6 +670,7 @@ class Meta_Box {
 				$this->save_field($post_id, $field, $old, $new);
 			}
 		}
+
 	}
 
 	// Common functions for saving field
@@ -690,11 +691,11 @@ class Meta_Box {
 		// get new values that need to add and get old values that need to delete
 		$add = array_diff((array)$new, (array)$old);
 		$delete = array_diff((array)$old, (array)$new);
-		foreach ($add as $add_new) {
-			add_post_meta($post_id, $name, $add_new, false);
-		}
 		foreach ($delete as $delete_old) {
 			delete_post_meta($post_id, $name, $delete_old);
+		}
+		foreach ($add as $add_new) {
+			add_post_meta($post_id, $name, $add_new, false);
 		}
 	}
 
