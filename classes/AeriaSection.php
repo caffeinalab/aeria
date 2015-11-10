@@ -73,7 +73,7 @@ class AeriaSection {
 				$s++;
 			}
 
-			update_post_meta( $post_id, 'post_sections', addslashes(serialize($sections)) );
+			if(!empty($sections)) update_post_meta( $post_id, 'post_sections', addslashes(serialize($sections)) );
 
 		});
 
@@ -141,6 +141,7 @@ class AeriaSection {
 
 		?>
 		<div class="box-reorder">
+			<p>Prima di utilizzare questa funzionalità assicurati di aver <b>salvato</b> tutto il lavoro.</p>
 			<?php
 				if($sections){
 					$s = 0;
@@ -151,7 +152,7 @@ class AeriaSection {
 						$s++;
 					}
 					echo '</ul>';
-					echo '<button class="button button-large button-primary" type="button" data-section-sortable-save ><span class="dashicons dashicons-yes"></span> Save</button>';
+					echo '<button class="button button-large button-primary" type="button" data-section-sortable-save ><span class="dashicons dashicons-yes"></span> Confirm</button>';
 
 				}
 			?>
@@ -167,9 +168,6 @@ class AeriaSection {
 						AeriaSection::render_section($section,$s,$section['columns'],$args);
 						$s++;
 					}
-				}else{
-					// Default Section (First)
-					AeriaSection::render_section([],0,1,$args);
 				}
 			?>
 		</div>
@@ -236,6 +234,7 @@ class AeriaSection {
 		<div class="box-section" data-section-num=<?= $key ?>>
 			<input type="hidden" data-section-columns name="post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
 			<div class="header-section" >
+				<div class="remove_background" data-remove-background>x</div>
 				<div class="background" data-section-background style="background-image:url(<?= stripslashes($section['background']) ?>);">
 					<input type="hidden" name="post_section_background_<?= $key ?>" id="post_section_background_<?= $key ?>" value="<?= $section['background'] ?>" />
 				</div>

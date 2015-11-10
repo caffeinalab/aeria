@@ -28,6 +28,7 @@
 	background-color: #FFF;
 	display: table;
 	width: 100%;
+	position: relative;
 }
 .box-section .header-section .background {
 	width: 20%;
@@ -114,4 +115,17 @@
 }
 .box-section .wp-editor-wrap{
 	margin-top: 10px;
+}
+.remove_background {
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	background-color: rgba(255,255,255,0.8);
+	font-size: 15px;
+	font-weight: bold;
+	padding: 3px 6px 6px 3px;
+	border-bottom-right-radius: 50%;
+	cursor: pointer;
+	color: #464C50;
 }
