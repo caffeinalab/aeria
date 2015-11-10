@@ -60,14 +60,6 @@ jQuery(function($){
 
         $.post(window.ajaxurl, { action: 'sort_section', order : order, post_id : post_id  }, function(response) {
             location.reload();
-            /*
-            var $button_save_draft = $('#save-post');
-            if($button_save_draft.length){
-                $button_save_draft.trigger('click');
-            }else{
-                $('#publish').trigger('click');
-            }
-            */
         });
     });
 

@@ -73,7 +73,7 @@ class AeriaSection {
 				$s++;
 			}
 
-			if(!empty($sections)) update_post_meta( $post_id, 'post_sections', addslashes(serialize($sections)) );
+			if(!empty($sections)) update_post_meta( $post_id, 'post_sections', wp_slash(json_encode($sections,JSON_UNESCAPED_UNICODE)) );
 
 		});
 
@@ -101,7 +101,7 @@ class AeriaSection {
 	}
 
 	public static function sort_section($order, $post_id) {
-		$sections = unserialize(get_post_meta( $post_id, 'post_sections', true ));
+		$sections = json_decode(get_post_meta( $post_id, 'post_sections', true ),true);
 
 		$new_sections = [];
 		$s = 0;
@@ -111,7 +111,7 @@ class AeriaSection {
 			$s++;
 		}
 
-		update_post_meta( $post_id, 'post_sections', addslashes(serialize($new_sections)) );
+		update_post_meta( $post_id, 'post_sections', wp_slash(json_encode($new_sections,JSON_UNESCAPED_UNICODE)) );
 
 		die(json_encode([
 			'success' => 1
@@ -136,8 +136,9 @@ class AeriaSection {
 	}
 
 	public static function render_sections($post_id, $args){
-		$sections = unserialize(get_post_meta( $post_id, 'post_sections', true ));
+		$sections = json_decode(get_post_meta( $post_id, 'post_sections', true ),true);
 		wp_nonce_field( 'section_metabox', 'section_metabox_nonce' );
+
 
 		?>
 		<div class="box-reorder">
@@ -255,7 +256,6 @@ class AeriaSection {
 							AeriaSection::render_field($field,$key,$value);
 						}
 					}
-
 					for ($i=1; $i <= $section['columns']; $i++) {
 						if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
 					 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );
