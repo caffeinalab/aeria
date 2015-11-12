@@ -72,13 +72,13 @@ class AeriaType {
         'feeds'               => false,
         'menu_position'       => null,
         'reorder'             => false,
-        'supports'            => false, // 'title', editor', 'author', 'thumbnail', 'excerpt', 'comments',
+        'supports'            => false, //'title, editor, author, thumbnail, excerpt, comments'
       ),$type['options']);
 
       unset($type['options']);
 
       $options_supports = $options['supports'];
-      if(!$options_supports) $options_supports = 'title,editor';
+      $options_supports = (!$options_supports)?'title,editor':str_replace(' ', '', $options_supports);
       $options['supports'] = explode(',',$options_supports);
 
       if($options['hierarchical']) $options['supports'][] = 'page-attributes';
