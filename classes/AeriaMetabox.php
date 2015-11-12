@@ -90,12 +90,22 @@ class AeriaMetabox {
 	public static function get_attachment_id_from_src($image_src) {
 		global $wpdb;
 		// Strip domain
-    $image_src = preg_replace('{^https?://[^/]+}', '', $image_src);
+		$image_src = preg_replace('{^https?://[^/]+}', '', $image_src);
 
-    $query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
+		$query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
 		$id = $wpdb->get_var($query);
-		return $id;
 
+		if(!$id){
+			// check wordpress crop
+			$file_name = explode('.', end(explode('/',$image_src)))[0];
+			$partremove = end(explode('-',$file_name));
+			$image_src  = str_replace('-'.$partremove, '', $image_src);
+
+			$query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
+			$id = $wpdb->get_var($query);
+		}
+
+		return $id;
 	}
 
 
