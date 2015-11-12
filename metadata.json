@@ -3,11 +3,11 @@
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
-    "version": "1.8.12",
+    "version": "1.8.13",
     "requires": "4.0",
     "tested": "4.3.1",
     "last_updated": "2015-11-03 11:00:00",
-    "upgrade_notice": "[AeriaSection] JSON Field",
+    "upgrade_notice": "[AeriaMetabox] Fix background media | Post Crop",
     "author": "Caffeina",
     "author_homepage": "http://caffeina.co/",
 
