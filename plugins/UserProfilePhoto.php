@@ -12,18 +12,17 @@
 // Enqueue scripts and styles
 add_action( 'admin_enqueue_scripts', 'cupp_enqueue_scripts_styles' );
 function cupp_enqueue_scripts_styles() {
-    // Register
-    wp_register_style( 'cupp_admin_css', AERIA_RESOURCE_URL.'/css/userprofilephoto.css', false, '1.0.0', 'all' );
-    wp_register_script( 'cupp_admin_js', AERIA_RESOURCE_URL.'/js/userprofilephoto.js', array('jquery'), '1.0.0', true );
+    global $pagenow;
+    if(($pagenow !== 'user-edit.php') && ($pagenow !== 'user-new.php') && ($pagenow !== 'profile.php')) return;
 
-    // Enqueue
-    wp_enqueue_style( 'cupp_admin_css' );
-    wp_enqueue_script( 'cupp_admin_js' );
+    wp_enqueue_style( 'cupp_admin_css', AERIA_RESOURCE_URL.'/css/userprofilephoto.css', false, '1.0.0', 'all' );
+    wp_enqueue_script( 'cupp_admin_js', AERIA_RESOURCE_URL.'/js/userprofilephoto.js', array('jquery'), '1.0.0', true );
 }
 
 // Show the new image field in the user profile page.
 add_action( 'show_user_profile', 'cupp_profile_img_fields' );
 add_action( 'edit_user_profile', 'cupp_profile_img_fields' );
+add_action( 'user_new_form', 'cupp_profile_img_fields');
 
 function cupp_profile_img_fields( $user ) {
     if(!current_user_can('upload_files'))
@@ -102,10 +101,15 @@ function cupp_profile_img_fields( $user ) {
 // Save the new user CUPP url.
 add_action( 'personal_options_update', 'cupp_save_img_meta' );
 add_action( 'edit_user_profile_update', 'cupp_save_img_meta' );
+add_action( 'user_register', 'cupp_save_img_meta');
 
 function cupp_save_img_meta( $user_id ) {
 
-    if ( !current_user_can( 'edit_user', $user_id ) )
+    if ( 
+        ( ( !current_user_can( 'edit_user', $user_id ) ) && ( ( $pagenow === 'user-edit.php' ) || ( $pagenow === 'profile.php' ) ) )
+        OR
+        ( ( !current_user_can( 'create_users', $user_id ) ) && ( $pagenow === 'user-new.php' ) )
+    )
         return false;
 
     // If the current user can edit Users, allow this.
