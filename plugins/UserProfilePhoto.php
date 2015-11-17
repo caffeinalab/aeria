@@ -163,12 +163,8 @@ function get_attachment_image_by_url( $url ) {
  * @param $size       Default: 'thumbnail'. Accepts all default WordPress sizes and any custom sizes made by the add_image_size() function.
  * @return {url}      Use this inside the src attribute of an image tag or where you need to call the image url.
  */
-function get_cupp_meta( $user_id, $size ) {
-
-    //allow the user to specify the image size
-    if (!$size){
-        $size = 'thumbnail'; // Default image size if not specified.
-    }
+function get_cupp_meta( $user_id = NULL, $size = 'thumbnail') {
+    
     if(!$user_id){
         $user_id = $post->post_author;
     }
