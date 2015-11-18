@@ -40,7 +40,6 @@ function cupp_profile_img_fields( $user ) {
         $btn_text = 'Change Current Image';
     }
     ?>
-
     <div id="cupp_container">
     <h3><?php _e( 'Custom User Profile Photo', 'aeria' ); ?></h3>
 
@@ -113,9 +112,12 @@ function cupp_save_img_meta( $user_id ) {
         return false;
 
     // If the current user can edit Users, allow this.
-    update_user_meta( $user_id, 'cupp_meta', $_POST['cupp_meta'] );
-    update_user_meta( $user_id, 'cupp_upload_meta', $_POST['cupp_upload_meta'] );
-    update_user_meta( $user_id, 'cupp_upload_edit_meta', $_POST['cupp_upload_edit_meta'] );
+    if ( $_POST['cupp_meta'] )
+        update_user_meta( $user_id, 'cupp_meta', $_POST['cupp_meta'] );
+    if ( $_POST['cupp_upload_meta'] ) 
+        update_user_meta( $user_id, 'cupp_upload_meta', $_POST['cupp_upload_meta'] );
+    if ( $_POST['cupp_upload_edit_meta'] )
+        update_user_meta( $user_id, 'cupp_upload_edit_meta', $_POST['cupp_upload_edit_meta'] );
 }
 
 /**
@@ -136,12 +138,8 @@ function get_attachment_image_by_url( $url ) {
     // Split the $url into two parts with the wp-content directory as the separator.
     $parse_url  = explode( parse_url( WP_CONTENT_URL, PHP_URL_PATH ), $url );
 
-    // Get the host of the current site and the host of the $url, ignoring www.
-    $this_host = str_ireplace( 'www.', '', parse_url( home_url(), PHP_URL_HOST ) );
-    $file_host = str_ireplace( 'www.', '', parse_url( $url, PHP_URL_HOST ) );
-
-    // Return nothing if there aren't any $url parts or if the current host and $url host do not match.
-    if ( !isset( $parse_url[1] ) || empty( $parse_url[1] ) || ( $this_host != $file_host ) ) {
+    // Return nothing if there aren't any $url parts
+    if ( !isset( $parse_url[1] ) || empty( $parse_url[1] ) ) {
         return;
     }
 
@@ -164,7 +162,11 @@ function get_attachment_image_by_url( $url ) {
  * @return {url}      Use this inside the src attribute of an image tag or where you need to call the image url.
  */
 function get_cupp_meta( $user_id = NULL, $size = 'thumbnail') {
-    
+
+    //allow the user to specify the image size
+    if (!$size){
+        $size = 'thumbnail'; // Default image size if not specified.
+    }
     if(!$user_id){
         $user_id = $post->post_author;
     }
@@ -180,13 +182,13 @@ function get_cupp_meta( $user_id = NULL, $size = 'thumbnail') {
     } elseif($attachment_ext_url) {
         $attachment_url = $attachment_ext_url;
     }
-
+    
     // grabs the id from the URL using Frankie Jarretts function
     $attachment_id = get_attachment_image_by_url( $attachment_url );
 
     // retrieve the thumbnail size of our image
     $image_thumb = wp_get_attachment_image_src( $attachment_id, $size );
-
+    
     // return the image thumbnail
     return $image_thumb[0];
 }
