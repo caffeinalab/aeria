@@ -209,6 +209,12 @@ class AeriaSection {
 				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.$val.'">';
 				break;
 
+			case 'wysiwyg':
+				echo '<div class="wrap-editor">';
+				wp_editor( stripslashes($val) , $field['id'].'_'.$key );
+				echo '</div>';
+				break;
+
 			case 'media':
 				$background = stripslashes($val);
 				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background.');">';

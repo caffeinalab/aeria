@@ -58,7 +58,7 @@
 	position: relative;
 	background-color: #363B3F;
 }
-.box-section .row-field .wrap-media {
+.box-section .row-field .wrap-media, .box-section .row-field .wrap-editor {
 	position: relative;
 	display: inline-block;
 }
