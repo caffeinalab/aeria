@@ -63,6 +63,17 @@ jQuery(function($){
         });
     });
 
+    $('[data-generate-section]').on('click', function(e) {
+        e.preventDefault();
+        var $btn_draft = $('#save-post');
+        if($btn_draft.length){
+            $btn_draft.trigger('click');
+        }else{
+            $('#publish').trigger('click');
+        }
+
+    });
+
     function engineSelectBg(){
 
         // Runs when the image button is clicked.

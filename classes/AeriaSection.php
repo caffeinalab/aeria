@@ -229,6 +229,10 @@ class AeriaSection {
 			}
 			echo '</select>';
 
+			//print buttons | 2 buttons 1 function, i know :)
+			echo '<button data-generate-section class="button">Genera campi</button>';
+			echo ' <button data-generate-section class="button button-primary">Salva</button>';
+
 		echo '</div>';
 
 	}
