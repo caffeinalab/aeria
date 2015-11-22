@@ -49,6 +49,29 @@
 	margin-left: -22px;
 	color: rgba(255, 255, 255, 0.4);
 }
+.box-section .row-field .background {
+	width: 200px;
+	height: 150px;
+	background-size: cover;
+	display: block;
+	cursor: pointer;
+	position: relative;
+	background-color: #363B3F;
+}
+.box-section .row-field .wrap-media {
+	position: relative;
+	display: inline-block;
+}
+.box-section .row-field .background:before {
+	content: "\f472";
+	font-family: "dashicons";
+	font-size: 3rem;
+	position: absolute;
+	top: 65px;
+	left: 50%;
+	margin-left: -22px;
+	color: rgba(255, 255, 255, 0.4);
+}
 .box-section .header-section .post_section_title {
 	font-size: 1.5rem;
 	border: none;
@@ -112,6 +135,7 @@
 	display: inline-block;
 	position: relative;
 	width: 35%;
+	vertical-align: top;
 }
 .box-section .wp-editor-wrap{
 	margin-top: 10px;

@@ -209,6 +209,13 @@ class AeriaSection {
 				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.$val.'">';
 				break;
 
+			case 'media':
+				$background = stripslashes($val);
+				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background.');">';
+				echo '<input type="hidden" name="'.$field['id'].'_'.$key.'" id="'.$field['id'].'_'.$key.'" value="'.$background.'" />';
+				echo '</div></div>';
+				break;
+
 			default:
 				return null;
 				break;
