@@ -64,9 +64,19 @@ class AeriaSection {
 					'content' => $content
 				];
 
-				if(isset($args['fields']) && !empty($args['fields'])){
+				//if exist section type -> save
+				$value_type = isset($_POST['section_type_'.$s])?$_POST['section_type_'.$s]:'';
+				if($value_type) $sections['section_'.$s]['section_type'] = $value_type;
+
+				//save classic fields
+				if(isset($args['fields']) && !empty($args['fields']) && isset($args['fields'][0]['type'])){
 					foreach ($args['fields'] as $field) {
 						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
+					}
+				}elseif(count($args['fields']) && !empty($value_type)) {
+
+					foreach ($args['fields'][$value_type]['fields'] as $field) {
+						$sections['section_'.$s]['fields'][$value_type][$field['id']] = $_POST[$field['id'].'_'.$s];
 					}
 				}
 
@@ -203,6 +213,21 @@ class AeriaSection {
 		echo '</div>';
 	}
 
+	public static function render_relation_fields($fields=null,$key=0,$val=''){
+		if(!$fields) return;
+
+		echo '<div class="row-field">';
+
+			echo '<select id="section_type_'.$key.'" name="section_type_'.$key.'">';
+			foreach ($fields as $k => $value) {
+				$selected = ($val == $k)?'selected="selected"':'';
+				echo '<option value="'.$k.'" '.$selected.'>'.$value['description'].'</option>';
+			}
+			echo '</select>';
+
+		echo '</div>';
+	}
+
 	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
 
 		if(empty($section_passed)) {
@@ -229,6 +254,10 @@ class AeriaSection {
 			if(!empty($section_passed['fields'])){
 				$section['fields'] = $section_passed['fields'];
 			}
+
+			if(!empty($section_passed['section_type'])){
+				$section['section_type'] = $section_passed['section_type'];
+			}
 		}
 
 	?>
@@ -250,12 +279,38 @@ class AeriaSection {
 			<div class="body-section">
 				<?php
 
+					/**
+					 * check pre render field
+					 * classic or conditional fields?
+					 */
+
 					if(isset($args['fields']) && !empty($args['fields'])){
-						foreach ($args['fields'] as $field) {
-							$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-							AeriaSection::render_field($field,$key,$value);
+						if(isset($args['fields'][0]['type'])){
+
+							/**
+							 * Classic list fields
+							 */
+							foreach ($args['fields'] as $field) {
+								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
+								AeriaSection::render_field($field,$key,$value);
+							}
+						}elseif(count($args['fields'])) {
+
+							/**
+							 * Relation list fields
+							 */
+
+							$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings
+							AeriaSection::render_relation_fields($args['fields'],$key,$value_type);
+
+							foreach ($args['fields'][$value_type]['fields'] as $field) {
+								$value = (isset($section['fields'][$value_type][$field['id']]) && !empty($section['fields'][$value_type][$field['id']]))?$section['fields'][$value_type][$field['id']]:'';
+								AeriaSection::render_field($field,$key,$value);
+							}
+
 						}
 					}
+
 					for ($i=1; $i <= $section['columns']; $i++) {
 						if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
 					 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );
