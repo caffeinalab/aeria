@@ -49,6 +49,7 @@ class AeriaType {
       ];
       if(isset($type['sections']['fields'])) $sections_args['fields'] = $type['sections']['fields'];
       if(isset($type['sections']['description'])) $sections_args['description'] = $type['sections']['description'];
+      if(isset($type['sections']['supports'])) $sections_args['supports'] = $type['sections']['supports'];
 
       AeriaSection::register($sections_args);
 

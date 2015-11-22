@@ -13,7 +13,7 @@ class AeriaSection {
 				'aeria_section',
 				'Sections',
 				function($post) use ($args){
-					AeriaSection::render_controls();
+					AeriaSection::render_controls($args);
 					AeriaSection::render_sections($post->ID,$args);
 				},
 				$args['type']
@@ -54,7 +54,7 @@ class AeriaSection {
 
 				$content = [];
 				for ($i=1; $i <= $columns ; $i++) {
-					$content['column_'.$i] = wpautop($_POST['post_section_'.$s.'_'.$i]);
+					if(isset($_POST['post_section_'.$s.'_'.$i])) $content['column_'.$i] = wpautop($_POST['post_section_'.$s.'_'.$i]);
 				}
 
 				$sections['section_'.$s] = [
@@ -76,7 +76,7 @@ class AeriaSection {
 				}elseif(count($args['fields']) && !empty($value_type)) {
 
 					foreach ($args['fields'][$value_type]['fields'] as $field) {
-						$sections['section_'.$s]['fields'][$value_type][$field['id']] = $_POST[$field['id'].'_'.$s];
+						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
 					}
 				}
 
@@ -128,15 +128,19 @@ class AeriaSection {
 		]));
 	}
 
-	public static function render_controls(){
+	public static function render_controls($args=[]){
 		?>
 		<div class="box-controls">
+			<?php if(empty($args['supports']) || in_array('columns', $args['supports'])){ ?>
 			<select id="ncol">
 				<option value="1">1 Col</option>
 				<option value="2">2 Cols</option>
 				<option value="3">3 Cols</option>
 				<option value="4">4 Cols</option>
 			</select>
+			<?php }else{ ?>
+				<input type="hidden" value="1" id="ncol">
+			<?php } ?>
 			<button class="button button-primary button-large" type="button" data-section-add ><span class="dashicons dashicons-welcome-add-page"></span> Add Section</button>
 			<button class="button button-large" type="button" data-section-expand-all ><span class="dashicons dashicons-editor-expand"></span> Expand All Sections</button>
 			<button class="button button-large" type="button" data-section-sort ><span class="dashicons dashicons-randomize"></span> Reorder/Remove</button>
@@ -148,7 +152,6 @@ class AeriaSection {
 	public static function render_sections($post_id, $args){
 		$sections = json_decode(get_post_meta( $post_id, 'post_sections', true ),true);
 		wp_nonce_field( 'section_metabox', 'section_metabox_nonce' );
-
 
 		?>
 		<div class="box-reorder">
@@ -230,6 +233,10 @@ class AeriaSection {
 
 	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
 
+		//check supports
+		$support_columns = (empty($args['supports']) || in_array('columns', $args['supports']));
+		$support_fields = (empty($args['supports']) || in_array('fields', $args['supports']));
+
 		if(empty($section_passed)) {
 			$section = [
 				'columns' => $ncol,
@@ -304,17 +311,19 @@ class AeriaSection {
 							AeriaSection::render_relation_fields($args['fields'],$key,$value_type);
 
 							foreach ($args['fields'][$value_type]['fields'] as $field) {
-								$value = (isset($section['fields'][$value_type][$field['id']]) && !empty($section['fields'][$value_type][$field['id']]))?$section['fields'][$value_type][$field['id']]:'';
+								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
 								AeriaSection::render_field($field,$key,$value);
 							}
 
 						}
 					}
 
-					for ($i=1; $i <= $section['columns']; $i++) {
-						if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
-					 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );
-					 }
+					if($support_columns){
+						for ($i=1; $i <= $section['columns']; $i++) {
+							if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
+						 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );
+						}
+					}
 				?>
 			</div>
 		</div>
