@@ -65,7 +65,7 @@ class AeriaSection {
 				];
 
 				//if exist section type -> save
-				$value_type = isset($_POST['section_type_'.$s])?$_POST['section_type_'.$s]:'';
+				$value_type = (isset($_POST['section_type_'.$s]) && !empty($_POST['section_type_'.$s]))?$_POST['section_type_'.$s]:'';
 				if($value_type) $sections['section_'.$s]['section_type'] = $value_type;
 
 				//save classic fields
@@ -222,6 +222,7 @@ class AeriaSection {
 		echo '<div class="row-field">';
 
 			echo '<select id="section_type_'.$key.'" name="section_type_'.$key.'">';
+			echo '<option value="">Seleziona una tipologia di sezione</option>';
 			foreach ($fields as $k => $value) {
 				$selected = ($val == $k)?'selected="selected"':'';
 				echo '<option value="'.$k.'" '.$selected.'>'.$value['description'].'</option>';
@@ -229,6 +230,7 @@ class AeriaSection {
 			echo '</select>';
 
 		echo '</div>';
+
 	}
 
 	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
@@ -310,10 +312,16 @@ class AeriaSection {
 							$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings
 							AeriaSection::render_relation_fields($args['fields'],$key,$value_type);
 
-							foreach ($args['fields'][$value_type]['fields'] as $field) {
-								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-								AeriaSection::render_field($field,$key,$value);
+							if(!empty($value_type)){
+								echo '<h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4>';
+								foreach ($args['fields'][$value_type]['fields'] as $field) {
+									$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
+									AeriaSection::render_field($field,$key,$value);
+								}
+							}else{
+								echo '<div class="row-field">Nessuna tipologia di sezione attiva</div>';
 							}
+
 
 						}
 					}
