@@ -74,6 +74,19 @@ jQuery(function($){
         }
 
     });
+    var $select_preview = $('[data-select-preview]');
+
+    if($select_preview.length){
+         $('[data-select-preview]').on('change', function(e) {
+            e.preventDefault();
+            var path = $(this).attr('data-select-preview');
+            var img = $(this).val();
+            $(this).parents('.body-section').find('.wrap-preview').html('<img src="'+path+img+'.png">');
+        });
+
+        $select_preview.trigger('change');
+    }
+
 
     function engineSelectBg(){
 

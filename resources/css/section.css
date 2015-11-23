@@ -114,6 +114,8 @@
 }
 .box-section .row-field .wrap-editor {
 	display: block;
+	clear: both;
+	margin-top: 20px;
 }
 .box-section .row-field .background:before {
 	content: "\f472";
@@ -178,9 +180,19 @@
 	display: block;
 	width: 100%;
 }
+.box-section .row-half {
+	display: inline-block;
+	width: 50%;
+	vertical-align: middle;
+}
 
 .box-section .wp-editor-wrap {
 	margin: 10px;
+}
+
+.box-section .wrap-preview img{
+	float: right;
+	max-width: 500px;
 }
 
 
@@ -189,6 +201,15 @@
 		border-bottom: 1px dashed rgba(0,0,0,0.1);
 		flex-basis: 100%;
 		display: block;
+	}
+	.box-section .row-half {
+		display: block;
+		width: 100%;
+	}
+	.box-section .wrap-preview img{
+		float: none;
+		margin-top: 30px;
+		max-width: 500px;
 	}
 }
 

@@ -229,12 +229,15 @@ class AeriaSection {
 		echo '</div>';
 	}
 
-	public static function render_relation_fields($fields=null,$key=0,$val=''){
+	public static function render_relation_fields($fields=null,$key=0,$val='',$preview_path){
 		if(!$fields) return;
 
-		echo '<div class="row-full">';
+		$row_class = !empty($preview_path)?'row-half':'row-full';
+		$preview_attr = !empty($preview_path)?'data-select-preview="'.$preview_path.'"':'';
 
-			echo '<select id="section_type_'.$key.'" name="section_type_'.$key.'">';
+		echo '<div class="'.$row_class.'">';
+
+			echo '<select '.$preview_attr.' id="section_type_'.$key.'" name="section_type_'.$key.'">';
 			echo '<option value="">Seleziona una tipologia di sezione</option>';
 			foreach ($fields as $k => $value) {
 				$selected = ($val == $k)?'selected="selected"':'';
@@ -248,13 +251,19 @@ class AeriaSection {
 
 		echo '</div>';
 
+		if(!empty($preview_path)){
+			echo '<div class="'.$row_class.'"><div class="wrap-preview"></div></div>';
+		}
+
 	}
 
 	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
 
 		//check supports
-		$support_columns = (empty($args['supports']) || in_array('columns', $args['supports']));
-		$support_fields = (empty($args['supports']) || in_array('fields', $args['supports']));
+		$support_columns = (!isset($args['supports']) || empty($args['supports']) || in_array('columns', $args['supports']));
+		$support_fields = (!isset($args['supports']) || empty($args['supports']) || in_array('fields', $args['supports']));
+		$preview_path = (isset($args['preview_path']) && !empty($args['preview_path']))?$args['preview_path']:false;
+
 
 		if(empty($section_passed)) {
 			$section = [
@@ -329,7 +338,7 @@ class AeriaSection {
 							 */
 
 							$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings
-							AeriaSection::render_relation_fields($args['fields'],$key,$value_type);
+							AeriaSection::render_relation_fields($args['fields'],$key,$value_type,$preview_path);
 
 							if(!empty($value_type)){
 								echo '<div class="row-full"><h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4></div>';
