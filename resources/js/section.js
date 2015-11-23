@@ -24,13 +24,14 @@ jQuery(function($){
     $('[data-section-expand-all]').on('click', function(e) {
         e.preventDefault();
         if(!box_reorder.is(':visible')) {
-          $('.box-sections').find('.body-section').slideDown();
+          $('.box-sections').find('.body-section').css('display','block');
         }
     });
 
     $('[data-section-expand]').on('click', function(e) {
         e.preventDefault();
-        $(this).parents('.box-section').find('.body-section').slideToggle();
+        $('.body-section').css('display','none');
+        $(this).parents('.box-section').find('.body-section').css('display','block');
     });
 
     $('[data-section-remove]').on('click', function(e) {

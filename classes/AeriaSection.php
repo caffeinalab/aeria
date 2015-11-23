@@ -232,7 +232,7 @@ class AeriaSection {
 	public static function render_relation_fields($fields=null,$key=0,$val=''){
 		if(!$fields) return;
 
-		echo '<div class="row-field">';
+		echo '<div class="row-full">';
 
 			echo '<select id="section_type_'.$key.'" name="section_type_'.$key.'">';
 			echo '<option value="">Seleziona una tipologia di sezione</option>';
@@ -316,10 +316,12 @@ class AeriaSection {
 							/**
 							 * Classic list fields
 							 */
+							echo '<div class="wrap-fields">';
 							foreach ($args['fields'] as $field) {
 								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
 								AeriaSection::render_field($field,$key,$value);
 							}
+							echo '</div>';
 						}elseif(count($args['fields'])) {
 
 							/**
@@ -330,13 +332,15 @@ class AeriaSection {
 							AeriaSection::render_relation_fields($args['fields'],$key,$value_type);
 
 							if(!empty($value_type)){
-								echo '<h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4>';
+								echo '<div class="row-full"><h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4></div>';
+								echo '<div class="wrap-fields">';
 								foreach ($args['fields'][$value_type]['fields'] as $field) {
 									$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
 									AeriaSection::render_field($field,$key,$value);
 								}
+								echo '</div>';
 							}else{
-								echo '<div class="row-field">Nessuna tipologia di sezione attiva</div>';
+								echo '<div class="row-full"><p>Nessuna tipologia di sezione attiva</p></div>';
 							}
 
 
@@ -354,5 +358,4 @@ class AeriaSection {
 		</div>
 	<?php
 	}
-
 }

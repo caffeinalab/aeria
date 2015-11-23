@@ -1,3 +1,4 @@
+/* BOX CONTROLS */
 .box-controls {
 	padding: 15px;
 }
@@ -5,23 +6,45 @@
 	float: left;
 	margin-right: 5px !important;
 }
-.box-controls .dashicons, .box-reorder .dashicons  {
-	margin-top: 3px;
+
+.box-section .header-section .controls {
+	width: 20%;
+	display: table-cell;
+	vertical-align: middle;
 }
+.box-section .header-section .controls button {
+	float: right;
+	display: block;
+  	position: relative;
+  	margin-right: 15px;
+}
+
+/* REORDER */
 .box-section, .box-reorder {
 	margin: 1rem 0;
 	background-color: #F1F1F1;
 	border: 1px dashed #C7C7C7;
 }
-.box-section .body-section {
-	margin: 15px;
+.box-reorder {
 	display: none;
+	padding: 0.5rem 1rem;
 }
-.box-section .body-section h2 {
-	padding: 10px 0 !important;
-	margin-left: 0;
-	margin-right: 0;
-	border-bottom: 1px dashed #C7C7C7;
+.box-reorder ul li {
+	background: #fff;
+	border: 1px dashed #C7C7C7;
+	padding: 1rem;
+	cursor: move;
+}
+.box-reorder ul li button {
+	float: right;
+}
+.box-reorder ul li .dashicons {
+	margin-top: 0;
+}
+
+/* HEADER SECTION */
+.box-controls .dashicons, .box-reorder .dashicons  {
+	margin-top: 3px;
 }
 .box-section .header-section {
 	text-transform: uppercase;
@@ -49,29 +72,6 @@
 	margin-left: -22px;
 	color: rgba(255, 255, 255, 0.4);
 }
-.box-section .row-field .background {
-	width: 200px;
-	height: 150px;
-	background-size: cover;
-	display: block;
-	cursor: pointer;
-	position: relative;
-	background-color: #363B3F;
-}
-.box-section .row-field .wrap-media, .box-section .row-field .wrap-editor {
-	position: relative;
-	display: inline-block;
-}
-.box-section .row-field .background:before {
-	content: "\f472";
-	font-family: "dashicons";
-	font-size: 3rem;
-	position: absolute;
-	top: 65px;
-	left: 50%;
-	margin-left: -22px;
-	color: rgba(255, 255, 255, 0.4);
-}
 .box-section .header-section .post_section_title {
 	font-size: 1.5rem;
 	border: none;
@@ -84,61 +84,66 @@
 	vertical-align: middle;
 	padding-left: 15px;
 }
-.box-section .header-section .controls {
-	width: 20%;
-	display: table-cell;
-	vertical-align: middle;
-}
-.box-section .header-section .controls button {
-	float: right;
-	display: block;
-  	position: relative;
-  	margin-right: 15px;
-}
-.box-reorder {
+
+/* BODY SECTION */
+.box-section .body-section {
+	margin: 15px;
 	display: none;
-	padding: 0.5rem 1rem;
+	position: relative;
 }
-.box-reorder ul li {
-	background: #fff;
-	border: 1px dashed #C7C7C7;
-	padding: 1rem;
-	cursor: move;
+.box-section .body-section h2 {
+	padding: 10px 0 !important;
+	margin-left: 0;
+	margin-right: 0;
+	border-bottom: 1px dashed #C7C7C7;
 }
-.box-reorder ul li button {
-	float: right;
+
+/* FIELDS STYLES */
+.box-section .row-field .background {
+	width: 200px;
+	height: 150px;
+	background-size: cover;
+	display: block;
+	cursor: pointer;
+	position: relative;
+	background-color: #F4F4F4;
 }
-.box-reorder ul li .dashicons {
-	margin-top: 0;
-}
-.box-section .row-field {
-	padding: 10px 0;
-	border-bottom: 1px dashed rgba(0,0,0,0.1);
-	width: 50%;
+.box-section .row-field .wrap-media {
+	position: relative;
 	display: inline-block;
-	min-height: 45px;
 }
-@media(max-width: 1480px){
-	.box-section .row-field {
-		border-bottom: 1px dashed rgba(0,0,0,0.1);
-		width: 100%;
-		display: block;
-	}
+.box-section .row-field .wrap-editor {
+	display: block;
+}
+.box-section .row-field .background:before {
+	content: "\f472";
+	font-family: "dashicons";
+	font-size: 3rem;
+	position: absolute;
+	top: 65px;
+	left: 50%;
+	margin-left: -22px;
+	color: rgba(0, 0, 0, 0.1);
 }
 .box-section .row-field select {
 	min-width: 250px;
+	margin: 1em;
+	width: 63%;
 }
 .box-section .row-field input[type="text"] {
 	min-width: 250px;
+	border: 1px solid #E9E9E9;
+	box-shadow: none;
+	padding: 5px;
+	width: 63%;
 }
 .box-section .row-field label {
-	display: inline-block;
+	display: block;
 	position: relative;
-	width: 35%;
-	vertical-align: top;
-}
-.box-section .wp-editor-wrap{
-	margin-top: 10px;
+	float: left;
+	width: 33%;
+	line-height: 2.5em;
+	margin-left: 2%;
 }
 .remove_background {
 	position: absolute;
@@ -153,3 +158,37 @@
 	cursor: pointer;
 	color: #464C50;
 }
+
+/* WRAPPER FIELDS*/
+
+.body-section .wrap-fields { /* wrapper fields (fields container) */
+	flex-flow: row wrap;
+	display: flex;
+	position: relative;
+	padding: 1em;
+	background-color: white;
+	border: 1px dashed #C7C7C7;
+}
+.box-section .wrap-fields .row-field { /* container single fields */
+	padding: 10px 0;
+	flex-basis: 50%;
+	min-height: 45px;
+}
+.box-section .row-full {
+	display: block;
+	width: 100%;
+}
+
+.box-section .wp-editor-wrap {
+	margin: 10px;
+}
+
+
+@media(max-width: 1480px){
+	.box-section .wrap-fields .row-field {
+		border-bottom: 1px dashed rgba(0,0,0,0.1);
+		flex-basis: 100%;
+		display: block;
+	}
+}
+
