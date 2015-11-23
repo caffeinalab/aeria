@@ -187,9 +187,11 @@
 }
 
 .box-section .wp-editor-wrap {
+	margin-top: 30px;
+}
+.box-section .wrap-fields .wp-editor-wrap {
 	margin: 10px;
 }
-
 .box-section .wrap-preview img{
 	float: right;
 	max-width: 500px;
