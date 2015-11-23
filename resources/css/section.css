@@ -114,8 +114,7 @@
 }
 .box-section .row-field .wrap-editor {
 	display: block;
-	clear: both;
-	margin-top: 20px;
+	margin-top: 50px !important;
 }
 .box-section .row-field .background:before {
 	content: "\f472";
@@ -145,6 +144,7 @@
 	float: left;
 	width: 33%;
 	margin-left: 2%;
+	margin-top: 20px;
 }
 .remove_background {
 	position: absolute;

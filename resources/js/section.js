@@ -81,7 +81,9 @@ jQuery(function($){
             e.preventDefault();
             var path = $(this).attr('data-select-preview');
             var img = $(this).val();
-            $(this).parents('.body-section').find('.wrap-preview').html('<img src="'+path+img+'.png">');
+            var $wrap = $(this).parents('.body-section').find('.wrap-preview');
+            $wrap.empty();
+            if(img.length) $wrap.html('<img src="'+path+img+'.png">');
         });
 
         $select_preview.trigger('change');
