@@ -130,7 +130,7 @@
 .box-section .row-field select {
 	min-width: 250px;
 	margin: 1em;
-	width: 63%;
+	width: 58%;
 }
 .box-section .row-field input[type="text"] {
 	min-width: 250px;
@@ -144,7 +144,6 @@
 	position: relative;
 	float: left;
 	width: 33%;
-	line-height: 2.5em;
 	margin-left: 2%;
 }
 .remove_background {
