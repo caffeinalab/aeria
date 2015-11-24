@@ -15,7 +15,7 @@ Class AeriaForm {
 						$beforeField		= '',
 						$afterField			= '',
 						$enableHTML5    	= true,
-						$fieldsType     	= [ "text", "file". "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea" ],
+						$fieldsType     	= [ "text", "file". "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title" ],
 						$fieldsTypeHTML5  	= [ "color", "date", "datetime", "datetime-local", "email", "week", "month", "number", "range", "search", "tel", "time", "url" ],
 						$ErrorPrefix		= '<strong>[AeriaForm: ',
 						$ErrorSuffix		= '!]</strong>',
@@ -134,6 +134,11 @@ Class AeriaForm {
 				$html = $this->tab.'<!-- ['. $fieldArray['value'] .'] -->'.$this->paragraph;
 				break;
 
+			case 'title':
+				$head = ( ( $this->validateArrayKey( $fieldArray, 'head', false ) )? $fieldArray['head'] : '3' );
+				$html = $this->tab.'<h'.$head.'>'. $fieldArray['value'] .'</h'.$head.'>'.$this->paragraph;
+				break;
+
 			case 'select':
 				if($this->beforeField){
 					$html = $this->tab.$this->beforeField.$this->paragraph;
@@ -228,21 +233,21 @@ Class AeriaForm {
 
 	protected function checkfields(array $fieldArray){
 
-		$this->validateArrayKey( $fieldArray, 'type', false, 'You must define a type');
+		$this->validateArrayKey( $fieldArray, 'type', true, 'You must define a type');
 
-		if ( $fieldArray['type'] === 'comment' ) {
+		if ( ( $fieldArray['type'] === 'comment' ) || ( $fieldArray['type'] === 'title' ) ) {
 			
-			$this->validateArrayKey( $fieldArray, 'value', false, 'You must define a value');
+			$this->validateArrayKey( $fieldArray, 'value', true, 'You must define a value');
 		
 		} else {
 
-			$this->validateArrayKey( $fieldArray, 'name', false, 'You must define a name');
+			$this->validateArrayKey( $fieldArray, 'name', true, 'You must define a name');
 		
 			if ( !in_array( $fieldArray['type'], $this->getAllowedType() ) ) $this->error('This type isn\'t supported');
 			
 			if ( $fieldArray['type'] !== 'select' ) {
 
-				$this->validateArrayKey( $fieldArray, 'value', false, 'You must define a value');
+				$this->validateArrayKey( $fieldArray, 'value', true, 'You must define a value');
 			
 			}else if ( ( !is_array( $fieldArray['options'] ) ) || ( $this->isAssoc($fieldArray['options']) ) ){
 				$this->error('You must define a valid option for select type');
