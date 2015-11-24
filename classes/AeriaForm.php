@@ -15,7 +15,7 @@ Class AeriaForm {
 						$beforeField		= '',
 						$afterField			= '',
 						$enableHTML5    	= true,
-						$fieldsType     	= [ "text", "file". "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title" ],
+						$fieldsType     	= [ "text", "file". "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title", "custom" ],
 						$fieldsTypeHTML5  	= [ "color", "date", "datetime", "datetime-local", "email", "week", "month", "number", "range", "search", "tel", "time", "url" ],
 						$ErrorPrefix		= '<strong>[AeriaForm: ',
 						$ErrorSuffix		= '!]</strong>',
@@ -130,6 +130,10 @@ Class AeriaForm {
 		$this->checkfields($fieldArray);
 		$this->addTab();
 		switch ($fieldArray['type']) {
+			case 'custom':
+				$html = $this->tab . $fieldArray['render'] . $this->paragraph;
+				break;
+
 			case 'comment':
 				$html = $this->tab.'<!-- ['. $fieldArray['value'] .'] -->'.$this->paragraph;
 				break;
@@ -239,6 +243,10 @@ Class AeriaForm {
 			
 			$this->validateArrayKey( $fieldArray, 'value', true, 'You must define a value');
 		
+		} else if($fieldArray['type'] === 'custom') {
+			
+			$this->validateArrayKey( $fieldArray, 'render', true, 'You must define a render for custom type');
+
 		} else {
 
 			$this->validateArrayKey( $fieldArray, 'name', true, 'You must define a name');
