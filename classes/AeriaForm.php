@@ -24,7 +24,7 @@ Class AeriaForm {
 						$beforeInput		= '',
 						$afterInput			= '',
 						$enableHTML5    	= true,
-						$fieldsType     	= [ "text", "file". "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title", "custom" ],
+						$fieldsType     	= [ "text", "file", "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title", "custom" ],
 						$fieldsTypeHTML5  	= [ "color", "date", "datetime", "datetime-local", "email", "week", "month", "number", "range", "search", "tel", "time", "url" ],
 						$ErrorPrefix		= '<strong>[AeriaForm: ',
 						$ErrorSuffix		= '!]</strong>',
@@ -79,20 +79,24 @@ Class AeriaForm {
 
 		$this->startForm = '<form'.( ( $this->validateArrayKey( $options, 'id', false ) )? ' id="'.$options['id'].'"' : '' ).( ( $this->validateArrayKey( $options, 'name', false ) )?' name="'.$options['name'].'"':'').' action="'.$options['action'].'" method="'.$options['method'].'" enctype="'.$options['enctype'].'"'.( ( $this->validateArrayKey( $options, 'other', false) )? ' '.$options['other'] : '' ).'>'.$this->paragraph;
 		
-		if( $options['type'] !== 'none' ){
+		if( $options['type'] !== 'none' )
 			$this->renderFormType( $options['type'] );
+
+		$this->beforeForm 		= ($this->validateArrayKey( $options, 'before', false ) )? $options['before'] : $this->beforeForm ;
+		$this->afterForm 		= ($this->validateArrayKey( $options, 'after', false ) )? $options['after'] : $this->afterForm ;
+		$this->beforeInnerForm 	= ($this->validateArrayKey( $options, 'beforeInner', false ) )? $options['beforeInner'] : $this->beforeInnerForm ;
+		$this->afterInnerForm 	= ($this->validateArrayKey( $options, 'afterInner', false ) )? $options['afterInner'] : $this->afterInnerForm ;
+		
+		if($this->beforeForm){
+			$html = $this->getElement($this->beforeForm);
+			$this->addTab();
 		}else{
-			$this->beforeForm 		= $options['before'];
-			$this->afterForm 		= $options['after'];
-			$this->beforeInnerForm 	= $options['beforeInner'];
-			$this->afterInnerForm 	= $options['afterInner'];
-		}
-
-		$html = $this->getElement($this->beforeForm);
-
+			$html = '';
+		}	
+		
 		$html .= $this->tab.$this->startForm;
 
-		$html .= $this->getElement($this->beforeInnerForm);
+		$html .= $this->getElement($this->beforeInnerForm, true);
 
 		$this->startForm = $html;
 	}
@@ -163,13 +167,13 @@ Class AeriaForm {
 
 			case 'custom':
 				if (is_callable($fieldArray['render'])){
-					$html = $this->getElement($this->beforeField);
+					$html = $this->getElement($this->beforeField, true);
 					$this->addTab();
 					$html .= $this->tab.call_user_func($fieldArray['render']).$this->paragraph;
 					$this->removeTab();
 					$html .= $this->getElement($this->afterField, false);
 				}else{
-					$html = $this->getElement($this->beforeField);
+					$html = $this->getElement($this->beforeField, true);
 					$this->addTab();
 					$html .= $this->tab . $fieldArray['render'] . $this->paragraph;
 					$this->removeTab();
@@ -185,7 +189,7 @@ Class AeriaForm {
 
 			case 'title':
 				$head = ( ( $this->validateArrayKey( $fieldArray, 'head', false ) )? $fieldArray['head'] : '3' );
-				$html = $this->getElement($this->beforeField);
+				$html = $this->getElement($this->beforeField, true);
 				$this->addTab();
 				$html = $this->tab.'<h'.$head.'>'. $fieldArray['value'] .'</h'.$head.'>'.$this->paragraph;
 				$this->removeTab();
@@ -193,17 +197,17 @@ Class AeriaForm {
 				break;
 
 			case 'select':
-				$html = $this->getElement($this->beforeField);
+				$html = $this->getElement($this->beforeField, true);
 				
 				if ( $this->validateArrayKey( $fieldArray, 'label', false ) ){
-					$html .= $this->getElement($this->beforeLabel);
+					$html .= $this->getElement($this->beforeLabel, true);
 					$this->addTab();
 					$html .= $this->tab.'<label'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' for="'.$fieldArray['id'].'"' ) : '' ).'>'.$fieldArray['label'].'</label>'.$this->paragraph;
 					$this->removeTab();
 					$html .= $this->getElement($this->afterLabel, false);
 				}
 
-				$html .= $this->getElement($this->beforeInput);
+				$html .= $this->getElement($this->beforeInput, true);
 				$this->addTab();
 				$html .= $this->tab.'<select'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ).' name="'.$fieldArray['name'].'">'.$this->paragraph;
 				
@@ -227,10 +231,10 @@ Class AeriaForm {
 
 			case 'textarea':
 
-				$html = $this->getElement($this->beforeField);
+				$html = $this->getElement($this->beforeField, true);
 				if ( $this->validateArrayKey( $fieldArray, 'label', false ) ){
 
-					$html .= $this->getElement($this->beforeLabel);
+					$html .= $this->getElement($this->beforeLabel, true);
 					$this->addTab();
 					$html .= $this->tab.'<label'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' for="'.$fieldArray['id'].'"' ) : '' ).'>'.$fieldArray['label'].'</label>'.$this->paragraph;
 					$this->removeTab();
@@ -238,7 +242,7 @@ Class AeriaForm {
 
 				}
 
-				$html .= $this->getElement($this->beforeInput);
+				$html .= $this->getElement($this->beforeInput, true);
 				$this->addTab();
 				$html .= $this->tab.'<textarea'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ).' name="'.$fieldArray['name'].'" rows="'.( ( $this->validateArrayKey( $fieldArray, 'rows', false ) )? $fieldArray['rows'] : '5' ).'" cols="'.( ( $this->validateArrayKey( $fieldArray, 'cols', false ) )? $fieldArray['cols'] : '40' ).'"'.( ( $this->validateArrayKey( $fieldArray, 'other', false ) )? ' '.$fieldArray['other'] : '' ).'>'.( ( $this->validateArrayKey( $fieldArray, 'value', false ) )? $fieldArray['value'] : '' ).'</textarea>'.$this->paragraph;
 				$this->removeTab();
@@ -250,18 +254,18 @@ Class AeriaForm {
 
 			case 'radio':
 			case 'checkbox':
-				$html = $this->getElement($this->beforeField);
+				$html = $this->getElement($this->beforeField, true);
 				
 				if ($this->validateArrayKey( $fieldArray, 'heading', false)) {
 
-					$html .= $this->getElement($this->beforeLabel);
+					$html .= $this->getElement($this->beforeLabel, true);
 
 					$html .= $this->tab.$fieldArray['heading'].$this->paragraph;
 
 					$html .= $this->getElement($this->afterLabel, false);
 				}
 
-				$html .= $this->getElement($this->beforeInput);
+				$html .= $this->getElement($this->beforeInput, true);
 				
 				if ($this->validateArrayKey( $fieldArray, 'label', false)) {
 					$this->addTab();
@@ -283,19 +287,19 @@ Class AeriaForm {
 
 			default:
 
-				$html = $this->getElement($this->beforeField);
+				$html = $this->getElement($this->beforeField, true);
 
 				if ( $this->validateArrayKey( $fieldArray, 'label', false ) ) {
-					$html .= $this->getElement($this->beforeLabel);
+					$html .= $this->getElement($this->beforeLabel, true);
 					$this->addTab();
 					$html .= $this->tab.'<label'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' for="'.$fieldArray['id'].'"' ) : '' ).'>'.$fieldArray['label'].'</label>'.$this->paragraph;
 					$this->removeTab();
 					$html .= $this->getElement($this->afterLabel, false);
 				}
 
-				$html .= $this->getElement($this->beforeInput);
+				$html .= $this->getElement($this->beforeInput, true);
 				$this->addTab();
-				$html .= $this->tab.'<input'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ).' name="'.$fieldArray['name'].'" type="'.$fieldArray['type'].'" value="'.$fieldArray['value'].'"'.( ( $this->validateArrayKey( $fieldArray, 'other', false ) )? ' '.$fieldArray['other'] : '' ).'>'.$this->paragraph;
+				$html .= $this->tab.'<input'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ).' name="'.$fieldArray['name'].'" type="'.$fieldArray['type'].'"'.( ( $this->validateArrayKey( $fieldArray, 'value', false ) )? ' value="'.$fieldArray['value'].'"' : '' ).( ( $this->validateArrayKey( $fieldArray, 'other', false ) )? ' '.$fieldArray['other'] : '' ).'>'.$this->paragraph;
 				$this->removeTab();
 				$html .= $this->getElement($this->afterInput, false);
 
@@ -323,13 +327,17 @@ Class AeriaForm {
 
 			$this->validateArrayKey( $fieldArray, 'name', true, 'You must define a name');
 		
-			if ( !in_array( $fieldArray['type'], $this->getAllowedType() ) ) $this->error('This type isn\'t supported');
-			
-			if ( $fieldArray['type'] !== 'select' ) {
+			if ( !in_array( $fieldArray['type'], $this->getAllowedType() ) ) $this->error('The '.$fieldArray['type'].' type isn\'t supported');
+
+			if ( ( $fieldArray['type'] === 'checkbox' ) || ( $fieldArray['type'] === 'radio' ) ) {
 
 				$this->validateArrayKey( $fieldArray, 'value', true, 'You must define a value');
 			
-			}else if ( ( !is_array( $fieldArray['options'] ) ) || ( $this->isAssoc($fieldArray['options']) ) ){
+			}else if ( 
+				( $fieldArray['type'] === 'select' ) 
+				&&
+				( ( !is_array( $fieldArray['options'] ) ) || ( $this->isAssoc($fieldArray['options']) ) ) 
+			){
 				$this->error('You must define a valid option for select type');
 
 			}
@@ -340,8 +348,8 @@ Class AeriaForm {
 	private function renderFormType( $formType ){
 		switch ($formType) {
 			case 'bootstrap':
-				$this->beforeForm		= '';
-				$this->afterForm		= '';
+				$this->beforeForm		= '<div class="row">';
+				$this->afterForm		= '</div>';
 				$this->beforeInnerForm	= '';
 				$this->afterInnerForm	= '';
 				$this->beforeField 		= '<div class="form-group">';
@@ -362,7 +370,7 @@ Class AeriaForm {
 				$this->beforeLabel		= '<th scope="row">';
 				$this->afterLabel		= '</th>';
 				$this->beforeInput		= '<td>';
-				$this->afterInput		= '</td>';				
+				$this->afterInput		= '</td>';	
 				break;
 
 			default:
@@ -379,9 +387,12 @@ Class AeriaForm {
 
 		$html .= $this->getElement($this->afterInnerForm, false);
 
-		$html .= $this->tab.$this->endForm;
+		$html .= $this->tab.$this->endForm.$this->paragraph;
 		
-		$html .= $this->getElement($this->afterForm, false);
+		if($this->afterForm){
+			$this->removeTab();
+			$html .= $this->getElement($this->afterForm);
+		}
 
 		if ($echo){
 			echo $html;
@@ -491,15 +502,17 @@ Class AeriaForm {
 		return $this;
 	}
 
-	public function getElement( $point, $addTab = true){
+	public function getElement( $point, $addTab = NULL){
 		if($point !== ''){
-			if(!!$addTab){
-				$this->addTab();
-				return $this->tab.$point.$this->paragraph;
-			}else{
-				$html = $this->tab.$point.$this->paragraph;
-				$this->removeTab();
-				return $html; 
+			if(!is_null($addTab)){
+				if(!!$addTab){
+					$this->addTab();
+					return $this->tab.$point.$this->paragraph;
+				}else{
+					$html = $this->tab.$point.$this->paragraph;
+					$this->removeTab();
+					return $html; 
+				}
 			}
 			return $this->tab.$point.$this->paragraph;
 		}else{
