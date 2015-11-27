@@ -155,6 +155,12 @@ Class AeriaForm {
 		$this->checkfields($fieldArray);
 
 		switch ($fieldArray['type']) {
+			case 'hidden':
+					$this->addTab();
+					$html = $this->tab.'<input'.( ( $this->validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ).' name="'.$fieldArray['name'].'" type="hidden" value="'.$fieldArray['value'].'"'.( ( $this->validateArrayKey( $fieldArray, 'other', false ) )? ' '.$fieldArray['other'] : '' ).'>'.$this->paragraph;
+					$this->removeTab();
+				break;
+
 			case 'custom':
 				if (is_callable($fieldArray['render'])){
 					$html = $this->getElement($this->beforeField);
