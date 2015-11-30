@@ -178,7 +178,7 @@ Class AeriaForm {
 				if (is_callable($fieldArray['render'])){
 					$html = $this->getBefore( 'field', true );
 					$this->addTab();
-					$html .= utils['currentTab'] . call_user_func( $fieldArray['render'], $this ) . $this->utils['paragraph'];
+					$html .= $this->utils['currentTab'] . call_user_func( $fieldArray['render'], $this ) . $this->utils['paragraph'];
 					$this->removeTab();
 					$html .= $this->getAfter( 'field', false );
 				}else{
