@@ -24,7 +24,7 @@ Class AeriaForm {
 	public				$form 				= [
 							'start' 	=> '',
 							'fields'    => [],
-							'end'       => '</form>',
+							'end'       => '',
 						],
 						// Utils Array
 						$utils 				= [
@@ -82,13 +82,21 @@ Class AeriaForm {
 			'before'		=> [],
 			'after'			=> [],
 			'type'			=> 'none',
-			'indentation'	=> 0
+			'indentation'	=> 0,
+			'startForm'     => false,
+			'endForm'		=> '</form>',
       	), $options );
 
 		if ( $options['indentation'] > 0 )
 			$this->addTab( $options['indentation'] );
 
-		$this->form['start'] = '<form' . ( ( self::validateArrayKey( $options, 'id', false ) )? ' id="' . $options['id'] . '"' : '' ) . ( ( self::validateArrayKey( $options, 'name', false ) )?' name="' . $options['name'] . '"' : '' ) . ' action="' . $options['action'] . '" method="' . $options['method'] . '" enctype="' . $options['enctype'] . '"' . ( ( self::validateArrayKey( $options, 'other', false ) )? ' ' . $options['other'] : '' ) . '>' . $this->utils['paragraph'];
+		if( $options['startForm'] !== false ){
+			$this->form['start'] = $options['startForm'];
+		}else{
+			$this->form['start'] = '<form' . ( ( self::validateArrayKey( $options, 'id', false ) )? ' id="' . $options['id'] . '"' : '' ) . ( ( self::validateArrayKey( $options, 'name', false ) )?' name="' . $options['name'] . '"' : '' ) . ' action="' . $options['action'] . '" method="' . $options['method'] . '" enctype="' . $options['enctype'] . '"' . ( ( self::validateArrayKey( $options, 'other', false ) )? ' ' . $options['other'] : '' ) . '>' . $this->utils['paragraph'];
+		}
+
+		$this->form['end'] = $options['endForm'];
 		
 		if( ( $options['type'] !== 'none' ) && ( $options['type'] !== '' ) )
 			$this->renderFormType( $options['type'] );

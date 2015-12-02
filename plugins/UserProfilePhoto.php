@@ -105,10 +105,14 @@ add_action( 'user_register', 'cupp_save_img_meta');
 function cupp_save_img_meta( $user_id ) {
 
     if ( 
-        ( ( !current_user_can( 'edit_user', $user_id ) ) && ( ( $pagenow === 'user-edit.php' ) || ( $pagenow === 'profile.php' ) ) )
-        OR
-        ( ( !current_user_can( 'create_users', $user_id ) ) && ( $pagenow === 'user-new.php' ) )
-    )
+            ( $pagenow !== 'profile.php' ) 
+            &&
+            (
+                ( ( !current_user_can( 'edit_user', $user_id ) ) && ( ( $pagenow === 'user-edit.php' ) ) )
+                OR
+                ( ( !current_user_can( 'create_users', $user_id ) ) && ( $pagenow === 'user-new.php' ) )
+            )   
+        )
         return false;
 
     // If the current user can edit Users, allow this.
