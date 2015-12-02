@@ -3,21 +3,23 @@ if( false === defined('AERIA') ) exit;
 
 class AeriaUserMeta {
 	
-	public static 	$saveHook 	= array( 'personal_options_update', 'edit_user_profile_update', 'user_register' ),
-					$showHook 	= array( 'show_user_profile', 'edit_user_profile', 'user_new_form' ),
-					$type 		= [ 'select', 'text', 'textarea' ];
+	public static 	$saveHook 		= array( 'personal_options_update', 'edit_user_profile_update', 'user_register' ),
+					$showHook 		= array( 'show_user_profile', 'edit_user_profile', 'user_new_form' ),
+					$type 			= [ 'select', 'text', 'textarea' ],
+					$showedTitle 	= false; 
 
 
-	public static function register( $option = [] ) {
-		if(empty($option['id'])) die('AeriaUserMeta: You must define a user meta id.');
-		if(empty($option['type'])) die('AeriaUserMeta: You must define a user meta type.');
-		if( !in_array( $option['type'], static::$type ) ) die('AeriaUserMeta: The ' . $option['type'].' type isn\'t supported.');
+	public static function register( $options = [] ) {
+		if(empty($options['id'])) die('AeriaUserMeta: You must define a user meta id.');
+		if(empty($options['type'])) die('AeriaUserMeta: You must define a user meta type.');
+		if( !in_array( $options['type'], static::$type ) ) die('AeriaUserMeta: The ' . $options['type'].' type isn\'t supported.');
 		
 		$options = array_merge_replace( array(
-			'label'			=> '',
+			'label'		=> '',
+			'title'   	=> 'Campi aggiuntivi'
       	), $options );
 
-		$saveMeta = function( $user_id ) use ( $option ) {
+		$saveMeta = function( $user_id ) use ( $options ) {
 			global $pagenow;
 			if ( 
 				( $pagenow !== 'profile.php' ) 
@@ -30,12 +32,17 @@ class AeriaUserMeta {
 			)
 			    return false;
 
-			update_user_meta( $user_id, $option['id'], $_POST[ $option['id'] ] );
+			update_user_meta( $user_id, $options['id'], $_POST[ $options['id'] ] );
 		};
 
-		$metaFields = function( $user ) use ( $option ) {
+		$metaFields = function( $user ) use ( $options ) {
     		if(!current_user_can('read'))
         		return false;
+
+        	if(!self::$showedTitle){
+        		echo '<h3>',$options['title'],'</h3>';
+        		self::$showedTitle = true;
+        	}
 
         	$form = new AeriaForm([
 	    		'action' 	=> 'hack',
@@ -44,21 +51,21 @@ class AeriaUserMeta {
 	    		'endForm'   => ''
 	    	]);	
        		$form->setFields([
-    				'id'    => $option['id'],
-					'name'  => $option['id'],
-					'label' => $option['label'],
-					'type'  => $option['type'],
+    				'id'    => $options['id'],
+					'name'  => $options['id'],
+					'label' => $options['label'],
+					'type'  => $options['type'],
 					'other' => 'class="regular-text"',
-					'value' => esc_attr( get_the_author_meta( $option['id'], $user->ID ) )
+					'value' => esc_attr( get_the_author_meta( $options['id'], $user->ID ) )
     			]);
     		$form->getForm();
         };
 
 		foreach (static::$saveHook as $value) {
-			add_action( $value, $saveMeta );
+			add_action( $value, $saveMeta, 1 );
 		}
 		foreach (static::$showHook as $value) {
-			add_action( $value, $metaFields );
+			add_action( $value, $metaFields, 1 );
 		}
 	}
 }
