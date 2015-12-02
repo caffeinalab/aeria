@@ -133,7 +133,7 @@ Class AeriaForm {
 	public function & setFields(){	
 		foreach (func_get_args() as $field){
 			if(is_array($field)){
-				if (self::isAssoc($field)){
+				if (is_array_associative($field)){
 					$this->form['fields'][] = $this->renderField($field);
 				}else{
 					foreach ($field as $subfield){
@@ -336,7 +336,7 @@ Class AeriaForm {
 			}else if ( 
 				( $fieldArray['type'] === 'select' ) 
 				&&
-				( ( !is_array( $fieldArray['options'] ) ) || ( self::isAssoc( $fieldArray['options'] ) ) ) 
+				( ( !is_array( $fieldArray['options'] ) ) || ( is_array_associative( $fieldArray['options'] ) ) ) 
 			){
 				self::error( 'You must define a valid option for select type' );
 
@@ -346,13 +346,13 @@ Class AeriaForm {
 	}
 
 	public static function setFormType( $typeArray ){
-		if ( self::isAssoc($typeArray) ) {
+		if ( is_array_associative($typeArray) ) {
 			foreach ($typeArray as $name => $type) {
-				if ( self::isAssoc($type) ){
+				if ( is_array_associative($type) ){
 					if( 
-						( self::validateArrayKey( $type, 'before', false ) && is_array($type['before']) && self::isAssoc($type['before']) ) 
+						( self::validateArrayKey( $type, 'before', false ) && is_array($type['before']) && is_array_associative($type['before']) ) 
 						||
-						( self::validateArrayKey( $type, 'after', false ) && is_array($type['after']) && self::isAssoc($type['after']) ) 
+						( self::validateArrayKey( $type, 'after', false ) && is_array($type['after']) && is_array_associative($type['after']) ) 
 					){
 						static::$customType[$name] = $type;
 					}else{
@@ -516,17 +516,6 @@ Class AeriaForm {
 
 	private static function error( $errorMessage = 'Unknown Error!' ){
 		die( self::$error['prefix'] . $errorMessage . self::$error['suffix'] );
-	}
-
-	/**
-	 * Check if array is associative
-	 * @param  array   $arr         Array to be verified
-	 * @param  boolean $reusingKeys Array can be with repeated keys
-	 * @return boolean              True if success else false
-	 */
-	private static function isAssoc( $arr, $reusingKeys = false ) {
-		$range = range( 0, count( $arr ) - 1 );
-		return $reusingKeys? $arr !== $range : array_keys( $arr ) !== $range;
 	}
 }
 

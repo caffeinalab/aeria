@@ -9,7 +9,24 @@ class AeriaUserMeta {
 					$showedTitle 	= false; 
 
 
-	public static function register( $options = [] ) {
+	public static function register() {
+		foreach ( func_get_args() as $options ){
+			if( is_array( $options ) ){
+				if ( is_array_associative( $options ) ){
+					static::setMeta( $options );
+				}else{
+					foreach ( $options as $option ){
+						static::setMeta( $option );
+					}
+				}
+			}else{
+				die('AeriaUserMeta: options parameter isn\'t an array.');
+			}
+		}
+		
+	}
+
+	private static function setMeta( $options ){
 		if(empty($options['id'])) die('AeriaUserMeta: You must define a user meta id.');
 		if(empty($options['type'])) die('AeriaUserMeta: You must define a user meta type.');
 		if( !in_array( $options['type'], static::$type ) ) die('AeriaUserMeta: The ' . $options['type'].' type isn\'t supported.');
