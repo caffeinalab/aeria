@@ -1,6 +1,11 @@
 <?php 
 /**
- * @Author: Gabriele Diener <gabriele.diener@caffeina.it>
+ * @Author: Gabriele Diener <gabriele.diener@caffeina.com>
+ *
+ * TODO:
+ * - Aggiungere filtri sui singoli elementi form, input e label
+ * - Aggiungere opzione in setFormType() per agire sui filtri dei singoli elementi
+ * - Rimuovere else inutili seguiti da throw new Exception
  **/
 
 if( false === defined('AERIA') ) exit;
@@ -13,11 +18,6 @@ Class AeriaForm {
 							'standard'  	=> [ "text", "file", "radio", "checkbox", "button", "image", "hidden", "password", "reset", "submit", "select", "textarea", "title", "custom" ],
 							'Html5' 		=> [ "color", "date", "datetime", "datetime-local", "email", "week", "month", "number", "range", "search", "tel", "time", "url" ],
 							'enableHtml5' 	=> true
-						],
-						// Error Array
-						$error		= [
-							'prefix' => '<strong>[AeriaForm: ',
-							'suffix' => '!]</strong>'
 						];
 	
 						// Form Parts Array
@@ -70,7 +70,7 @@ Class AeriaForm {
 	*/
 	public function __construct( array $options ){
 		
-		self::validateArrayKey( $options, 'action', true, 'You must define a action' );
+		self::validateArrayKey( $options, 'action', true, 'You must define a action.' );
 
 		$options = array_merge_replace( array(
 			'name'			=> '',
@@ -111,7 +111,7 @@ Class AeriaForm {
 			$html = '';
 		}	
 		
-		$html .= $this->utils['currentTab'].$this->form['start'].$this->getBefore('innerForm', true, $options );
+		$html .= $this->utils['currentTab'].$this->form['start'].$this->getBefore( 'innerForm', true, $options );
 		$this->form['start'] = $html;
 
 	}
@@ -131,17 +131,14 @@ Class AeriaForm {
 	* @param array() Fields option array
 	*/
 	public function & setFields(){	
-		foreach (func_get_args() as $field){
-			if(is_array($field)){
-				if (is_array_associative($field)){
-					$this->form['fields'][] = $this->renderField($field);
-				}else{
-					foreach ($field as $subfield){
-						$this->form['fields'][] = $this->renderField($subfield);
-					}
-				}
+		foreach ( func_get_args() as $field ){
+			if ( !is_array( $field ) ) throw new Exception( "AeriaForm: setFields() parameter isn't an array.", 1 );
+			if ( is_array_associative( $field ) ){
+				$this->form['fields'][] = $this->renderField( $field );
 			}else{
-				self::error( 'setFields() parameter isn\'t an array' );
+				foreach ( $field as $subfield ){
+					$this->form['fields'][] = $this->renderField( $subfield );
+				}
 			}
 		}
 		return $this;
@@ -176,7 +173,7 @@ Class AeriaForm {
 		switch ($fieldArray['type']) {
 			case 'hidden':
 				$this->addTab();
-				$html = $this->utils['currentTab'] . '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ) . ' name="'.$fieldArray['name'] . '" type="hidden" value="' . $fieldArray['value'] . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>' . $this->utils['paragraph'];
+				$html = $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'].'"' ) : '' ) . ' name="'.$fieldArray['name'] . '" type="hidden" value="' . $fieldArray['value'] . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>', $fieldArray  ) . $this->utils['paragraph'];
 				$this->removeTab();
 				break;
 
@@ -184,9 +181,9 @@ Class AeriaForm {
 				$html = $this->getBefore( 'field', true, $fieldArray );
 				$this->addTab();
 				if (is_callable($fieldArray['render'])){
-					$html .= $this->utils['currentTab'] . call_user_func( $fieldArray['render'], $this->utils ) . $this->utils['paragraph'];
+					$html .= $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', call_user_func( $fieldArray['render'], $this->utils ), $fieldArray ) . $this->utils['paragraph'];
 				}else{
-					$html .= $this->utils['currentTab'] . $fieldArray['render'] . $this->utils['paragraph'];
+					$html .= $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', $fieldArray['render'], $fieldArray ) . $this->utils['paragraph'];
 				}
 				$this->removeTab();
 				$html .= $this->getAfter( 'field', false, $fieldArray );
@@ -194,7 +191,7 @@ Class AeriaForm {
 
 			case 'comment':
 				$this->addTab();
-				$html = $this->utils['currentTab'] . '<!-- ['. $fieldArray['value'] .'] -->' . $this->utils['paragraph'];
+				$html = $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<!-- ['. $fieldArray['value'] .'] -->', $fieldArray ) . $this->utils['paragraph'];
 				$this->removeTab();
 				break;
 
@@ -202,11 +199,12 @@ Class AeriaForm {
 				$head = ( ( self::validateArrayKey( $fieldArray, 'head', false ) )? $fieldArray['head'] : '3' );
 				$html = $this->getBefore( 'field', true, $fieldArray );
 				$this->addTab();
-				$html = $this->utils['currentTab'] . '<h' . $head . '>'. $fieldArray['value'] .'</h' . $head . '>' . $this->utils['paragraph'];
+				$html = $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<h' . $head . '>'. $fieldArray['value'] .'</h' . $head . '>', $fieldArray ) . $this->utils['paragraph'];
 				$this->removeTab();
 				$html = $this->getAfter( 'field', false, $fieldArray );
 				break;
 
+			// Input apply_filters mancante
 			case 'select':
 				$html = $this->getBefore( 'field', true, $fieldArray );
 				
@@ -224,8 +222,8 @@ Class AeriaForm {
 				$this->addTab();
 
 				foreach ( $fieldArray['options'] as $option ) {
-					self::validateArrayKey( $option, 'value', true, 'You must define a value for select option' );
-					self::validateArrayKey( $option, 'label', true, 'You must define a label for select option' );
+					self::validateArrayKey( $option, 'value', true, 'You must define a value for select option.' );
+					self::validateArrayKey( $option, 'label', true, 'You must define a label for select option.' );
 					$html .= $this->utils['currentTab'] . '<option value="' . $option['value'] . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $option['other'] : '' ) . '>'.$option['label'] . '</option>' . $this->utils['paragraph'];
 				}
 				
@@ -251,7 +249,7 @@ Class AeriaForm {
 
 				$html .= $this->getBefore( 'input', true, $fieldArray );
 				$this->addTab();
-				$html .= $this->utils['currentTab'] . '<textarea' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'] . '"' ) : '' ) . ' name="' . $fieldArray['name'] . '" rows="' . ( ( self::validateArrayKey( $fieldArray, 'rows', false ) )? $fieldArray['rows'] : '5' ) . '" cols="' . ( ( self::validateArrayKey( $fieldArray, 'cols', false ) )? $fieldArray['cols'] : '40' ) . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>' . ( ( self::validateArrayKey( $fieldArray, 'value', false ) )? $fieldArray['value'] : '' ) . '</textarea>' . $this->utils['paragraph'];
+				$html .= $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<textarea' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="'.$fieldArray['id'] . '"' ) : '' ) . ' name="' . $fieldArray['name'] . '" rows="' . ( ( self::validateArrayKey( $fieldArray, 'rows', false ) )? $fieldArray['rows'] : '5' ) . '" cols="' . ( ( self::validateArrayKey( $fieldArray, 'cols', false ) )? $fieldArray['cols'] : '40' ) . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>' . ( ( self::validateArrayKey( $fieldArray, 'value', false ) )? $fieldArray['value'] : '' ) . '</textarea>', $fieldArray ) . $this->utils['paragraph'];
 				$this->removeTab();
 				$html .= $this->getAfter( 'input', false, $fieldArray );
 				$html .= $this->getAfter( 'field', false, $fieldArray );
@@ -276,7 +274,7 @@ Class AeriaForm {
 				}
 
 				$this->addTab();
-				$html .= $this->utils['currentTab'] . '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="' . $fieldArray['id'] . '"' ) : '' ) . ' name="' . $fieldArray['name'] . '" type="' . $fieldArray['type'] . '" value="' . $fieldArray['value'] . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>' . ( ( self::validateArrayKey( $fieldArray, 'label', false) )? ' ' . $fieldArray['label'] : '' ) . $this->utils['paragraph'];
+				$html .= $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="' . $fieldArray['id'] . '"' ) : '' ) . ' name="' . $fieldArray['name'] . '" type="' . $fieldArray['type'] . '" value="' . $fieldArray['value'] . '"' . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>', $fieldArray ) . ( ( self::validateArrayKey( $fieldArray, 'label', false) )? ' ' . $fieldArray['label'] : '' ) . $this->utils['paragraph'];
 				$this->removeTab();
 
 				if ( self::validateArrayKey( $fieldArray, 'label', false ) ) {
@@ -301,7 +299,7 @@ Class AeriaForm {
 
 				$html .= $this->getBefore( 'input', true, $fieldArray );
 				$this->addTab();
-				$html .= $this->utils['currentTab'] . '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="' . $fieldArray['id'] . '"' ) : '' ) . ' name="'.$fieldArray['name'] . '" type="' . $fieldArray['type'].'"' . ( ( self::validateArrayKey( $fieldArray, 'value', false ) )? ' value="' . $fieldArray['value'] . '"' : '' ) . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>' . $this->utils['paragraph'];
+				$html .= $this->utils['currentTab'] . apply_filters( 'AeriaFormInput', '<input' . ( ( self::validateArrayKey( $fieldArray, 'id', false ) )? ( ' id="' . $fieldArray['id'] . '"' ) : '' ) . ' name="'.$fieldArray['name'] . '" type="' . $fieldArray['type'].'"' . ( ( self::validateArrayKey( $fieldArray, 'value', false ) )? ' value="' . $fieldArray['value'] . '"' : '' ) . ( ( self::validateArrayKey( $fieldArray, 'other', false ) )? ' ' . $fieldArray['other'] : '' ) . '>', $fieldArray ) . $this->utils['paragraph'];
 				$this->removeTab();
 				$html .= $this->getAfter( 'input', false, $fieldArray );
 				$html .= $this->getAfter( 'field', false, $fieldArray );
@@ -313,57 +311,50 @@ Class AeriaForm {
 
 	private function checkfields(array $fieldArray){
 
-		self::validateArrayKey( $fieldArray, 'type', true, 'You must define a type' );
+		self::validateArrayKey( $fieldArray, 'type', true, 'You must define a type.' );
 
 		if ( ( $fieldArray['type'] === 'comment' ) || ( $fieldArray['type'] === 'title' ) ) {
 			
-			self::validateArrayKey( $fieldArray, 'value', true, 'You must define a value' );
+			self::validateArrayKey( $fieldArray, 'value', true, 'You must define a value.' );
 		
 		} else if( $fieldArray['type'] === 'custom' ) {
 			
-			self::validateArrayKey( $fieldArray, 'render', true, 'You must define a render for custom type' );
+			self::validateArrayKey( $fieldArray, 'render', true, 'You must define a render for custom type.' );
 
 		} else if( $fieldArray['type'] !== 'submit' ){
 
-			self::validateArrayKey( $fieldArray, 'name', true, 'You must define a name' );
+			self::validateArrayKey( $fieldArray, 'name', true, 'You must define a name.' );
 		
-			if ( !in_array( $fieldArray['type'], static::getAllowedType() ) ) self::error( 'The ' . $fieldArray['type'].' type isn\'t supported' );
+			if ( !in_array( $fieldArray['type'], static::getAllowedType() ) ) throw new Exception( "AeriaForm: The " . $fieldArray['type']." type isn't supported.", 1 );
 
 			if ( ( $fieldArray['type'] === 'checkbox' ) || ( $fieldArray['type'] === 'radio' ) ) {
 
-				self::validateArrayKey( $fieldArray, 'value', true, 'You must define a value' );
+				self::validateArrayKey( $fieldArray, 'value', true, 'You must define a value.' );
 			
 			}else if ( 
 				( $fieldArray['type'] === 'select' ) 
 				&&
 				( ( !is_array( $fieldArray['options'] ) ) || ( is_array_associative( $fieldArray['options'] ) ) ) 
 			){
-				self::error( 'You must define a valid option for select type' );
-
+				throw new Exception( 'AeriaForm: You must define a valid option for select type.', 1 );
 			}
 		}
 
 	}
 
 	public static function setFormType( $typeArray ){
-		if ( is_array_associative($typeArray) ) {
-			foreach ($typeArray as $name => $type) {
-				if ( is_array_associative($type) ){
-					if( 
-						( self::validateArrayKey( $type, 'before', false ) && is_array($type['before']) && is_array_associative($type['before']) ) 
-						||
-						( self::validateArrayKey( $type, 'after', false ) && is_array($type['after']) && is_array_associative($type['after']) ) 
-					){
-						static::$customType[$name] = $type;
-					}else{
-						self::error( '$type doesn\'t have an array associative with key before or after' );
-					}
-				}else{
-					self::error( '$type parameter isn\'t an associative array' );
-				}
+		if ( !is_array_associative($typeArray) ) throw new Exception( "AeriaForm: $typeArray parameter isn't an associative array.", 1 );
+		foreach ($typeArray as $name => $type) {
+			if ( !is_array_associative($type) ) throw new Exception( "AeriaForm: $type parameter isn't an associative array.", 1 );
+			if( 
+				( self::validateArrayKey( $type, 'before', false ) && is_array($type['before']) && is_array_associative($type['before']) ) 
+				||
+				( self::validateArrayKey( $type, 'after', false ) && is_array($type['after']) && is_array_associative($type['after']) ) 
+			){
+				static::$customType[$name] = $type;
+			}else{
+				throw new Exception( "AeriaForm: $type doesn't have an array associative with key before or after.", 1 );
 			}
-		}else{
-			self::error( '$typeArray parameter isn\'t an associative array' );
 		}
 	}
 
@@ -376,7 +367,7 @@ Class AeriaForm {
 				$this->after = array_merge_replace( $this->after, static::$customType[$formType]['after'] );
 			}
 		}else{
-			self::error( 'Form type "' . $formType . '" isn\'t supported' );
+			throw new Exception( "AeriaForm: Form type " . $formType . " isn't supported.", 1 );
 		}
 	}
 
@@ -402,10 +393,8 @@ Class AeriaForm {
 	}
 
 	public function & resetFields(){
-
 		$this->form['fields'] = [];
 		return $this;
-	
 	}
 
 	/**
@@ -504,18 +493,11 @@ Class AeriaForm {
 	 */
 	private static function validateArrayKey( $array, $key = 0, $triggerError = true, $errorMessage = NULL ){
 		if ( ( !isset( $array[$key] ) ) ||  empty( $array[$key] ) ) { 
-			if( $triggerError ) { 
-				self::$error($errorMessage);
-			}else{ 
-				return false;
-			}
+			if( $triggerError ) throw new Exception( 'AeriaForm: ' . $errorMessage, 1 );
+			return false;
 		}else{ 
 			return true;
 		}
-	}
-
-	private static function error( $errorMessage = 'Unknown Error!' ){
-		die( self::$error['prefix'] . $errorMessage . self::$error['suffix'] );
 	}
 }
 
