@@ -1,4 +1,13 @@
 <?php 
+/**
+ * TODO:
+ * - implementare altri campi form
+ * - implementare campi in registrazione utente
+ * - implementare campi condizionali e validazione
+ * - implementera possibilità di eliminare campi esistenti
+ * - creare una classe AeriaUser
+ */
+
 if( false === defined('AERIA') ) exit;
 
 class AeriaUserMeta {
@@ -27,13 +36,13 @@ class AeriaUserMeta {
 	}
 
 	private static function setMeta( $options ){
-		if(empty($options['id'])) die('AeriaUserMeta: You must define a user meta id.');
-		if(empty($options['type'])) die('AeriaUserMeta: You must define a user meta type.');
-		if( !in_array( $options['type'], static::$type ) ) die('AeriaUserMeta: The ' . $options['type'].' type isn\'t supported.');
+		if( empty( $options['id'] ) ) die( 'AeriaUserMeta: You must define a user meta id.' );
+		if( empty( $options['type'] ) ) die( 'AeriaUserMeta: You must define a user meta type.' );
+		if( !in_array( $options['type'], static::$type ) ) die( 'AeriaUserMeta: The ' . $options['type'] . ' type isn\'t supported.' );
 		
 		$options = array_merge_replace( array(
-			'label'		=> '',
-			'title'   	=> 'Campi aggiuntivi'
+			'label'	=> '',
+			'title' => 'Campi aggiuntivi'
       	), $options );
 
 		$saveMeta = function( $user_id ) use ( $options ) {
@@ -53,11 +62,11 @@ class AeriaUserMeta {
 		};
 
 		$metaFields = function( $user ) use ( $options ) {
-    		if(!current_user_can('read'))
+    		if( !current_user_can( 'read' ) )
         		return false;
 
-        	if(!self::$showedTitle){
-        		echo '<h3>',$options['title'],'</h3>';
+        	if( !self::$showedTitle ){
+        		echo '<h3>' , $options['title'] , '</h3>';
         		self::$showedTitle = true;
         	}
 
@@ -68,20 +77,20 @@ class AeriaUserMeta {
 	    		'endForm'   => ''
 	    	]);	
        		$form->setFields([
-    				'id'    => $options['id'],
-					'name'  => $options['id'],
-					'label' => $options['label'],
-					'type'  => $options['type'],
-					'other' => 'class="regular-text"',
-					'value' => esc_attr( get_the_author_meta( $options['id'], $user->ID ) )
-    			]);
+				'id'    => $options['id'],
+				'name'  => $options['id'],
+				'label' => $options['label'],
+				'type'  => $options['type'],
+				'other' => 'class="regular-text"',
+				'value' => esc_attr( get_the_author_meta( $options['id'], $user->ID ) )
+			]);
     		$form->getForm();
         };
 
-		foreach (static::$saveHook as $value) {
+		foreach ( static::$saveHook as $value ) {
 			add_action( $value, $saveMeta, 1 );
 		}
-		foreach (static::$showHook as $value) {
+		foreach ( static::$showHook as $value ) {
 			add_action( $value, $metaFields, 1 );
 		}
 	}
