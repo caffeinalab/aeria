@@ -1,7 +1,5 @@
 <?php 
 /**
- * @Author: Gabriele Diener <gabriele.diener@caffeina.com>
- *
  * TODO:
  * - Aggiungere filtri sui singoli elementi form, input e label
  * - Aggiungere opzione in setFormType() per agire sui filtri dei singoli elementi

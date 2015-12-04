@@ -1,7 +1,5 @@
 <?php 
 /**
- * @Author: Gabriele Diener <gabriele.diener@caffeina.com>
- *
  * TODO:
  * - Fix title not only one
  * - Implementare altri campi form
