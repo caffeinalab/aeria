@@ -337,9 +337,12 @@ class AeriaSection {
 							/**
 							 * Relation list fields
 							 */
-
-							$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings
-							AeriaSection::render_relation_fields($args['fields'],$key,$value_type,$preview_path);
+							if( count( $args['fields'] ) === 1 ){
+								$value_type = current(array_keys($args['fields']));
+							}else{
+								$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings	
+								AeriaSection::render_relation_fields($args['fields'],$key,$value_type,$preview_path);
+							}
 
 							if(!empty($value_type)){
 								echo '<div class="row-full"><h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4></div>';
