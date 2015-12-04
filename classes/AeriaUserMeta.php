@@ -7,7 +7,7 @@
  * - Implementare campi condizionali e validazione
  * - Implementera possibilità di eliminare campi esistenti
  * - Creare una classe AeriaUser
- */
+ **/
 
 if( false === defined('AERIA') ) exit;
 

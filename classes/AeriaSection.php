@@ -320,19 +320,19 @@ class AeriaSection {
 					 * classic or conditional fields?
 					 */
 
-					if(isset($args['fields']) && !empty($args['fields'])){
-						if(isset($args['fields'][0]['type'])){
+					if( isset( $args['fields'] ) && !empty( $args['fields'] ) ){
+						if( isset( $args['fields'][0]['type'] ) ){
 
 							/**
 							 * Classic list fields
 							 */
 							echo '<div class="wrap-fields">';
-							foreach ($args['fields'] as $field) {
+							foreach ( $args['fields'] as $field ) {
 								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
 								AeriaSection::render_field($field,$key,$value);
 							}
 							echo '</div>';
-						}elseif(count($args['fields'])) {
+						}elseif( count( $args['fields'] ) ) {
 
 							/**
 							 * Relation list fields
@@ -340,16 +340,16 @@ class AeriaSection {
 							if( count( $args['fields'] ) === 1 ){
 								$value_type = current(array_keys($args['fields']));
 							}else{
-								$value_type = isset($section['section_type'])?$section['section_type']:'';	// get value from general section settings	
-								AeriaSection::render_relation_fields($args['fields'],$key,$value_type,$preview_path);
+								$value_type = isset( $section['section_type'] )?$section['section_type']:'';	// get value from general section settings	
+								AeriaSection::render_relation_fields( $args['fields'],$key,$value_type,$preview_path );
 							}
 
 							if(!empty($value_type)){
-								echo '<div class="row-full"><h4>'.strtoupper($args['fields'][$value_type]['description']).'</h4></div>';
+								echo '<div class="row-full"><h4>'.strtoupper( $args['fields'][$value_type]['description'] ).'</h4></div>';
 								echo '<div class="wrap-fields">';
 								foreach ($args['fields'][$value_type]['fields'] as $field) {
-									$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-									AeriaSection::render_field($field,$key,$value);
+									$value = ( isset( $section['fields'][$field['id']] ) && !empty( $section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
+									AeriaSection::render_field( $field,$key,$value );
 								}
 								echo '</div>';
 							}else{
