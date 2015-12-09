@@ -45,9 +45,9 @@ class AeriaSection {
 					return;
 				}
 			}
-
 			$sections = [];
 			$s = 0;
+
 			while ( isset($_POST['post_section_columns_'.$s])) {
 
 				// check columns
@@ -66,16 +66,19 @@ class AeriaSection {
 				];
 
 				//if exist section type -> save
-				$value_type = (isset($_POST['section_type_'.$s]) && !empty($_POST['section_type_'.$s]))?$_POST['section_type_'.$s]:'';
-				if($value_type) $sections['section_'.$s]['section_type'] = $value_type;
-
+				if ( count( $args['fields'] ) === 1 ){
+					$value_type = array_keys( $args['fields'] )[0];
+				}else{
+					$value_type = ( isset($_POST['section_type_'.$s] ) && !empty( $_POST['section_type_'.$s] ) )? $_POST['section_type_'.$s] : '' ;
+				}
+				if( $value_type ) $sections['section_'.$s]['section_type'] = $value_type;
+				
 				//save classic fields
 				if(isset($args['fields']) && !empty($args['fields']) && isset($args['fields'][0]['type'])){
 					foreach ($args['fields'] as $field) {
 						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
 					}
 				}elseif(count($args['fields']) && !empty($value_type)) {
-
 					foreach ($args['fields'][$value_type]['fields'] as $field) {
 						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
 					}
@@ -83,7 +86,6 @@ class AeriaSection {
 
 				$s++;
 			}
-
 			if(!empty($sections)) update_post_meta( $post_id, 'post_sections', wp_slash(json_encode($sections,JSON_UNESCAPED_UNICODE)) );
 
 		});
@@ -221,6 +223,10 @@ class AeriaSection {
 				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background.');">';
 				echo '<input type="hidden" name="'.$field['id'].'_'.$key.'" id="'.$field['id'].'_'.$key.'" value="'.$background.'" />';
 				echo '</div></div>';
+				break;
+
+			case 'select_ajax':
+				echo '<input type="hidden" value="' . html_addslashes($val) . '" id="' . $field['id'] . '_' . $key . '" name="' . $field['id'] . '_' . $key . '" class="input-xlarge select2_ajax" data-relation="' . ( $field['relation']? $field['relation'] : 'page' ) . '" data-placeholder="Select an Option.."'. ( $field['multiple'] ? ' data-multiple="true" style="height:auto"' : ' data-multiple="false"' ) .' /> ';
 				break;
 
 			default:

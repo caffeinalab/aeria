@@ -11,15 +11,21 @@
 	filter: blur(@blur);
 }
 body {
-	.aeria-container {
+	#aeria_section .box-sections .row-field .select2-container{
+		width: 60%;
+	}
+	.aeria-container .container .row .select2-container{
+		width: 100%;
+	}
+	.aeria-container, #aeria_section {
 
 		-webkit-font-smoothing: antialiased;
 
-		.container {
+		.container, .box-sections {
 
 			width: auto;
 
-			.row {
+			.row, .row-field {
 				padding:2em 0;
 				border-bottom: 1px solid #DFDFDF;
 
@@ -182,14 +188,11 @@ body {
 				}
 
 				.select2-container {
-					width: 100%;
-
 					* {
 						outline: none;
 					}
 
 					& > a, .select2-choices {
-						min-height: 34px;
 						height: auto;
 						padding: 6px 12px;
 						font-size: 14px;
