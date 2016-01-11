@@ -40,6 +40,10 @@ class AeriaSection {
 				return;
 			}
 
+			if( $_POST['post_type'] !== $args['type']){
+				return;
+			}
+
 			if (isset($_POST['post_type']) && 'page' == $_POST['post_type']){
 				if(!current_user_can('edit_page', $post_id )){
 					return;
