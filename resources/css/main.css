@@ -44,6 +44,7 @@ body #aeria_section .container .row-field input[type="text"],
 body .aeria-container .box-sections .row-field input[type="text"],
 body #aeria_section .box-sections .row-field input[type="text"] {
   min-height: 34px;
+  width: 100%;
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
