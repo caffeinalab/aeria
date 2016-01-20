@@ -5,14 +5,14 @@
  * Author: Caffeina
  * Author URI: http://caffeina.it
  * Plugin URI: https://github.com/CaffeinaLab/aeria
- * Version: 1.8.30
+ * Version: 1.8.31
  */
 
 // Exit if accessed directly
 if( false === defined('ABSPATH') ) exit;
 
 // The Framework version
-define('AERIA','1.8.30');
+define('AERIA','1.8.31');
 
 // Store whether or not we're in the admin
 if( false === defined('IS_ADMIN') ) define( 'IS_ADMIN',  is_admin() );
@@ -59,7 +59,7 @@ if(IS_ADMIN){
 		// Branding
 		add_filter( 'admin_footer_text', function($text){
 			$aeria_logo = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAKCAYAAAC9vt6cAAACEUlEQVQoFV1SzWsTQRR/MztJuul2E7PZkrVtWmmJCqEWKljRQ0WEIgiCKLReAt68tJcevBUpgsGDXvwDFEEU2kLwIB56VWqFqkHToDY1bWzSfLGzzSbZD3dWU8SBN8z8vt6DGVSsUh/8Xb1HhOb0k49zalCZUdtmD8bowzkZ3108L2c6mn/1DEMMqNKG5/iATKeXcsltvn9e1OswFukCv8jD5rdfdQk1pzReELoblD68MvTWtm1SqmncYQDrvLC0EU+V+I2w6MeJs7KtCAg1gbNpG6GVtb16UTMDzGDqjcdvEiOznQDMujOi5gkIqtbCl6IEQgKBArVthvfxtnV5NCReHwsBq5OycPvag9dTrCnzEjb6XGpr4l1m7766WwE4E4YKNYBNEOuxWAaSOAybNXADYTiAsmnfwuLy2mfHu4Wcw9DyFyPLlBdOBLnBQQU1dR0uDosgdHvANNwQRrtrp1i3VrImzqa/rj+aiU+StOq7uru/T26MR1qOmTBzn88E07SAau2Oz72zS5fXg+PBA6N1VBq/83x9khzkcnVH6VARKFdUQ+FNiEoB0tCbf0Y+jABoGaaLjch+nC9UIF8taziZmHgpaTur39OfvFSlnEMQy7JcIXY+QqdYjpdwiBU769Xys1f3bq6izM+S8GM7f/rpi9QtRoA/FB6NDdiK0uu+jov9txUKxfapWDR5LNr//jfP/ulncDnamgAAAABJRU5ErkJggg==';
-			return $text . ' - Powered by <img src="'.$aeria_logo.'" title="Aeria"> Aeria ' . AERIA . ' by <a href="http://caffeina.it" target="_blank">Caffeina</a>.';
+			return $text . ' - Powered by <img src="'.$aeria_logo.'" title="Aeria"> Aeria ' . AERIA . ' by <a href="http://caffeina.com" target="_blank">Caffeina</a>.';
 		}, 11 );
 	});
 
