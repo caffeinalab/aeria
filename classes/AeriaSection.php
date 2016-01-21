@@ -311,7 +311,7 @@ class AeriaSection {
 		}
 
 	?>
-		<div class="box-section" data-section-num=<?= $key ?>>
+		<div class="box-section<?= ($section_passed['section_type']) ? ' section_' . $section_passed['section_type'] : '' ?>" data-section-num=<?= $key ?>>
 			<input type="hidden" data-section-columns name="post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
 			<div class="header-section" >
 				<div class="remove_background" data-remove-background>x</div>
