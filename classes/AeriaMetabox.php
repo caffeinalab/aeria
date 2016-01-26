@@ -714,6 +714,12 @@ class Meta_Box {
 		$this->save_field($post_id, $field, $old, $new);
 	}
 
+	function save_field_datetime($post_id, $field, $old, $new) {
+		$ts = preg_replace( '/([0-9]+)\/([0-9]+)\/([0-9]+) ([0-9]+):([0-9]+)/', '$3-$2-$1 $4:$5', $new );
+		update_post_meta( $post_id, $field['id'] . '_ts', strtotime( $ts ) );
+		$this->save_field( $post_id, $field, $old, $new );
+	}
+
 	function save_field_daterange($post_id, $field, $old, $new) {
 		$this->save_field($post_id, $field, $old, implode('|',$new));
 	}
