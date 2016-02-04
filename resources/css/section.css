@@ -187,7 +187,7 @@
 .box-section .wp-editor-wrap {
 	margin-top: 30px;
 }
-.box-section .wrap-fields .wp-editor-wrap {
+.box-section .wrap-fields .wp-editor-wrap, .box-section .wrap-fields textarea {
 	margin: 10px;
 }
 .box-section .wrap-preview img{
