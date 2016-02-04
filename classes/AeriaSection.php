@@ -80,7 +80,7 @@ class AeriaSection {
 					$value_type = ( isset($_POST['section_type_'.$s] ) && !empty( $_POST['section_type_'.$s] ) )? $_POST['section_type_'.$s] : '' ;
 				}
 				if( $value_type ) $sections['section_'.$s]['section_type'] = $value_type;
-				
+
 				//save classic fields
 				if(isset($args['fields']) && !empty($args['fields']) && isset($args['fields'][0]['type'])){
 					foreach ($args['fields'] as $field) {
@@ -220,6 +220,12 @@ class AeriaSection {
 				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.$val.'">';
 				break;
 
+			case 'textarea':
+				echo '<div class="wrap-editor">';
+				echo '<textarea rows="5" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'">'.$val.'</textarea>';
+				echo '</div>';
+				break;
+
 			case 'wysiwyg':
 				echo '<div class="wrap-editor">';
 				wp_editor( stripslashes($val) , $field['id'].'_'.$key );
@@ -354,7 +360,7 @@ class AeriaSection {
 							if( count( $args['fields'] ) === 1 ){
 								$value_type = current(array_keys($args['fields']));
 							}else{
-								$value_type = isset( $section['section_type'] )?$section['section_type']:'';	// get value from general section settings	
+								$value_type = isset( $section['section_type'] )?$section['section_type']:'';	// get value from general section settings
 								AeriaSection::render_relation_fields( $args['fields'],$key,$value_type,$preview_path );
 							}
 
