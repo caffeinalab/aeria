@@ -337,18 +337,15 @@ class Meta_Box {
 			return;
 		}
 		wp_nonce_field(basename(__FILE__), 'mbox_meta_box_nonce');
-		echo '<table class="form-table ">';
+
 		foreach ($this->_fields as &$field) {
 			//if( $field['type'] == 'gallery' ) $field['multiple'] = true;
 			$meta = get_post_meta($post->ID, $field['id'], !$field['multiple']);
 			$meta = isset($meta) ? $meta : $field['std'];
 
-			echo '<tr>';
-				// call separated methods for displaying each type of field
-				call_user_func(array(&$this, 'show_field_' . $field['type']), $field, $meta);
-			echo '</tr>';
+			// call separated methods for displaying each type of field
+			call_user_func(array(&$this, 'show_field_' . $field['type']), $field, $meta);
 		}
-		echo '</table>';
 	}
 
 	/******************** END META BOX PAGE **********************/

@@ -11,12 +11,12 @@ window.aeria_init_select2 = function(){
 						formatSelection: formatSel || undefined,
 						escapeMarkup: function(m) { return m; }
 					}).on('select2-loaded',function(){
-						this.addClass('loaded').css({opacity:1});
+						$this.addClass('loaded').css({opacity:1});
 					});
 				}
 			});
 		})(
-		function(state){
+	function(state){
       if (!state.id) return state.text; // optgroup
       var originalOption = state.element,
       $me = jQuery(originalOption);
