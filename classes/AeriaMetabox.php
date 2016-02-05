@@ -356,7 +356,7 @@ class Meta_Box {
 	/******************** BEGIN META BOX FIELDS **********************/
 
 	function show_field_begin($field, $meta) {
-		echo "<div class='aeria-container'>
+		echo "<div class='aeria-container " . $field['id'] . "-field-container'>
 				<div class='container'>
 				<div class='row'>
 					<div class='col-md-4'><label for='{$field['id']}'>{$field['name']}</label></div>
