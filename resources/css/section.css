@@ -169,6 +169,9 @@
 	background-color: white;
 	border: 1px dashed #C7C7C7;
 }
+.body-section div.wrap-fields:empty {
+	display: none;
+}
 .box-section .wrap-fields .row-field { /* container single fields */
 	padding: 10px 0;
 	flex-basis: 50%;

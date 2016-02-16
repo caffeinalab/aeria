@@ -83,12 +83,22 @@ jQuery(function($){
             var img = $(this).val();
             var $wrap = $(this).parents('.body-section').find('.wrap-preview');
             $wrap.empty();
-            if(img.length) $wrap.html('<img src="'+path+img+'.png">');
+            if( img.length  && imageExists( path + img ) ) $wrap.html('<img src="'+path+img+'.png">');
         });
 
         $select_preview.trigger('change');
     }
 
+    function imageExists(image_url){
+
+        var http = new XMLHttpRequest();
+
+        http.open('HEAD', image_url, false);
+        http.send();
+
+        return http.status != 404;
+
+    }
 
     function engineSelectBg(){
 
