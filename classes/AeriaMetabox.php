@@ -572,7 +572,8 @@ class Meta_Box {
 
 	function show_field_checkbox($field, $meta) {
 		$this->show_field_begin($field, $meta);
-		echo "<input type='checkbox' name='{$field['id']}'" . checked(!empty($meta), true, false) . " />{$field['desc']}</td>";
+		echo "<input type='checkbox' name='{$field['id']}'" . checked(!empty($meta), true, false) . " />{$field['desc']}";
+		$this->show_field_end($field, $meta);
 	}
 
 	function show_field_wysiwyg($field, $meta) {
