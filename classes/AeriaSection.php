@@ -217,12 +217,12 @@ class AeriaSection {
 				break;
 
 			case 'text':
-				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.$val.'">';
+				echo '<input type="text" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'" value="'.stripslashes($val).'">';
 				break;
 
 			case 'textarea':
 				echo '<div class="wrap-editor">';
-				echo '<textarea rows="5" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'">'.$val.'</textarea>';
+				echo '<textarea rows="5" id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'">'.stripslashes($val).'</textarea>';
 				echo '</div>';
 				break;
 
