@@ -3,7 +3,7 @@ Contributors: caffeina
 Tags: framework, metabox, custom-post, development
 Requires at least: 3.0
 Tested up to: 4.4
-Stable tag: 1.8.32
+Stable tag: 1.8.33
 
 WordPress Rapid Development Toolkit
 

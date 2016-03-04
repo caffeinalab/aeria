@@ -3,11 +3,11 @@
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
-    "version": "1.8.32",
+    "version": "1.8.33",
     "requires": "4.0",
     "tested": "4.3.1",
     "last_updated": "2016-02-26 10:00:00",
-    "upgrade_notice": "[Fix AeriaMetabox | Checkbox]",
+    "upgrade_notice": "[Fix AeriaSection | Add filter text]",
     "author": "Caffeina",
     "author_homepage": "http://caffeina.com/",
 
