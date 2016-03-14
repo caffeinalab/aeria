@@ -208,10 +208,9 @@ class AeriaSection {
 
 		switch ($field['type']) {
 			case 'select':
-				echo '<select id="'.$field['id'].'_'.$key.'" name="'.$field['id'].'_'.$key.'">';
-				foreach ($field['options'] as $k => $value) {
-					$selected = ($val == $k)?'selected="selected"':'';
-					echo '<option value="'.$k.'" '.$selected.'>'.$value.'</option>';
+				echo '<select class="select2" id="' . $field['id'] . '_' . $key . '" name="' . $field['id'] . '_' . $key . ( $field['multiple'] ? '[]" multiple="multiple" style="height:auto"' : '"' ) . '>';
+				foreach ( $field['options'] as $k => $value ) {
+					echo '<option value="' . $k . '" ' . selected( in_array( $k, (array) $val ), true, false ) . '>' . $value . '</option>';
 				}
 				echo '</select>';
 				break;
