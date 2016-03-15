@@ -23,10 +23,12 @@ class AeriaSection {
 			}
 		});
 
-		add_filter( 'postbox_classes_' . $args['type'] . '_aeria_section', function( $classes ) use ( $args ) {
-			array_push( $classes, 'aeria_section_' . $args['title'] );
-			return $classes;
-		});
+		foreach ( (array) $args['type'] as $type ) {
+			add_filter( 'postbox_classes_' . $type . '_aeria_section', function( $classes ) use ( $args ) {
+				array_push( $classes, 'aeria_section_' . $args['title'] );
+				return $classes;
+			});
+		}
 
 		add_action('save_post', function($post_id) use($args) {
 
@@ -42,7 +44,7 @@ class AeriaSection {
 				return;
 			}
 
-			if( $_POST['post_type'] !== $args['type']){
+			if ( !in_array( $_POST['post_type'], (array) $args['type'] ) ) {
 				return;
 			}
 
