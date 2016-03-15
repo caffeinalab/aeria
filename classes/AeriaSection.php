@@ -10,15 +10,17 @@ class AeriaSection {
 		if(empty($args['title'])) $args['title'] = 'Sections';
 
 		add_action('add_meta_boxes', function() use ($args){
-			add_meta_box(
-				'aeria_section',
-				$args['title'],
-				function($post) use ($args){
-					AeriaSection::render_controls($args);
-					AeriaSection::render_sections($post->ID,$args);
-				},
-				$args['type']
-			);
+			foreach ( (array) $args['type'] as $type ) {
+				add_meta_box(
+					'aeria_section',
+					$args['title'],
+					function($post) use ($args) {
+						AeriaSection::render_controls($args);
+						AeriaSection::render_sections($post->ID,$args);
+					},
+					$type
+				);
+			}
 		});
 
 		add_filter( 'postbox_classes_' . $args['type'] . '_aeria_section', function( $classes ) use ( $args ) {
