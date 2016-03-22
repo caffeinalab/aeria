@@ -3,7 +3,7 @@
     "slug": "aeria",
     "homepage": "http://labs.caffeina.co/tech/aeria",
     "download_url": "https://github.com/CaffeinaLab/aeria/archive/master.zip",
-    "version": "1.8.33",
+    "version": "1.8.41",
     "requires": "4.0",
     "tested": "4.3.1",
     "last_updated": "2016-02-26 10:00:00",
