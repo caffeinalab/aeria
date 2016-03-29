@@ -1,18 +1,5 @@
 var tst = tst || {};
 
-tst.togglePreview = function (button) {
-    var preview = jQuery('.focalPoint_mediaUpload ._preview');
-    button = jQuery(button);
-
-    if (button.val() == 'Show Preview') {
-        button.val('Hide Preview');
-        preview.show();
-    } else {
-        button.val('Show Preview');
-        preview.hide();
-    }
-};
-
 // Create picker only after DOM elements have been added.
 tst.createPickerDelayed = function (options) {
     if (jQuery(options.input).size() > 0) {

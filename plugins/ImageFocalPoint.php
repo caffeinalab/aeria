@@ -1,8 +1,8 @@
 <?php
 
 add_action( 'admin_enqueue_scripts', function(){
-	wp_register_script( 'focal-point', AERIA_RESOURCE_URL.'/js/focal-point.js', ['jquery'], '1.0', true );
-	wp_register_style( 'focal-point', AERIA_RESOURCE_URL.'/css/focal-point.css', '1.0' );
+	wp_register_script( 'focal-point', AERIA_RESOURCE_URL.'/js/image-focal-point.js', ['jquery'], '1.0', true );
+	wp_register_style( 'focal-point', AERIA_RESOURCE_URL.'/css/image-focal-point.css', '1.0' );
 
 	wp_enqueue_script( 'focal-point' );
 	wp_enqueue_style( 'focal-point' );
@@ -29,8 +29,7 @@ class FocalPoint {
 			"200x100\n" .
 			"200x50\n" .
 			"150x200\n" .
-			"100x200\n" .
-			"50x200";
+			"100x200" ;
 	}
 
 	public static function get_focal_point( $postId, $orig_w = null, $orig_h = null ) {
@@ -89,7 +88,7 @@ add_action( 'attachment_fields_to_edit', function($form_fields,$post) {
 			<?php echo __( 'Clicca sull\'immagine e seleziona il <strong>punto focale</strong>', 'aeria' ); ?>
 		</p>
 		<div id="<?php echo $image_id; ?>" class="_picker"><img src="<?php echo $image[0]; ?>"></div>
-		<p>
+		<p class="label-example">
 			<span aria-hidden="true" class="tst-icon tst-icon-eye"></span>
 			<?php echo __( '<strong>Esempi:</strong>', 'aeria' ); ?>
 		</p>

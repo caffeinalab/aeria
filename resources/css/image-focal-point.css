@@ -17,7 +17,9 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-
+.compat-field-focal_position {
+	display: none;
+}
 .tst-icon-target:before {
 	content: "\e27a";
 }
@@ -54,13 +56,25 @@
 	max-width: 458px;
 	max-height: 300px;
 	padding: 1px;
-	border: 1px solid #DFDFDF;
 }
 .focalPoint_mediaUpload ._preview > div {
 	display: inline-block;
 	margin: 0 8px 8px 0;
 	padding: 1px;
-	border: 1px solid #DFDFDF;
+	background-color: #fff;
+	border: 5px solid #FFF;
+}
+.media-modal-content ._preview {
+	display: none;
+}
+.media-modal-content .focalPoint_mediaUpload ._picker img {
+	max-width: 100%;
+}
+.media-modal-content ._preview {
+	display: none;
+}
+.media-modal-content .focalPoint_mediaUpload p.label-example {
+	display: none;
 }
 .focalPoint_mediaUpload ._preview > div:last-child {
 	margin-right: 0;
@@ -68,11 +82,13 @@
 .focalPoint_mediaUpload ._preview ._imageContainer {
 	position: relative;
 	overflow: hidden;
+	background-color: #fff;
 }
 .focalPoint_mediaUpload ._preview ._caption {
 	margin-top: 1px;
-	padding: 1px 3px;
-	background: #DFDFDF;
+	padding: 5px 8px;
+	font-weight: 600;
+	background: #FFF;
 }
 .focalPoint_mediaUpload ._preview img {
  	position: absolute;
