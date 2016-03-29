@@ -18,7 +18,7 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 .compat-field-focal_position {
-	display: none;
+	display: none !important;
 }
 .tst-icon-target:before {
 	content: "\e27a";
