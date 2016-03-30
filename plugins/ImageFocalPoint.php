@@ -15,21 +15,18 @@ class FocalPoint {
 		$options = [
 			'default_focal_point_x'        => 0.5,
 			'default_focal_point_y'        => 0.5,
-			'previewSizes'                 => self::get_default_preview_sizes()
+			'previewSizes'                 => [
+				'200x200',
+				'200x150',
+				'200x100',
+				'200x50',
+				'150x200',
+				'100x200'
+			]
 		];
 
 		return $options[ $optionId ];
 
-	}
-
-	public static function get_default_preview_sizes() {
-		return
-			"200x200\n" .
-			"200x150\n" .
-			"200x100\n" .
-			"200x50\n" .
-			"150x200\n" .
-			"100x200" ;
 	}
 
 	public static function get_focal_point( $postId, $orig_w = null, $orig_h = null ) {
@@ -100,7 +97,6 @@ add_action( 'attachment_fields_to_edit', function($form_fields,$post) {
 
 	$new_sizes = [];
 	$sizes = FocalPoint::get_option( 'previewSizes' );
-	$sizes = explode( "\n", $sizes );
 	foreach ( $sizes as $size ) {
 		$values = explode( "x", $size );
 		$new_sizes[ $values[0] . ' &times; ' . $values[1] . ' px' ] = [
