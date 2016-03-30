@@ -83,12 +83,19 @@
 	position: relative;
 	overflow: hidden;
 	background-color: #fff;
+	margin:0 auto;
+	margin: 3px;
 }
 .focalPoint_mediaUpload ._preview ._caption {
 	margin-top: 1px;
-	padding: 5px 8px;
+	padding: 5px 3px;
 	font-weight: 600;
 	background: #FFF;
+}
+.focalPoint_mediaUpload ._preview ._caption span {
+	display: block;
+	font-weight: 300;
+	font-size: 0.95em;
 }
 .focalPoint_mediaUpload ._preview img {
  	position: absolute;

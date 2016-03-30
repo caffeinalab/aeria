@@ -83,7 +83,7 @@ tst.createPicker = function (options) {
                             height: size.height
                         })
                         .append(size.image);
-                    size.caption = $('<div class="_caption">' + i + '</div>');
+                    size.caption = $('<div class="_caption">' + i + ' <span> ' + size.label + ' </span></div>');
                     size.div = $('<div>')
                         .append(size.imageContainer, size.caption);
                     me.preview.append(size.div);
