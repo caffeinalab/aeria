@@ -42,7 +42,7 @@ tst.createPicker = function (options) {
         me.imageContainer = $(me.options.image);
         me.image = me.imageContainer.children('img');
         me.imageOverlay = $('<div class="_overlay">');
-        me.crosshair = $('<div class="_crosshair tst-icon-target2">');
+        me.crosshair = $('<div class="_crosshair">');
         me.preview = $(me.options.preview);
         me.imageContainer.append(me.crosshair, me.imageOverlay);
 

@@ -33,10 +33,24 @@
 }
 
 .focalPoint_mediaUpload ._crosshair {
-	text-shadow: 0 0 1px #fff, 0 0 1px #fff, 0 0 1px #fff;
 	position: absolute;
-	margin: -14px 0 0 -15px;
-	font-size: 32px;
+	margin-top: -15px;
+	margin-left: -15px;
+	width:40px;
+	height:40px;
+	background-color: rgba(255, 255, 255, 0.5);
+	border-radius: 50%;
+}
+.focalPoint_mediaUpload ._crosshair:before {
+	position: absolute;
+	content: '';
+	width: 20px;
+	height: 20px;
+	top:10px;
+	left:10px;
+	background-color: #0073AA;
+	display: block;
+	border-radius: 50%;
 }
 
 .focalPoint_mediaUpload ._overlay {
