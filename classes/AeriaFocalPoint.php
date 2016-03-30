@@ -50,7 +50,7 @@ class AeriaFocalPoint {
 			ob_end_clean();
 
 			$new_sizes = [];
-			foreach ( $options['sizes'] as $size => $label ) {
+			foreach ( $options['previews'] as $size => $label ) {
 				$values = explode( "x", $size );
 				$new_sizes[ $values[0] . ' &times; ' . $values[1] . ' px' ] = [
 					'width'  => $values[0],
@@ -110,7 +110,7 @@ class AeriaFocalPoint {
 		return [
 			'default_focal_point_x' => 0.5,
 			'default_focal_point_y' => 0.5,
-			'sizes' => [
+			'previews' => [
 				'200x200' => '',
 				'200x150' => '',
 				'200x100' => '',
