@@ -108,8 +108,6 @@ class AeriaFocalPoint {
 	public static function get_options() {
 
 		return [
-			'default_focal_point_x' => 0.5,
-			'default_focal_point_y' => 0.5,
 			'previews' => [
 				'200x200' => '',
 				'200x150' => '',
@@ -126,7 +124,7 @@ class AeriaFocalPoint {
 		$focal_point = get_post_meta($postId,'focal_position',true);
 
 		if (!$focal_point) {
-			$focal_point = [(float)$options['default_focal_point_x'], (float)$options['default_focal_point_y']];
+			$focal_point = [0.5, 0.5];
 		}
 
 		return $focal_point;
