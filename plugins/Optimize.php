@@ -91,7 +91,6 @@ add_action('init',function(){
 
 add_action('wp_dashboard_setup', function() {
     foreach ( [ "dashboard", "dashboard-network" ] as $hook ) {
-        remove_meta_box('dashboard_right_now', $hook, 'normal');
         remove_meta_box('dashboard_plugins', $hook, 'normal');
         remove_meta_box('dashboard_primary', $hook, 'side');
         remove_meta_box('dashboard_secondary', $hook, 'side');
