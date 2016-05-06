@@ -1,8 +1,8 @@
 #post-list {
 	margin-top: 20px;
 }
-#post-list > li > .ui-sortable-handle,
-#post-list > li > .children > li > div {
+#post-list li > .ui-sortable-handle,
+#post-list li > .children > li > div {
 	width: 50%;
 	font-weight: bold;
 	background: #fff; /* for non-css3 browsers */
@@ -11,14 +11,14 @@
 	position: relative;
 	padding: 1em;
 }
-#post-list > li > .ui-sortable-handle a {
+#post-list li > .ui-sortable-handle a {
 	text-transform: uppercase;
 	text-decoration: none;
 	background-color: #ddd;
 	padding: 0 3px;
 	color: #000;
 }
-#post-list > li > .children > li > div:nth-child(1) {
+#post-list li > .children > li > div:nth-child(1) {
 	margin-top: 5px;
 }
 .text {
@@ -28,7 +28,7 @@
 }
 .text div {
 	position: relative;
-	padding: 0 30px;
+	padding: 0;
 	display: table-cell;
 }
 #post-list ul {
