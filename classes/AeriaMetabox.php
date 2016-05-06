@@ -97,8 +97,8 @@ class AeriaMetabox {
 
 		if(!$id){
 			// check wordpress crop
-			$file_name = explode('.', end(explode('/',$image_src)))[0];
-			$partremove = end(explode('-',$file_name));
+			$file_name = @explode('.', end(explode('/',$image_src)))[0];
+			$partremove = @end(explode('-',$file_name));
 			$image_src  = str_replace('-'.$partremove, '', $image_src);
 
 			$query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
@@ -644,6 +644,9 @@ class Meta_Box {
 
 	// Save data from meta box
 	function save($post_id) {
+
+		global $wpdb;
+
 		if(empty($_POST['post_type']) || empty($_POST['post_ID'])) return;
 
 		$post_type_object = get_post_type_object($_POST['post_type']);
@@ -669,6 +672,36 @@ class Meta_Box {
 			if (class_exists('Meta_Box_Validate') && method_exists('Meta_Box_Validate', $field['validate_func'])) {
 				$new = call_user_func(array('Meta_Box_Validate', $field['validate_func']), $new);
 			}
+
+			if($type == 'select_ajax') {
+
+				/**
+				 * Backward Compatible -> Extend :)
+				 *
+				 * id_1: $post_id
+				 * id_2: $new loop
+				 * type: $field['id']
+				 */
+
+				$s_old = get_post_meta($post_id, $name, true);
+				$s_new = $_POST[$name];
+
+				if($s_old !== $s_new) {
+
+					// clean
+					$wpdb->delete($wpdb->prefix.'aeria_relations',['id_1' => $post_id, 'type' => $field['id']]);
+
+					if(!empty($s_new)) {
+						//insert
+						foreach (explode(',',$s_new) as $key => $val) {
+							$wpdb->insert($wpdb->prefix.'aeria_relations',['id_1' => $post_id, 'id_2' => $val, 'type' => $field['id']], ['%d','%d','%s']);
+						}
+					}
+
+				}
+
+			}
+
 
 			// call defined method to save meta value, if there's no methods, call common one
 			$save_func = 'save_field_' . $type;

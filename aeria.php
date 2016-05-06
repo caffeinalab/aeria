@@ -49,6 +49,19 @@ function icon($name){
 	return strpos($name,'http')===0 ? $name : AERIA_RESOURCE_URL.'icons/'.$name.'.png';
 }
 
+// Create ralations table on register
+register_activation_hook( __FILE__, function(){
+	global $wpdb;
+	$table_name = $wpdb->prefix.'aeria_relations';
+	$wpdb->query("CREATE TABLE IF NOT EXISTS $table_name (
+		`id_1` int(11) unsigned NOT NULL,
+		`id_2` int(11) unsigned NOT NULL,
+		`type` VARCHAR(50) NOT NULL,
+		PRIMARY KEY (id_1,id_2,type)
+	) DEFAULT CHARSET=utf8;");
+
+});
+
 // Enqueue Admin Scripts
 if(IS_ADMIN){
 
