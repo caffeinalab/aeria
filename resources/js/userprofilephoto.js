@@ -34,7 +34,7 @@ var file_frame;
       // write the selected image url to the value of the #cupp_meta text field
       jQuery('#cupp_meta').val('');
       jQuery('#cupp_upload_meta').val(attachment.url);
-      jQuery('#cupp_upload_edit_meta').val('/wp/wp-admin/post.php?post='+attachment.id+'&action=edit&image-editor');
+      jQuery('#cupp_upload_edit_meta').val('wp-admin/post.php?post='+attachment.id+'&action=edit&image-editor');
       jQuery('.cupp-current-img').attr('src', attachment.url);
     });
 

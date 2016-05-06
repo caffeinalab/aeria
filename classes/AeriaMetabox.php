@@ -2,24 +2,30 @@
 
 if( false === defined('AERIA') ) exit;
 
-class AeriaMetaBox {
+function html_addslashes($s){ return str_replace('"','\\"',$s);}
 
-	protected static $groups = array();
+class AeriaMetabox {
+
+	protected static $groups = [],
+					 $defs   = [];
 
 	public static function register($metabox){
 		if(false===is_array($metabox)) exit;
+
 		if(empty($metabox['id'])){
 			foreach($metabox as $meta_id => $meta){
-				static::$groups[$meta_id] = new Meta_Box($meta);
+				static::$defs[$meta_id]		= $meta;
+				static::$groups[$meta_id] 	= new Meta_Box($meta);
 			}
 		} else {
+			static::$defs[$metabox['id']]	= $metabox;
 			static::$groups[$metabox['id']] = new Meta_Box($metabox);
 		}
 	}
 
 	public static function infoForField($post_type,$field_name){
-		foreach (static::boxesForType($post_type) as $box){
-			foreach ($box->_fields as $field) {
+		foreach (static::defsForType($post_type) as $def){
+			foreach ($def['fields'] as $field) {
 				if($field['id']==$field_name){
 					return $field;
 				}
@@ -30,11 +36,18 @@ class AeriaMetaBox {
 	public static function boxesForType($post_type){
 		$res = [];
 		foreach (static::$groups as $id => $box) {
-			if(in_array($post_type, $box->_meta_box['pages'])) $res[] = $box;
+			if(in_array($post_type, (array)$box->_meta_box['pages'])) $res[] = $box;
 		}
 		return $res;
 	}
 
+	public static function defsForType($post_type){
+		$res = [];
+		foreach (static::$defs as $id => $def) {
+			if(in_array($post_type, (array)$def['pages'])) $res[] = $def;
+		}
+		return $res;
+	}
 
 
 	public static function add_script_date(){
@@ -77,12 +90,22 @@ class AeriaMetaBox {
 	public static function get_attachment_id_from_src($image_src) {
 		global $wpdb;
 		// Strip domain
-    $image_src = preg_replace('{^https?://[^/]+}', '', $image_src);
+		$image_src = preg_replace('{^https?://[^/]+}', '', $image_src);
 
-    $query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
+		$query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
 		$id = $wpdb->get_var($query);
-		return $id;
 
+		if(!$id){
+			// check wordpress crop
+			$file_name = explode('.', end(explode('/',$image_src)))[0];
+			$partremove = end(explode('-',$file_name));
+			$image_src  = str_replace('-'.$partremove, '', $image_src);
+
+			$query = "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%$image_src%'";
+			$id = $wpdb->get_var($query);
+		}
+
+		return $id;
 	}
 
 
@@ -218,7 +241,7 @@ class Meta_Box {
 	function check_field_datetime() {
 		if ($this->has_field('datetime') && $this->is_edit_page()) {
 
-			AeriaMetaBox::add_script_date();
+			AeriaMetabox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
 				echo '<script type="text/javascript">jQuery(document).ready(function($){';
@@ -257,7 +280,7 @@ class Meta_Box {
 	function check_field_daterange() {
 		if ($this->has_field('daterange') && $this->is_edit_page()) {
 
-			AeriaMetaBox::add_script_date();
+			AeriaMetabox::add_script_date();
 			add_action('admin_head', function(){
 				$elements = array();
 
@@ -314,18 +337,15 @@ class Meta_Box {
 			return;
 		}
 		wp_nonce_field(basename(__FILE__), 'mbox_meta_box_nonce');
-		echo '<table class="form-table ">';
+
 		foreach ($this->_fields as &$field) {
 			//if( $field['type'] == 'gallery' ) $field['multiple'] = true;
 			$meta = get_post_meta($post->ID, $field['id'], !$field['multiple']);
 			$meta = isset($meta) ? $meta : $field['std'];
 
-			echo '<tr>';
-				// call separated methods for displaying each type of field
-				call_user_func(array(&$this, 'show_field_' . $field['type']), $field, $meta);
-			echo '</tr>';
+			// call separated methods for displaying each type of field
+			call_user_func(array(&$this, 'show_field_' . $field['type']), $field, $meta);
 		}
-		echo '</table>';
 	}
 
 	/******************** END META BOX PAGE **********************/
@@ -333,7 +353,7 @@ class Meta_Box {
 	/******************** BEGIN META BOX FIELDS **********************/
 
 	function show_field_begin($field, $meta) {
-		echo "<div class='aeria-container'>
+		echo "<div class='aeria-container " . $field['id'] . "-field-container'>
 				<div class='container'>
 				<div class='row'>
 					<div class='col-md-4'><label for='{$field['id']}'>{$field['name']}</label></div>
@@ -347,7 +367,7 @@ class Meta_Box {
 	function show_field_text($field, $meta) {
 		$this->show_field_begin($field, $meta);
 		$input_type = ($_=&$field['input_type']?:'text');
-		echo "<input type='{$input_type}' name='{$field['id']}' id='{$field['id']}' value='$meta'/>";
+		echo "<input type=\"{$input_type}\" name=\"{$field['id']}\" id=\"{$field['id']}\" value=\"".html_addslashes($meta)."\"/>";
 		$this->show_field_end($field, $meta);
 	}
 
@@ -366,7 +386,7 @@ class Meta_Box {
 		<span class="twbootstrap">
 		<div class="form-group" style="margin:0;">
 			<div class="input-group date" id="'.$field['id'].'_field">
-				<input type="text" class="form-control" id="'.$field['id'].'" name="'.$field['id'].'" value="'.$meta.'" />
+				<input type="text" class="form-control" id="'.$field['id'].'" name="'.$field['id'].'" value="'.html_addslashes($meta).'" />
 				<span class="input-group-addon"><span class="glyphicon glyphicon-'.$icon.'"></span></span>
 			</div>
 		</div>
@@ -415,7 +435,7 @@ class Meta_Box {
 		if($layout=='list') {
 				foreach ((array)$metas as $meta) {
 				echo "<table class=\"media aeria-media-gallery-".$field['id']." item_".$idx."\" width=\"100%\"><tr><td><img id='".$field['id'].'_'.$idx."_image' src='".$meta."'/>";
-				echo "</td><td><input type='text' name='".$field['id']."[]' id='".$field['id'].'_'.$idx."' value='".$meta."'/>";
+				echo "</td><td><input type='text' name='".$field['id']."[]' id='".$field['id'].'_'.$idx."' value=\"".html_addslashes($meta)."\"/>";
 				echo "<a class='button button-primary data-type='list' aeria_upload_media_gallery_button' id='".$field['id']."_button' data-target='#".$field['id'].'_'.$idx."'>Select</a>";
 				echo "<a class='button button-secondary' onclick=\"jQuery('.aeria-media-gallery-".$field['id'].".item_".$idx."').remove();\">Remove</a>";
 				echo "</td></tr></table>";
@@ -426,7 +446,7 @@ class Meta_Box {
 		}
 		if($layout=='preview') {
 
-			if(!$single) AeriaMetaBox::add_script_sortable();
+			if(!$single) AeriaMetabox::add_script_sortable();
 			if($single) {
 				$num_class='single';
 			}else{
@@ -436,7 +456,7 @@ class Meta_Box {
 			echo '<div class="aeria-media-gallery-'.$field['id'].'">';
 
 			foreach ((array)$metas as $meta) {
-				$media_id = AeriaMetaBox::get_attachment_id_from_src($meta);
+				$media_id = AeriaMetabox::get_attachment_id_from_src($meta);
 
 				if($media_id){
 					$url_edit = 'post.php?post='.$media_id.'&action=edit';
@@ -462,7 +482,7 @@ class Meta_Box {
 
 				$hidden_class = $meta==''?'display:none;':'';
 				echo '<div class="box-image item_'.$idx.'" style="'.$hidden_class.'">';
-				echo "<div class='image ".$num_class." ".$class_background."' style='background:url(".$background.");'>";
+				echo "<div class='image ".$num_class." ".$class_background."' style='background-image:url(".$background.");'>";
 				if($class_background=='file'){
 					echo "<h4>".(wp_trim_words($meta_title,8)?:'<i>Untitled</i>')."</h4>";
 				}
@@ -471,7 +491,7 @@ class Meta_Box {
 						<a class='button button-remove'><i class='glyphicon glyphicon-trash'></i></a>
 						<a class='button button-edit' target='_blank' href='".$url_edit."'><i class='glyphicon glyphicon-pencil'></i></a>
 					</div>";
-				echo "<input type='hidden' name='".$field['id']."[]' value='".$meta."'/>";
+				echo "<input type='hidden' name='".$field['id']."[]' value=\"".html_addslashes($meta)."\"/>";
 				echo '</div>';
 				$idx++;
 			}
@@ -536,9 +556,9 @@ class Meta_Box {
 
 	function show_field_select_ajax($field, $meta) {
 		if (!is_array($meta)) $meta = (array) $meta;
-		$meta_value = empty($meta)?'':$meta[0];
+		$meta_value = html_addslashes(empty($meta)?'':$meta[0]);
 		$this->show_field_begin($field, $meta);
-		echo "<input type='hidden' value='{$meta_value}' name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
+		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
 		$this->show_field_end($field, $meta);
 	}
 
@@ -552,7 +572,8 @@ class Meta_Box {
 
 	function show_field_checkbox($field, $meta) {
 		$this->show_field_begin($field, $meta);
-		echo "<input type='checkbox' name='{$field['id']}'" . checked(!empty($meta), true, false) . " />{$field['desc']}</td>";
+		echo "<input type='checkbox' name='{$field['id']}'" . checked(!empty($meta), true, false) . " />{$field['desc']}";
+		$this->show_field_end($field, $meta);
 	}
 
 	function show_field_wysiwyg($field, $meta) {
@@ -632,7 +653,7 @@ class Meta_Box {
 		|| (!in_array($_POST['post_type'], $this->_meta_box['pages']))        			// check if current post type is supported
 		|| (!check_admin_referer(basename(__FILE__), 'mbox_meta_box_nonce'))  	// verify nonce
 		|| (!current_user_can($post_type_object->cap->edit_post, $post_id))) {	// check permission
-		                                                                      	return $post_id;
+		return $post_id;
 		}
 
 		foreach ($this->_fields as $field) {
@@ -657,6 +678,7 @@ class Meta_Box {
 				$this->save_field($post_id, $field, $old, $new);
 			}
 		}
+
 	}
 
 	// Common functions for saving field
@@ -677,17 +699,23 @@ class Meta_Box {
 		// get new values that need to add and get old values that need to delete
 		$add = array_diff((array)$new, (array)$old);
 		$delete = array_diff((array)$old, (array)$new);
-		foreach ($add as $add_new) {
-			add_post_meta($post_id, $name, $add_new, false);
-		}
 		foreach ($delete as $delete_old) {
 			delete_post_meta($post_id, $name, $delete_old);
+		}
+		foreach ($add as $add_new) {
+			add_post_meta($post_id, $name, $add_new, false);
 		}
 	}
 
 	function save_field_textarea($post_id, $field, $old, $new) {
 		$new = htmlspecialchars($new);
 		$this->save_field($post_id, $field, $old, $new);
+	}
+
+	function save_field_datetime($post_id, $field, $old, $new) {
+		$ts = preg_replace( '/([0-9]+)\/([0-9]+)\/([0-9]+) ([0-9]+):([0-9]+)/', '$3-$2-$1 $4:$5', $new );
+		update_post_meta( $post_id, $field['id'] . '_ts', strtotime( $ts ) );
+		$this->save_field( $post_id, $field, $old, $new );
 	}
 
 	function save_field_daterange($post_id, $field, $old, $new) {

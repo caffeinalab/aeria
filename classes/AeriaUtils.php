@@ -93,8 +93,10 @@ class AeriaUtils {
 	public static function title_like_posts_where( $where, &$wp_query ) {
 	    global $wpdb;
 	    if ( $post_title_like = $wp_query->get( 'post_title_like' ) ) {
-	        $where .= ' AND ' . $wpdb->posts . '.post_title LIKE \'' . esc_sql( like_escape( $post_title_like ) ) . '%\'';
+	        $where .= ' AND ' . $wpdb->posts . '.post_title LIKE \'%' . esc_sql( like_escape( $post_title_like ) ) . '%\'';
 	    }
 	    return $where;
 	}
+
+
 }

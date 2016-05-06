@@ -104,7 +104,7 @@ class AeriaReorder {
 	 * @param array $args    If not set, then uses $defaults instead
 	 */
 	public function __construct( $args = array() ) {
-
+		if (!is_admin()) return;
 		// Parse arguments
 		$defaults = array(
 			'post_type'   => 'post',                     // Setting the post type to be reordered
@@ -137,8 +137,8 @@ class AeriaReorder {
 		add_action( 'admin_menu',          array( $this, 'enable_post_sort' ), 10, 'page' );
 
 		// Add Scripts
-		wp_enqueue_script('list', AERIA_RESOURCE_URL.'js/list.js');
-		wp_enqueue_script('list_main', AERIA_RESOURCE_URL.'js/list-main.js');
+		wp_enqueue_script('list', 			AERIA_RESOURCE_URL.'js/list.js',['jquery']);
+		wp_enqueue_script('list_main',  AERIA_RESOURCE_URL.'js/list-main.js',['jquery']);
 	}
 
 

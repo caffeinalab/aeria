@@ -51,7 +51,7 @@ add_action('init',function(){
     remove_action( 'admin_bar_menu', 'wp_admin_bar_appearance_menu', 60 );
 
     // Disable RSS feeds
-    function __disable_feed(){static $url = null; if(null===$url) $url = get_bloginfo('url'); wp_redirect($url);}
+    $__disable_feed = function(){static $url = null; if(null===$url) $url = get_bloginfo('url'); wp_redirect($url);};
     add_action('do_feed',               '__disable_feed', 1);
     add_action('do_feed_rdf',           '__disable_feed', 1);
     add_action('do_feed_rss',           '__disable_feed', 1);
@@ -63,11 +63,38 @@ add_action('init',function(){
     // optimize_rewrites
 	add_filter('rewrite_rules_array', function($rules){
 	    foreach ($rules as $rule => $rewrite) {
-	        if ( preg_match('(feed|rss2|atom|comment|attachment|trackback|/page)i',$rule) ) {
+	        if ( preg_match('(feed|rss2|atom|comment|attachment|trackback)i',$rule) ) {
 	            unset($rules[$rule]);
 	        }
 	    }
 	    return $rules;
 	});
 
+    // Disable Emojis
+    remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+    remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+    remove_action( 'wp_print_styles', 'print_emoji_styles' );
+    remove_action( 'admin_print_styles', 'print_emoji_styles' );
+    remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+    remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+    remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+    add_filter( 'tiny_mce_plugins', function($plugins){
+        if ( is_array( $plugins ) ) {
+            return array_diff( $plugins, array( 'wpemoji' ) );
+        } else {
+            return array();
+        }
+    });
+
+    remove_action( 'welcome_panel', 'wp_welcome_panel' );
+});
+
+add_action('wp_dashboard_setup', function() {
+    foreach ( [ "dashboard", "dashboard-network" ] as $hook ) {
+        remove_meta_box('dashboard_plugins', $hook, 'normal');
+        remove_meta_box('dashboard_primary', $hook, 'side');
+        remove_meta_box('dashboard_secondary', $hook, 'side');
+        remove_meta_box('icl_dashboard_widget', $hook, 'side');
+        remove_meta_box('wpseo-dashboard-overview', $hook, 'side');
+    }
 });

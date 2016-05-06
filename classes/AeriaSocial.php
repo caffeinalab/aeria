@@ -117,7 +117,7 @@ class AeriaSocial {
 		if (is_array($uri)) {
 			return array_map([ 'static', 'getCountSingle' ], $uri);
 		} else {
-			return $this->getCountSingle($uri);
+			return static::getCountSingle($uri);
 		}
 	}
 

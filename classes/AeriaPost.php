@@ -14,6 +14,7 @@ class AeriaPost {
     public      $permalink      = '';
     public      $order          = '';
     public      $type           = '';
+    public      $post_author    = '';
     public      $parent         = null;
     protected   $_fields        = null;
     protected   $_fields_cache  = null;
@@ -24,11 +25,17 @@ class AeriaPost {
     protected   $_tax_cache     = null;
     protected   $_featured      = null;
 
-
     public function __construct($id,$type=null){
         if($id){
-            if(is_a($id,'WP_Post')){
-                $t_post         = $id;
+            if(is_object($id)){
+                if (is_a($id,'WP_Post')){
+                    $t_post         = $id;
+                } else if (is_a($id,'AeriaPost')) {
+                    foreach ($id as $key => $value) {
+                        $this->$key = $value;
+                    }
+                    return;
+                }
             } else {
                 $fld = is_numeric($id)?'id':'name';
                 $q = $type?array($fld=>$id,'post_type'=>$type):array($fld=>$id);
@@ -37,6 +44,7 @@ class AeriaPost {
             $this->id           = $t_post->ID;
             $this->title        = apply_filters('the_title', $t_post->post_title);
             $this->raw_content  = $t_post->post_content;
+            $this->post_author  = $t_post->post_author;
             $this->content      = do_shortcode(apply_filters('the_content', $t_post->post_content));
             $this->excerpt      = apply_filters('the_excerpt', $t_post->post_excerpt);
             $this->date         = $t_post->post_date;
@@ -44,7 +52,7 @@ class AeriaPost {
             $this->order        = $t_post->menu_order?:0;
             $this->permalink    = AERIA_HOME_URL.$t_post->post_type.'/'.$t_post->post_name;
             $this->type         = $type?:$t_post->post_type;
-            $this->parent       = ($t_post->post_parent)?new self($t_post->post_parent):null;
+            $this->parent       = ($t_post->post_parent)?new static($t_post->post_parent):null;
         }
     }
 
@@ -88,17 +96,14 @@ class AeriaPost {
         if(!empty($terms)){
             if(!is_wp_error($terms)){
                 foreach($terms as $key=>$term){
-
-                    if($key[0]!='_'){
-                        if(count($term)>1){
-                            $temp = [];
-                            foreach ($term as $value) {
-                                $temp[] = is_serialized($value)?unserialize($value):$value;
-                            }
-                            $results[$key] = $temp;
-                        } else {
-                            $results[$key] = is_serialized($term[0])?unserialize($term[0]):$term[0];
+                    if(count($term)>1){
+                        $temp = [];
+                        foreach ($term as $value) {
+                            $temp[] = is_serialized($value)?unserialize($value):$value;
                         }
+                        $results[$key] = $temp;
+                    } else {
+                        $results[$key] = is_serialized($term[0])?unserialize($term[0]):$term[0];
                     }
                 }
             }
@@ -348,6 +353,33 @@ class AeriaPost {
         } else {
             return [];
         }
+    }
+
+    function fieldInfo($field_name){
+        return AeriaMetabox::infoForField($this->type,$field_name);
+    }
+
+    function fieldDisplayValue($field_name){
+        $info = $this->fieldInfo($field_name);
+        $raw  = $this->fields->$field_name;
+        if (empty($info['options'])) return $raw;
+        $value = is_callable($info['options']) ? call_user_func($info['options']) : $info['options'];
+        return is_array($value) && isset($value[$raw]) ? $value[$raw] : $raw;
+    }
+
+    /**
+     * fieldAsPost function.
+     *
+     * @access public
+     * @param mixed $field_name
+     * @return void
+     */
+    function fieldAsPost($field_name){
+        $res = [];
+        if(isset($this->fields->$field_name)) foreach(preg_split('/\s*,\s*/',$this->fields->$field_name) as $_id){
+            $res[] = new self($_id);
+        };
+        return empty($res)?false:(count($res)>1?$res:$res[0]);
     }
 
     /**

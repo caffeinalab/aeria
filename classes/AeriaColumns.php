@@ -83,7 +83,8 @@ class AeriaColumns {
                         $w = @$column_def['width']?:'150px';
                         $h = @$column_def['height']?:'150px';
                         $s = @$column_def['shadow']?:'1px 1px 5px rgba(0,0,0,.6)';
-                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.';">';
+                        $x = @$column_def['style']?:'';
+                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.';'.$x.'">';
                       }
                       break;
                     case 'media':
@@ -91,7 +92,8 @@ class AeriaColumns {
                         $w = @$column_def['width']?:'150px';
                         $h = @$column_def['height']?:'150px';
                         $s = @$column_def['shadow']?:'1px 1px 5px rgba(0,0,0,.6)';
-                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.'">';
+                        $x = @$column_def['style']?:'';
+                        echo '<div style="width:'.$w.';height:'.$h.';display:block;margin:0 auto;background:url('.$value.') center center no-repeat;background-size:cover;box-shadow:'.$s.';'.$x.'">';
                       }
                       break;
                     default:
