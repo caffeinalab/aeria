@@ -12,7 +12,7 @@ class AeriaSection {
 		add_action('add_meta_boxes', function() use ($args){
 			foreach ( (array) $args['type'] as $type ) {
 				add_meta_box(
-					'aeria_section',
+					'aeria_section' . ( !empty($args['id']) ? "_{$args['id']}" : "" ),
 					$args['title'],
 					function($post) use ($args) {
 						AeriaSection::render_controls($args);
