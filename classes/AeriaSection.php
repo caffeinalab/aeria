@@ -8,11 +8,11 @@ class AeriaSection {
 
 		if(empty($args['type'])) die("AeriaSection: You must define a post_type id");
 		if(empty($args['title'])) $args['title'] = 'Sections';
-
-		add_action('add_meta_boxes', function() use ($args){
+		$section_id = 'aeria_section' . ( !empty($args['id']) ? "_{$args['id']}" : "" );
+		add_action('add_meta_boxes', function() use ($args, $section_id){
 			foreach ( (array) $args['type'] as $type ) {
 				add_meta_box(
-					'aeria_section' . ( !empty($args['id']) ? "_{$args['id']}" : "" ),
+					$section_id,
 					$args['title'],
 					function($post) use ($args) {
 						AeriaSection::render_controls($args);
@@ -24,8 +24,8 @@ class AeriaSection {
 		});
 
 		foreach ( (array) $args['type'] as $type ) {
-			add_filter( 'postbox_classes_' . $type . '_aeria_section', function( $classes ) use ( $args ) {
-				array_push( $classes, 'aeria_section_' . $args['title'] );
+			add_filter( "postbox_classes_{$type}_{$section_id}", function($classes) use ($args, $section_id) {
+				array_push( $classes, $section_id );
 				return $classes;
 			});
 		}
