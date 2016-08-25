@@ -3,9 +3,12 @@ jQuery(function($){
     var box_reorder = $('.box-reorder');
 
     $('[data-section-add]').on('click', function (e) {
+        var id_section = $(this).data('section-add');
+        var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
+
         e.preventDefault();
         if(!box_reorder.is(':visible')) {
-            var last_section = $('.box-sections > .box-section').last();
+            var last_section = $('#'+content_section+' .box-sections > .box-section').last();
             var new_section_num;
             if(typeof last_section.data('section-num') === 'undefined'){
                 new_section_num = 0;
@@ -14,23 +17,27 @@ jQuery(function($){
             }
             var ncol = $('#ncol').val();
 
-            $.post(window.ajaxurl, { action: 'add_section', section : new_section_num, ncol : parseInt(ncol) }, function(response) {
-                $('.box-sections').append(response);
+            $.post(window.ajaxurl, { action: 'add_section', section : new_section_num, ncol : parseInt(ncol), id_section : id_section }, function(response) {
+                $('#'+content_section+' .box-sections').append(response);
                 engineSelectBg();
             });
         }
     });
 
     $('[data-section-expand-all]').on('click', function(e) {
+         var id_section = $(this).data('section-expand-all');
+         var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
         e.preventDefault();
         if(!box_reorder.is(':visible')) {
-          $('.box-sections').find('.body-section').css('display','block');
+          $('#'+content_section+' .box-sections').find('.body-section').css('display','block');
         }
     });
 
     $('[data-section-expand]').on('click', function(e) {
+        var id_section = $(this).data('section-expand');
+        var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
         e.preventDefault();
-        $('.body-section').css('display','none');
+        $('#'+content_section+' .body-section').css('display','none');
         $(this).parents('.box-section').find('.body-section').css('display','block');
     });
 
@@ -40,9 +47,11 @@ jQuery(function($){
     });
 
     $('[data-section-sort]').on('click', function() {
-        $('.box-sections').hide();
-        $('.box-reorder').fadeIn();
-        $('.box-controls').css('opacity',0.3);
+        var id_section = $(this).data('section-sort');
+         var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
+        $('#'+content_section+' .box-sections').hide();
+        $('#'+content_section+' .box-reorder').fadeIn();
+        $('#'+content_section+' .box-controls').css('opacity',0.3);
     });
 
     $('[data-section-sortable]').sortable({
@@ -53,13 +62,16 @@ jQuery(function($){
 
     $('[data-section-sortable-save]').on('click', function() {
         var order = [];
+        var id_section = $(this).data('section-sortable-save');
+        var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
+
         var post_id = $('[data-section-sortable]').data('post-id');
 
-        $('[data-section-sortable] > li').each(function(index, el) {
+        $('#'+content_section+' [data-section-sortable] > li').each(function(index, el) {
             order.push($(el).data('section-id'));
         });
 
-        $.post(window.ajaxurl, { action: 'sort_section', order : order, post_id : post_id  }, function(response) {
+        $.post(window.ajaxurl, { action: 'sort_section', order : order, post_id : post_id, 'id_section' : id_section  }, function(response) {
             location.reload();
         });
     });
