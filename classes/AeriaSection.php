@@ -226,6 +226,11 @@ class AeriaSection {
 
 		if(!empty($id_section)) $field['id'] = $id_section.'_'.$field['id'];
 
+		if ($field['type'] == 'hidden'){
+			echo '<input type="hidden" value="' . $field['value'] . '" id="' . $field['id'] . '_' . $key . '" name="' . $field['id'] . '_' . $key . '"/> ';
+			return;
+		}
+		
 		echo '<div class="row-field">';
 
 		echo '<label for="'.$field['id'].'_'.$key.'">'.$field['name'].'</label>';
