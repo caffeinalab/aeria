@@ -8,11 +8,14 @@ class AeriaSection {
 
 		if(empty($args['type'])) die("AeriaSection: You must define a post_type id");
 		if(empty($args['title'])) $args['title'] = 'Sections';
-		$section_id = 'aeria_section' . ( !empty($args['id']) ? "_{$args['id']}" : "" );
-		add_action('add_meta_boxes', function() use ($args, $section_id){
+		$id_section = (empty($args['id']))?'':$args['id'];
+
+		add_action('add_meta_boxes', function() use ($args, $id_section){
+
+			$id_metabox = !empty($id_section)?'aeria_section_'.$id_section:'aeria_section';
 			foreach ( (array) $args['type'] as $type ) {
 				add_meta_box(
-					$section_id,
+					$id_metabox,
 					$args['title'],
 					function($post) use ($args) {
 						AeriaSection::render_controls($args);
@@ -24,13 +27,15 @@ class AeriaSection {
 		});
 
 		foreach ( (array) $args['type'] as $type ) {
-			add_filter( "postbox_classes_{$type}_{$section_id}", function($classes) use ($args, $section_id) {
-				array_push( $classes, $section_id );
+			add_filter( 'postbox_classes_' . $type . '_aeria_section', function( $classes ) use ( $args ) {
+				array_push( $classes, 'aeria_section_' . $args['title'] );
 				return $classes;
 			});
 		}
 
 		add_action('save_post', function($post_id) use($args) {
+
+			$id_section = (empty($args['id']))?'':$args['id'].'_';
 
 			if (!isset($_POST['section_metabox_nonce'])){
 				return;
@@ -60,20 +65,20 @@ class AeriaSection {
 			$sections = [];
 			$s = 0;
 
-			while ( isset($_POST['post_section_columns_'.$s])) {
+			while ( isset($_POST[$id_section.'post_section_columns_'.$s])) {
 
 				// check columns
-				$columns = $_POST['post_section_columns_'.$s];
+				$columns = $_POST[$id_section.'post_section_columns_'.$s];
 
 				$content = [];
 				for ($i=1; $i <= $columns ; $i++) {
-					if(isset($_POST['post_section_'.$s.'_'.$i])) $content['column_'.$i] = wpautop($_POST['post_section_'.$s.'_'.$i]);
+					if(isset($_POST[$id_section.'post_section_'.$s.'_'.$i])) $content['column_'.$i] = wpautop($_POST[$id_section.'post_section_'.$s.'_'.$i]);
 				}
 
 				$sections['section_'.$s] = [
 					'columns' =>  $columns,
-					'title' => sanitize_text_field($_POST['post_section_title_'.$s]),
-					'background' => $_POST['post_section_background_'.$s],
+					'title' => sanitize_text_field($_POST[$id_section.'post_section_title_'.$s]),
+					'background' => $_POST[$id_section.'post_section_background_'.$s],
 					'content' => $content
 				];
 
@@ -81,24 +86,26 @@ class AeriaSection {
 				if ( count( $args['fields'] ) === 1 ){
 					$value_type = array_keys( $args['fields'] )[0];
 				}else{
-					$value_type = ( isset($_POST['section_type_'.$s] ) && !empty( $_POST['section_type_'.$s] ) )? $_POST['section_type_'.$s] : '' ;
+					$value_type = ( isset($_POST[$id_section.'section_type_'.$s] ) && !empty( $_POST[$id_section.'section_type_'.$s] ) )? $_POST[$id_section.'section_type_'.$s] : '' ;
 				}
 				if( $value_type ) $sections['section_'.$s]['section_type'] = $value_type;
 
 				//save classic fields
 				if(isset($args['fields']) && !empty($args['fields']) && isset($args['fields'][0]['type'])){
 					foreach ($args['fields'] as $field) {
-						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
+						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$id_section.$field['id'].'_'.$s];
 					}
 				}elseif(count($args['fields']) && !empty($value_type)) {
 					foreach ($args['fields'][$value_type]['fields'] as $field) {
-						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$field['id'].'_'.$s];
+						$sections['section_'.$s]['fields'][$field['id']] = $_POST[$id_section.$field['id'].'_'.$s];
 					}
 				}
 
 				$s++;
 			}
-			if(!empty($sections)) update_post_meta( $post_id, 'post_sections', wp_slash(json_encode($sections,JSON_UNESCAPED_UNICODE)) );
+			$id_meta_section = !empty($id_section)?'_'.str_replace('_','',$id_section):'';
+
+			if(!empty($sections)) update_post_meta( $post_id, 'post_sections'.$id_meta_section, wp_slash(json_encode($sections,JSON_UNESCAPED_UNICODE)) );
 
 		});
 
@@ -115,18 +122,19 @@ class AeriaSection {
 	        );
 		});
 
-		add_action( 'wp_ajax_add_section', function(){
-			AeriaSection::render_section([],$_POST['section'],$_POST['ncol']); exit;
+		add_action( 'wp_ajax_add_section', function() {
+			AeriaSection::render_section([],$_POST['section'],$_POST['ncol'],['id' => $_POST['id_section']]); exit;
 		});
 
 		add_action( 'wp_ajax_sort_section', function(){
-			AeriaSection::sort_section($_POST['order'], $_POST['post_id']); exit;
+			AeriaSection::sort_section($_POST['order'], $_POST['post_id'],$_POST['id_section']); exit;
 		});
 
 	}
 
-	public static function sort_section($order, $post_id) {
-		$sections = json_decode(get_post_meta( $post_id, 'post_sections', true ),true);
+	public static function sort_section($order, $post_id, $id_section) {
+		$id_meta_section = !empty($id_section)?'_'.$id_section:'';
+		$sections = json_decode(get_post_meta( $post_id, 'post_sections'.$id_meta_section, true ),true);
 
 		$new_sections = [];
 		$s = 0;
@@ -136,7 +144,7 @@ class AeriaSection {
 			$s++;
 		}
 
-		update_post_meta( $post_id, 'post_sections', wp_slash(json_encode($new_sections,JSON_UNESCAPED_UNICODE)) );
+		update_post_meta( $post_id, 'post_sections'.$id_meta_section, wp_slash(json_encode($new_sections,JSON_UNESCAPED_UNICODE)) );
 
 		die(json_encode([
 			'success' => 1
@@ -144,6 +152,10 @@ class AeriaSection {
 	}
 
 	public static function render_controls($args=[]){
+
+		$id_section = (empty($args['id']))?'':$args['id'];
+		$id_metabox = !empty($id_section)?'aeria_section_'.$id_section:'aeria_section';
+
 		?>
 		<div class="box-controls">
 			<?php if(empty($args['supports']) || in_array('columns', $args['supports'])){ ?>
@@ -156,16 +168,22 @@ class AeriaSection {
 			<?php }else{ ?>
 				<input type="hidden" value="1" id="ncol">
 			<?php } ?>
-			<button class="button button-primary button-large" type="button" data-section-add ><span class="dashicons dashicons-welcome-add-page"></span> <?= __('Add', 'aeria') ?> <?= $args['title'] ?></button>
-			<button class="button button-large" type="button" data-section-expand-all ><span class="dashicons dashicons-editor-expand"></span> <?= __('Expand All', 'aeria') ?> <?= $args['title'] ?></button>
-			<button class="button button-large" type="button" data-section-sort ><span class="dashicons dashicons-randomize"></span> <?= __('Reorder/Remove', 'aeria') ?></button>
+			<button class="button button-primary button-large" type="button" data-section-add="<?= $id_section ?>" ><span class="dashicons dashicons-welcome-add-page"></span> <?= __('Add', 'aeria') ?> <?= $args['title'] ?></button>
+			<button class="button button-large" type="button" data-section-expand-all="<?= $id_section ?>" ><span class="dashicons dashicons-editor-expand"></span> <?= __('Expand All', 'aeria') ?> <?= $args['title'] ?></button>
+			<button class="button button-large" type="button" data-section-sort="<?= $id_section ?>" ><span class="dashicons dashicons-randomize"></span> <?= __('Reorder/Remove', 'aeria') ?></button>
 			<div style="clear:both"></div>
 		</div>
 		<?php
 	}
 
 	public static function render_sections($post_id, $args){
-		$sections = json_decode(get_post_meta( $post_id, 'post_sections', true ),true);
+
+		$id_section = (empty($args['id']))?'':$args['id'];
+		$id_meta_section = !empty($id_section)?'_'.$id_section:'';
+		$id_metabox = !empty($id_section)?'aeria_section_'.$id_section:'aeria_section';
+
+		$sections = json_decode(get_post_meta( $post_id, 'post_sections'.$id_meta_section, true ),true);
+
 		wp_nonce_field( 'section_metabox', 'section_metabox_nonce' );
 
 		?>
@@ -177,11 +195,11 @@ class AeriaSection {
 					echo '<ul data-section-sortable data-post-id="'.$post_id.'">';
 					foreach ($sections as $key => $section) {
 						$title = !empty($section['title'])?stripslashes($section['title']):'Section '.$s;
-						echo '<li data-section-id="section_'.$s.'">'.$title.' <button class="button button-small" type="button" data-section-remove ><span class="dashicons dashicons-trash"></span></button></li>';
+						echo '<li data-section-id="section_'.$s.'">'.$title.' <button class="button button-small" type="button" data-section-remove="'.$id_section.'" ><span class="dashicons dashicons-trash"></span></button></li>';
 						$s++;
 					}
 					echo '</ul>';
-					echo '<button class="button button-large button-primary" type="button" data-section-sortable-save ><span class="dashicons dashicons-yes"></span> Confirm</button>';
+					echo '<button class="button button-large button-primary" type="button" data-section-sortable-save="'.$id_section.'" ><span class="dashicons dashicons-yes"></span> Confirm</button>';
 
 				}
 			?>
@@ -203,8 +221,10 @@ class AeriaSection {
 		<?php
 	}
 
-	public static function render_field($field=null,$key=0,$val=''){
+	public static function render_field($field=null,$key=0,$val='',$id_section=''){
 		if(!$field) return;
+
+		if(!empty($id_section)) $field['id'] = $id_section.'_'.$field['id'];
 
 		echo '<div class="row-field">';
 
@@ -253,15 +273,17 @@ class AeriaSection {
 		echo '</div>';
 	}
 
-	public static function render_relation_fields($fields=null,$key=0,$val='',$preview_path){
+	public static function render_relation_fields($fields=null,$key=0,$val='',$preview_path, $id_section=''){
 		if(!$fields) return;
+
+		$field_id = (empty($id_section))?'':$id_section.'_';
 
 		$row_class = !empty($preview_path)?'row-half':'row-full';
 		$preview_attr = !empty($preview_path)?'data-select-preview="'.$preview_path.'"':'';
 
 		echo '<div class="'.$row_class.'">';
 
-			echo '<select '.$preview_attr.' id="section_type_'.$key.'" name="section_type_'.$key.'">';
+			echo '<select '.$preview_attr.' id="'.$field_id.'section_type_'.$key.'" name="'.$field_id.'section_type_'.$key.'">';
 			echo '<option value="">Seleziona una tipologia di sezione</option>';
 			foreach ($fields as $k => $value) {
 				$selected = ($val == $k)?'selected="selected"':'';
@@ -288,6 +310,9 @@ class AeriaSection {
 		$support_fields = (!isset($args['supports']) || empty($args['supports']) || in_array('fields', $args['supports']));
 		$preview_path = (isset($args['preview_path']) && !empty($args['preview_path']))?$args['preview_path']:false;
 
+		$id_section = (empty($args['id']))?'':$args['id'];
+		$id_meta_section = !empty($id_section)?'_'.$id_section:'';
+		$id_input = !empty($id_section)?$id_section.'_':'';
 
 		if(empty($section_passed)) {
 			$section = [
@@ -321,17 +346,17 @@ class AeriaSection {
 
 	?>
 		<div class="box-section<?= ($section_passed['section_type']) ? ' section_' . $section_passed['section_type'] : '' ?>" data-section-num=<?= $key ?>>
-			<input type="hidden" data-section-columns name="post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
+			<input type="hidden" data-section-columns="<?= $id_section ?>" name="<?= $id_input ?>post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
 			<div class="header-section" >
-				<div class="remove_background" data-remove-background>x</div>
-				<div class="background" data-section-background style="background-image:url(<?= stripslashes($section['background']) ?>);">
-					<input type="hidden" name="post_section_background_<?= $key ?>" id="post_section_background_<?= $key ?>" value="<?= $section['background'] ?>" />
+				<div class="remove_background" data-remove-background="<?= $id_section ?>">x</div>
+				<div class="background" data-section-background="<?= $id_section ?>" style="background-image:url(<?= stripslashes($section['background']) ?>);">
+					<input type="hidden" name="<?= $id_input ?>post_section_background_<?= $key ?>" id="<?= $id_input ?>post_section_background_<?= $key ?>" value="<?= $section['background'] ?>" />
 				</div>
 				<div class="title">
-					<input type="text" placeholder="Here the title" class="post_section_title" name="post_section_title_<?= $key ?>" id="post_section_title_<?= $key ?>" value="<?= stripslashes($section['title']) ?>" >
+					<input type="text" placeholder="Here the title" class="post_section_title" name="<?= $id_input ?>post_section_title_<?= $key ?>" id="<?= $id_input ?>post_section_title_<?= $key ?>" value="<?= stripslashes($section['title']) ?>" >
 				</div>
 				<div class="controls">
-					<button class="button button-small" data-section-expand ><span class="dashicons dashicons-welcome-write-blog"></span></button>
+					<button class="button button-small" data-section-expand="<?= $id_section ?>" ><span class="dashicons dashicons-welcome-write-blog"></span></button>
 				</div>
 				<div style="clear:both;"></div>
 			</div>
@@ -352,7 +377,7 @@ class AeriaSection {
 							echo '<div class="wrap-fields">';
 							foreach ( $args['fields'] as $field ) {
 								$value = (isset($section['fields'][$field['id']]) && !empty($section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-								AeriaSection::render_field($field,$key,$value);
+								AeriaSection::render_field($field,$key,$value,$id_section);
 							}
 							echo '</div>';
 						}elseif( count( $args['fields'] ) ) {
@@ -364,7 +389,7 @@ class AeriaSection {
 								$value_type = current(array_keys($args['fields']));
 							}else{
 								$value_type = isset( $section['section_type'] )?$section['section_type']:'';	// get value from general section settings
-								AeriaSection::render_relation_fields( $args['fields'],$key,$value_type,$preview_path );
+								AeriaSection::render_relation_fields( $args['fields'],$key,$value_type,$preview_path,$id_section );
 							}
 
 							if(!empty($value_type)){
@@ -372,7 +397,7 @@ class AeriaSection {
 								echo '<div class="wrap-fields">';
 								foreach ($args['fields'][$value_type]['fields'] as $field) {
 									$value = ( isset( $section['fields'][$field['id']] ) && !empty( $section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-									AeriaSection::render_field( $field,$key,$value );
+									AeriaSection::render_field( $field,$key,$value,$id_section );
 								}
 								echo '</div>';
 							}else{
@@ -386,7 +411,7 @@ class AeriaSection {
 					if($support_columns){
 						for ($i=1; $i <= $section['columns']; $i++) {
 							if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
-						 	wp_editor( stripslashes($section['content']['column_'.$i]) , 'post_section_'.$key.'_'.$i );
+						 	wp_editor( stripslashes($section['content']['column_'.$i]) , $id_meta_section.'post_section_'.$key.'_'.$i );
 						}
 					}
 				?>
