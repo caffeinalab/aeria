@@ -148,7 +148,7 @@ class AeriaSocial {
 				if (isset($api_data['errors'][ $uri ])) {
 
 					$result[ $uri ]['errors'][ $service_key ] = $api_data['errors'][ $uri ];
-			
+					
 				} else if (isset($api_data['count'][ $uri ])) {
 
 					$count = $api_data['count'][ $uri ] ?: 0;
@@ -242,7 +242,7 @@ class AeriaSocial {
 			if (preg_match("/{c: (\d+)/", $data, $matches)) {
 				$result['count'][ $uri ] = intval($matches[1]);
 			} else {
-				$result['errors'][ $uri ] = "Unable to retrieve share count";
+				$result['count'][ $uri ] = 0;
 			}
 		}
 
