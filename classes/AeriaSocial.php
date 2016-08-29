@@ -121,12 +121,12 @@ class AeriaSocial {
 			'uri' 				=> $uri,
 			'hash' 				=> $hashes[ $uri ],
 			'services' 			=> [],
-			'services_errors' => [],
+			'errors' 			=> [],
 			'sum' 				=> 0
 			];
 
 			foreach (array_keys(static::$config['services']) as $service_key) {
-				$count = AeriaCache::get( static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key );
+				$count = AeriaCache::get(static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key);
 
 				if ($count == null || (time() > $count['expire'])) {				
 					if ($only_cache === false) {
@@ -142,29 +142,33 @@ class AeriaSocial {
 		foreach ($uris_to_fetch as $service_key => $uris_to_fetch_per_service) {
 			if (empty($uris_to_fetch_per_service)) continue;
 
-			try {
+			$api_data = forward_static_call([ 'static', 'getCountForService' . ucfirst($service_key)], $uris_to_fetch_per_service);
 
-				$api_data = forward_static_call([ 'static', 'getCountForService' . ucfirst($service_key)], $uris_to_fetch_per_service);
-				
-				foreach ($uris_to_fetch_per_service as $uri) {
-					$count = $api_data[ $uri ];
-					$result[ $uri ]['services'][ $service_key ] = $count;
+			foreach ($uris_to_fetch_per_service as $uri) {
+				if (isset($api_data['errors'][ $uri ])) {
 
-					AeriaCache::set([
-					'expire' => time() + static::$config['cache_ttl'],
-					'count' 	=> $count
-					], static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key);
+					$result[ $uri ]['errors'][ $service_key ] = $api_data['errors'][ $uri ];
+			
+				} else if (isset($api_data['count'][ $uri ])) {
 
+					$count = $api_data['count'][ $uri ] ?: 0;
+					if ($count < $result[ $uri ]['services'][ $service_key ]) {
+						$result[ $uri ]['errors'][ $service_key ] = "Greater count in cache";
+					} else if ($count > $result[ $uri ]['services'][ $service_key ]) {
+						$result[ $uri ]['services'][ $service_key ] = $count;
+						AeriaCache::set([
+						'expire' => time() + static::$config['cache_ttl'],
+						'count' 	=> $count
+						], static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key);
+					}
+
+				} else {
+					
+					$result[ $uri ]['errors'][ $service_key ] = "Empty count";
+			
 				}
-
-			} catch (Exception $e) {
-
-				foreach ($uris_to_fetch_per_service as $uri) {
-					$result[ $uri ]['services'][$service_key] = 0;
-					$result[ $uri ]['services_errors'] = $e->getMessage();
-				}
-
 			}
+
 		}			
 
 		foreach ($result as $uri => $data) {
@@ -184,16 +188,17 @@ class AeriaSocial {
 	}
 
 	public static function getCountForServiceEmpty($uris) {
-		$result = [];
-		foreach ($uris as $uri) $result[ $uri ] = 0;
+		$result = [ 'errors' => [], 'count' => [] ];
+		foreach ($uris as $uri) {
+			$result['count'][ $uri ] = 0;
+		}
 		return $result;
 	}
 
 	public static function getCountForServiceFacebook($uris) {
-		$result = [];
+		$result = [ 'errors' => [], 'count' => [] ];
 
-		$uri_encoded = implode(',', $uris);		
-		$url = "https://graph.facebook.com/?ids=" . $uri_encoded;
+		$url = "https://graph.facebook.com/?ids=" . implode(',', $uris);
 
 		if (!empty(static::$config['facebook_app_token'])) {
 			$url .= "&access_token=" . static::$config['facebook_app_token'];
@@ -202,9 +207,10 @@ class AeriaSocial {
 		$data = AeriaNetwork::json($url);
 
 		foreach ($uris as $uri) {
-			$result[ $uri ] = 0;
-			if (!empty($data->{$uri}->share->share_count)) {
-				$result[ $uri ] = intval($data->{$uri}->share->share_count);
+			if (isset($data->{$uri}->share->share_count)) {
+				$result['count'][ $uri ] = intval($data->{$uri}->share->share_count);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
 			}
 		}
 
@@ -212,35 +218,40 @@ class AeriaSocial {
 	}
 
 	public static function getCountForServiceLinkedin($uris) {
-		$result = [];
+		$result = [ 'errors' => [], 'count' => [] ];
 		
 		foreach ($uris as $uri) {
-			$result[ $uri ] = 0;
 			$data = AeriaNetwork::json("http://www.linkedin.com/countserv/count/share?format=json&url=" . urlencode($uri));
-			if (!empty($data->count)) {
-				$result[ $uri ] = intval($data->count);
+
+			if (isset($data->count)) {
+				$result['count'][ $uri ] = intval($data->count);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
 			}
 		}
 
 		return $result;
-	}
-
-	public static function getCountForServiceTwitter($uris) {
-		return static::getCountForServiceEmpty($uris);
 	}
 
 	public static function getCountForServiceGplus($uris) {
-		$result = [];
+		$result = [ 'errors' => [], 'count' => [] ];
 		
 		foreach ($uris as $uri) {
-			$result[ $uri ] = 0;
 			$data = AeriaNetwork::send("https://plusone.google.com/_/+1/fastbutton?count=true&url=" . urlencode($uri));
+
 			if (preg_match("/{c: (\d+)/", $data, $matches)) {
-				$result[ $uri ] = intval($matches[1]);
+				$result['count'][ $uri ] = intval($matches[1]);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
 			}
 		}
 
 		return $result;
+	}
+
+
+	public static function getCountForServiceTwitter($uris) {
+		return static::getCountForServiceEmpty($uris);
 	}
 
 	public static function getMostSharedContents() {
@@ -258,3 +269,4 @@ class AeriaSocial {
 	}
 
 }
+
