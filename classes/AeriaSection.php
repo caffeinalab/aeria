@@ -11,7 +11,10 @@ class AeriaSection {
 		$id_section = (empty($args['id']))?'':$args['id'];
 
 		add_action('add_meta_boxes', function() use ($args, $id_section){
-
+			global $post;
+			if (!empty($args['post_id']) && !in_array( $post->ID, (array) $args['post_id'] )){
+				return;
+			}
 			$id_metabox = !empty($id_section)?'aeria_section_'.$id_section:'aeria_section';
 			foreach ( (array) $args['type'] as $type ) {
 				add_meta_box(
@@ -50,6 +53,10 @@ class AeriaSection {
 			}
 
 			if ( !in_array( $_POST['post_type'], (array) $args['type'] ) ) {
+				return;
+			}
+
+			if (!empty($args['post_id']) && !in_array( $post_id, (array) $args['post_id'] )){
 				return;
 			}
 
