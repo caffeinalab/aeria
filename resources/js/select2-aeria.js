@@ -98,7 +98,7 @@ window.aeria_init_select2_ajax = function(){
 							        dataType: "json"
 							    }).done(function(data) {
 							    	jQuery.each(data,function( index, value ){
-							    		data[index].text = $("<textarea/>").html(value.text).val();
+							    		data[index].text = jQuery("<textarea/>").html(value.text).val();
 							    	});
 							    	callback(data);
 							    });
