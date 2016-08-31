@@ -558,8 +558,9 @@ class Meta_Box {
 	function show_field_select_ajax($field, $meta) {
 		if (!is_array($meta)) $meta = (array) $meta;
 		$meta_value = html_addslashes(empty($meta)?'':$meta[0]);
+		$field['with'] = !empty($field['with']) && in_array($field['with'], ["post_type", "taxonomy"]) ? $field['with'] : "post_type";
 		$this->show_field_begin($field, $meta);
-		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
+		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-with='{$field['with']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
 		$this->show_field_end($field, $meta);
 	}
 
