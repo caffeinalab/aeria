@@ -232,7 +232,7 @@ class AeriaSection {
 		if(!$field) return;
 
 		if(!empty($id_section)) $field['id'] = $id_section.'_'.$field['id'];
-
+		if (empty($val) && is_callable($field['value'])) $field['value'] = call_user_func($field['value']);
 		if ($field['type'] == 'hidden'){
 			echo '<input type="hidden" value="' . $field['value'] . '" id="' . $field['id'] . '_' . $key . '" name="' . $field['id'] . '_' . $key . '"/> ';
 			return;
