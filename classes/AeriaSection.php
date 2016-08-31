@@ -119,7 +119,7 @@ class AeriaSection {
 
 		add_action('admin_enqueue_scripts', function(){
 			wp_enqueue_style('aeria_section', AERIA_RESOURCE_URL.'css/section.css');
-			wp_enqueue_script('aeria_section', AERIA_RESOURCE_URL.'js/section.js');
+			wp_enqueue_script('aeria_section', AERIA_RESOURCE_URL.'js/section.js', ['jquery-ui-sortable']);
 			wp_enqueue_media();
 			wp_localize_script( 'aeria_section', 'meta_image',
 	        	[
