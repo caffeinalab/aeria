@@ -25,10 +25,10 @@ class AeriaAdmin {
 	public static function page( $options ) {
 		static $anon  = 0;
 		static $index = 0;
-		
+
 		// Dashicons
 		// https://developer.wordpress.org/resource/dashicons
-		
+
 		$options = (object)array_merge([
 			'id'     			=> null,
 			'title'  			=> 'Opzioni',
@@ -69,26 +69,27 @@ class AeriaAdmin {
 	}
 
 	public static function editor( $options ) {
-		
+
 		$options = (object)array_merge([
 			'json'  			=> false,
 			'mode'  			=> false,
 			'views'  			=> 'tree,code,form',
 		],(array)$options);
 
-		if (!$options->json || !file_exists($options->json)) 
+		if (!$options->json || !file_exists($options->json))
 			throw new Exception("AeriaAdmin::editor : JSON file not specified", 1);
 
 		$options->views = preg_split('~\s*,\s*~',$options->views);
 
 		if (!$options->mode) $options->mode = $options->views[0];
 
-		$options->render = function($options){ 
+		$options->render = function($options){
 				$options 	= (object)$options;
 
 				if ($_POST['action']=='save'){
 					if ($_POST['json'] != '~'){
 						file_put_contents($options->json,json_encode(json_decode(stripslashes($_POST['json'])),JSON_PRETTY_PRINT));
+						do_action('save_json',$options);
 						$message = 'Options saved to : '.basename($options->json);
 					} else $message = 'Something is wrong... file was not modified.';
 				} else $message = '';
