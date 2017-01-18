@@ -429,6 +429,10 @@ class Meta_Box {
 		wp_enqueue_media();
 		if(empty($metas)) $metas = [''];
 
+		if((@unserialize($metas) !== false)){
+			$metas = unserialize($metas);
+		}
+
 		$idx = 0;
 		$this->show_field_begin($field, $metas);
 		$layout = (isset($field['layout'])&&$field['layout'])!=''?$field['layout']:'preview';
