@@ -151,7 +151,7 @@ class AeriaPost {
                     'id'=>$term->term_id,
                     'name'=>$term->name,
                     'slug'=>$term->slug,
-                    'permalink' => get_term_link($term->term_id,$term->name)
+                    'permalink' => get_term_link($term->term_id,$taxname)
                     );
                 }
             }
