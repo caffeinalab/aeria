@@ -84,7 +84,7 @@ class AeriaSection {
 
 				$sections['section_'.$s] = [
 					'columns' =>  $columns,
-					'title' => sanitize_text_field($_POST[$id_section.'post_section_title_'.$s]),
+					'title' => htmlentities($_POST[$id_section.'post_section_title_'.$s]),
 					'background' => $_POST[$id_section.'post_section_background_'.$s],
 					'content' => $content
 				];
