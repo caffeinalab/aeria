@@ -1,9 +1,9 @@
 === Aeria ===
 Contributors: caffeina
 Tags: framework, metabox, custom-post, development
-Requires at least: 3.0
-Tested up to: 4.4
-Stable tag: 1.8.33
+Requires at least: 4.0
+Tested up to: 4.7.2
+Stable tag: 1.8.8
 
 WordPress Rapid Development Toolkit
 
