@@ -144,7 +144,10 @@ jQuery(function($){
 
                 // Grabs the attachment selection and creates a JSON representation of the model.
                 var media_attachment = meta_image_frame.state().get('selection').first().toJSON();
-
+                container.find('span.label').empty();
+                if(media_attachment.subtype == 'mp3' || media_attachment.subtype == 'mpeg'){
+                    container.find('span.label').html(media_attachment.filename);
+                }
                 // Sends the attachment URL to our custom image input field.
                 input.val(media_attachment.url);
                 container.css('background-image' , 'url('+media_attachment.url+')');
