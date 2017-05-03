@@ -273,6 +273,7 @@ class AeriaSection {
 
 				switch ($background_info['extension']) {
 					case 'mp3':
+					case 'mpeg':
 						$background_image = '';
 						$background_title = $background_info['basename'];
 						break;
@@ -284,9 +285,9 @@ class AeriaSection {
 				}
 
 				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background_image.');">';
-				if(!empty($background_title)){
-					echo '<span style="position:absolute; bottom:10px; width:100%; text-align: center;">'.$background_title.'</span>';
-				}
+				echo '<span class="label">';
+				if(!empty($background_title)) echo $background_title;
+				echo '</span>';
 				echo '<input type="hidden" name="'.$field['id'].'_'.$key.'" id="'.$field['id'].'_'.$key.'" value="'.$background.'" />';
 				echo '</div></div>';
 				break;
