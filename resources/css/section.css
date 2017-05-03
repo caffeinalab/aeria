@@ -112,6 +112,12 @@
 	position: relative;
 	display: inline-block;
 }
+.box-section .row-field span.label {
+	position:absolute;
+	bottom:10px;
+	width:100%;
+	text-align: center;
+}
 .box-section .row-field .wrap-editor {
 	display: block;
 	margin-top: 50px !important;
