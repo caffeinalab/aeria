@@ -6,15 +6,13 @@
     "version": "1.8.82",
     "requires": "4.0",
     "tested": "4.7.2",
-    "last_updated": "2017-05-09 14:22:00",
+    "last_updated": "2017-05-09 15:00:00",
     "upgrade_notice": "",
     "author": "Caffeina",
     "author_homepage": "http://caffeina.com/",
-
     "sections": {
         "description": "Modular, Fast, Wordpress Framework for advanced theme development."
     },
-
     "rating": 100,
     "num_ratings": 1000,
     "downloaded": 0
