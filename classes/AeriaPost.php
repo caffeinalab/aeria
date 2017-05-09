@@ -42,6 +42,7 @@ class AeriaPost {
                 $q = $type?array($fld=>$id,'post_type'=>$type):array($fld=>$id);
                 $t_post         = is_numeric($id)?get_post($id):current(get_posts($q));
             }
+
             $this->id               = $t_post->ID;
             $this->title            = apply_filters('the_title', $t_post->post_title);
             $this->raw_content      = $t_post->post_content;
@@ -77,7 +78,7 @@ class AeriaPost {
             $this->date         = $t_post->post_date;
             $this->slug         = $t_post->post_name;
             $this->order        = $t_post->menu_order;
-            $this->permalink    = AERIA_HOME_URL.$t_post->post_name;
+            $this->permalink    = get_permalink($this->id);
             $this->type         = 'page';
         }
         return $this;
@@ -153,7 +154,7 @@ class AeriaPost {
                     'id'=>$term->term_id,
                     'name'=>$term->name,
                     'slug'=>$term->slug,
-                    'permalink' => get_term_link($term->term_id,$term->name)
+                    'permalink' => get_term_link($term->term_id,$taxname)
                     );
                 }
             }

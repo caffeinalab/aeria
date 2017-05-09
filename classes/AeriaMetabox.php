@@ -332,11 +332,12 @@ class Meta_Box {
 	// Callback function to show fields in meta box
 	function show() {
 		global $post;
+		wp_nonce_field(basename(__FILE__), 'mbox_meta_box_nonce');
+
 		if (isset($this->_meta_box['slug']) && $this->_meta_box['slug'] !== $post->post_name) {
 			echo '<style>.postbox#'.$this->_meta_box['id'].'{display:none;}</style>';
 			return;
 		}
-		wp_nonce_field(basename(__FILE__), 'mbox_meta_box_nonce');
 
 		foreach ($this->_fields as &$field) {
 			//if( $field['type'] == 'gallery' ) $field['multiple'] = true;
@@ -427,6 +428,10 @@ class Meta_Box {
 	function show_field_gallery($field, $metas, $single=false) {
 		wp_enqueue_media();
 		if(empty($metas)) $metas = [''];
+
+		if((@unserialize($metas) !== false)){
+			$metas = unserialize($metas);
+		}
 
 		$idx = 0;
 		$this->show_field_begin($field, $metas);
@@ -557,8 +562,9 @@ class Meta_Box {
 	function show_field_select_ajax($field, $meta) {
 		if (!is_array($meta)) $meta = (array) $meta;
 		$meta_value = html_addslashes(empty($meta)?'':$meta[0]);
+		$field['with'] = !empty($field['with']) && in_array($field['with'], ["post_type", "taxonomy"]) ? $field['with'] : "post_type";
 		$this->show_field_begin($field, $meta);
-		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
+		echo "<input type='hidden' value=\"{$meta_value}\" name='{$field['id']}'  class='input-xlarge select2_ajax' data-relation='{$field['relation']}' data-with='{$field['with']}' data-placeholder='Select an Option..'". ($field['multiple'] ? " data-multiple='true' style='height:auto'" : "data-multiple='false'") ." /> ";
 		$this->show_field_end($field, $meta);
 	}
 

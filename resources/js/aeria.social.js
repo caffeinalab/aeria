@@ -77,8 +77,6 @@ Aeria.social = (function(){
 		getAjaxCount({
 			uri: uri,
 		}, function(response) {
-			if ( ! $.isArray(response)) response = [ response ];
-
 			$.each(response, function(key, response_per_uri) {
 				var $t = $('[data-aeriasocial-uri="' + response_per_uri.uri + '"]');
 
@@ -88,9 +86,8 @@ Aeria.social = (function(){
 
 				setSum($t);
 			});
-
 		});
-	},
+	};
 
 	self.bind = function() {
 		$('[data-aeriasocial-uri]').each(function() {
@@ -101,7 +98,7 @@ Aeria.social = (function(){
 		self.binded = true;
 
 		var st = (document.body || document.documentElement).style;
-		if (st.transition==null && st.WebkitTransition==null && st.MozTransition==null && st.MsTransition==null && st.OTransition==null) {
+		if (st.transition == null && st.WebkitTransition == null && st.MozTransition == null && st.MsTransition == null && st.OTransition == null) {
 			$(document.body).addClass('no-csstransforms');
 		}
 
@@ -122,6 +119,7 @@ Aeria.social = (function(){
 			e.stopPropagation();
 			popup( $(this) );
 		});
+	
 	};
 
 	$(document).ready(function(){

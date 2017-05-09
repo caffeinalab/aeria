@@ -73,7 +73,6 @@ class AeriaWidgetElement extends WP_Widget {
     			$label = $opt->name;
 	    		switch($opt->type){
 		    		case 'select':
-		    		default:
 			    		echo '<tr><td valign=middle align=right><label style="font-weight:bold" for="',$id,'">',$label,':</label></td><td>';
 			    		echo '<select class="" id="',$id,'" name="',$name,'" style="width:100%;">';
 			    		foreach($opt->values as $name=>$value){

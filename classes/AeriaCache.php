@@ -79,7 +79,8 @@ function & redis(){
 		define('PREDIS_LOADED',1);
 	}
 	try {
-		return new Predis\Client('tcp://127.0.0.1:6379');
+		$redis = new Predis\Client('tcp://127.0.0.1:6379');
+		return $redis;
 	} catch(Exception $e){
 		die('AeriaCacheRedis Error: '.$e->getMessage());
 	}

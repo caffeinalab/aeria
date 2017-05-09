@@ -54,7 +54,8 @@ window.aeria_init_select2_ajax = function(){
 				}else{
 					multiple = false;
 				}
-				var relation = $this.attr('data-relation');
+				var relation = $this.attr('data-relation'),
+					type = $this.attr('data-with');
 				if( ! $this.data("select2")){
 					$this.select2({
 						minimumInputLength: 0,
@@ -72,7 +73,8 @@ window.aeria_init_select2_ajax = function(){
 								  page: page,
 								  posts_per_page : posts_per_page,
 								  action: 'aeria_search',
-								  post_type: relation
+								  post_type: relation,
+								  type: type
 								};
 							},
 							results: function (data, page) {
@@ -89,10 +91,15 @@ window.aeria_init_select2_ajax = function(){
 							        data: {
 							            id : id,
 							            action : 'aeria_search_init',
-							            multiple : multiple
+							            multiple : multiple,
+								  		type: type,
+							            post_type: relation,
 							        },
 							        dataType: "json"
 							    }).done(function(data) {
+							    	jQuery.each(data,function( index, value ){
+							    		data[index].text = jQuery("<textarea/>").html(value.text).val();
+							    	});
 							    	callback(data);
 							    });
 							}

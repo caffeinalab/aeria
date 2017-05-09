@@ -2,65 +2,73 @@
 // Exit if accessed directly.
 if( false === defined('AERIA') ) exit;
 
-wp_enqueue_script('aeria.social', AERIA_URL.'resources/js/aeria.social.js', ['jquery']);
-wp_enqueue_style('aeria.social', AERIA_URL.'resources/css/aeria.social.css');
-
-AeriaAJAX::register('aeriasocial.get', function(){
-	if (!isset($_REQUEST['uri'])) {
-		die(json_encode([ 'error' => 'Please provide a URI' ]));
-	}
-
-	die(json_encode(AeriaSocial::getCount($_REQUEST['uri'])));
-});
-
 class AeriaSocial {
 
-	public static $services = [];
+	public static $hash_prefix = 'AERIAS_';
 	public static $config = [
-		'cache_ttl'=> 600,
-		'sharedcount_url' => 'http://free.sharedcount.com',
-		'sharedcount_apikey'=> '7720b008f401af653af5f3e2bf3141aa32240ee0',
-		'services'=> [
+		'cache_ttl'		=> 600, // in seconds
+		'services'		=> [
 			'facebook'	=> [ 'claim' => 'Condividi' ],
 			'twitter'	=> [ 'claim' => 'Tweet' ],
+			'gplus'		=> [ 'claim' => 'Condividi' ],
 			'linkedin'	=> [ 'claim' => 'Consiglia' ],
-			'gplus'		=> [ 'claim' => 'Condividi' ]
 		]
 	];
 
-	public static function init($config = null) {
-		if (is_array($config)) static::$config = array_merge(static::$config, $config);
-		static::$services = array_keys(static::$config['services']);
+	public static function init($config = []) {
+		static::$config = array_merge(static::$config, $config);
 
-		if (isset(static::$config['apiurl'])) {
-			wp_localize_script('aeria.social', 'AERIA_SOCIAL', [ 'URL' => static::$config['apiurl'] ]);
+		// Added possibility to use outside of Wordpress
+		if (defined('ABSPATH')) {
+
+			// Install CSS + JS
+			wp_enqueue_script('aeria.social', AERIA_URL . 'resources/js/aeria.social.js', ['jquery']);
+			wp_enqueue_style('aeria.social', AERIA_URL . 'resources/css/aeria.social.css');
+			if (isset(static::$config['apiurl'])) {
+				wp_localize_script('aeria.social', 'AERIA_SOCIAL', [ 'URL' => static::$config['apiurl'] ]);
+			}
+
+			// Install AJAX handler
+			AeriaAJAX::register('aeriasocial.get', function(){
+				if (!isset($_REQUEST['uri'])) {
+					echo json_encode([ 'error' => 'Please provide a URI' ]);
+					exit(1);
+				}
+
+				echo json_encode(AeriaSocial::getCount($_REQUEST['uri']));
+				exit;
+			});
+
 		}
 	}
 
-	public static function widget($uri, $info=[], $opt=[]) {
+	public static function widget($uri, $info = [], $opt = []) {
 		$stats = null;
+
 		if (empty($opt['onlyajax'])) {
-			$stats = static::getViaCacheCount($uri);
+			$stats = static::getCountForURI($uri, true);
 		}
 
-		$r = '<header data-hash="' . static::getHash($uri) . '" class="aeriasocial-btns" ' . (is_null($stats) && !isset($opt['nocount']) ? 'data-aeriasocial-needajax="true"' : '') . ' data-aeriasocial-uri="' . $uri . '" ' . '>';
-		foreach (static::$services as $service) {
+		$r = '<header class="aeriasocial-btns" ' . (is_null($stats) && !isset($opt['nocount']) ? 'data-aeriasocial-needajax="true"' : '') . ' data-aeriasocial-uri="' . $uri . '" ' . '>';
+		foreach (array_keys(static::$config['services']) as $service) {
 			$the_service = static::$config['services'][$service];
 
 			$r .= '<div data-aeriasocial-service="' . $service . '" ';
-			foreach ((array)$info as $k => $v) $r .= ' data-aeriasocial-' . $k . '="' . $v . '" ';
+			foreach ((array)$info as $k => $v) {
+				$r .= ' data-aeriasocial-' . $k . '="' . $v . '" ';
+			}
 			$r .= 'class="aeriasocial-btn aeriasocial-btn-' . $service . '">';
 
 			$r .= '<a class="aeriasocial-claim">';
-				$r .= '<i class="aeriasocial-icon">&nbsp;</i>';
-				$r .= '<span class="aeriasocial-text">' . $the_service['claim'] . '</span>';
+			$r .= '<i class="aeriasocial-icon">&nbsp;</i>';
+			$r .= '<span class="aeriasocial-text">' . $the_service['claim'] . '</span>';
 			$r .= '</a>';
 
 			if ( ! isset($opt['nocount'])) {
 				$r .= '<span class="aeriasocial-count"><i></i><u></u>';
-					$r .= '<span data-aeriasocial-count>';
-						if (!is_null($stats)) $r .= (string)$stats['services'][$service];
-					$r .= '</span>';
+				$r .= '<span data-aeriasocial-count>';
+				if (!is_null($stats)) $r .= (string)$stats['services'][$service];
+				$r .= '</span>';
 				$r .= '</span>';
 			}
 
@@ -71,12 +79,12 @@ class AeriaSocial {
 		return $r;
 	}
 
-	public static function widgetOnlyShare($uri, $info=[]) {
+	public static function widgetOnlyShare($uri, $info = []) {
 		return static::widget($uri, $info, [ 'nocount' => true ]);
 	}
 
 	public static function widgetOnlyAjax($uri, $info=[]) {
-		return static::widget($uri, $info, [ 'onlyajax'=> true ]);
+		return static::widget($uri, $info, [ 'onlyajax' => true ]);
 	}
 
 	public static function widgetSum($uri, $info=[], $opt=[]) {
@@ -92,85 +100,168 @@ class AeriaSocial {
 	}
 
 	protected static function getHash($uri) {
-		return 'aeriasocial_' . substr(md5($uri), 0, 12);
+		return md5($uri);
 	}
 
-	public static function getViaCacheCount($uri) {
-		if (isset($_GET['__nocache'])) return null;
-		$hash = static::getHash($uri);
-		return AeriaCache::get($hash);
-	}
+	public static function getCount($uris, $only_cache = false) {
+		if (!is_array($uris)) $uris = [ $uris ];
 
-	public static function setCacheCount($uri, $data) {
-		$hash = static::getHash($uri);
-		AeriaCache::set($data, $hash, false, static::$config['cache_ttl']);
-	}
+		$result = [];
+		$uris_to_fetch = [];
+		$hashes = [];
 
-	public static function getViaAPICount($uri) {
-		return AeriaNetwork::json(static::$config['sharedcount_url'], [
-			'url' 	=> $uri,
-			'apikey' => static::$config['sharedcount_apikey']
-		]);
-	}
-
-	public static function getCount($uri) {
-		if (is_array($uri)) {
-			return array_map([ 'static', 'getCountSingle' ], $uri);
-		} else {
-			return static::getCountSingle($uri);
+		foreach (array_keys(static::$config['services']) as $service_key) {
+			$uris_to_fetch[ $service_key ] = [];
 		}
-	}
 
-	public static function getCountSingle($uri) {
-		try {
-			$data = static::getViaCacheCount($uri);
+		foreach ($uris as $uri) {
+			$hashes[ $uri ] = static::getHash($uri);
 
-			if (is_null($data)) {
-				$data = static::getViaAPICount($uri);
-				if (empty($data)) throw new Exception('Empty data');
-				if (isset($data->Error)) throw new Exception($data->Error);
+			$data = [
+			'uri' 				=> $uri,
+			'hash' 				=> $hashes[ $uri ],
+			'services' 			=> [],
+			'errors' 			=> [],
+			'sum' 				=> 0
+			];
 
-				$data = static::parseCount($uri, $data);
-				static::setCacheCount($uri, $data);
+			foreach (array_keys(static::$config['services']) as $service_key) {
+				$count = AeriaCache::get(static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key);
+
+				if ($count == null || (time() > $count['expire'])) {				
+					if ($only_cache === false) {
+						$uris_to_fetch[ $service_key ][] = $uri;
+					}
+				}
+
+				$data['services'][ $service_key ] = !is_null($count) ? intval($count['count']) : 0;
+				$result[ $uri ] = $data;
+			}
+		}
+
+		foreach ($uris_to_fetch as $service_key => $uris_to_fetch_per_service) {
+			if (empty($uris_to_fetch_per_service)) continue;
+
+			$api_data = forward_static_call([ 'static', 'getCountForService' . ucfirst($service_key)], $uris_to_fetch_per_service);
+
+			foreach ($uris_to_fetch_per_service as $uri) {
+
+				if (isset($api_data['errors'][ $uri ])) {
+
+					$result[ $uri ]['errors'][ $service_key ] = $api_data['errors'][ $uri ];
+					
+				} else if (isset($api_data['count'][ $uri ])) {
+
+					$count = $api_data['count'][ $uri ] ?: 0;
+					if ($count < $result[ $uri ]['services'][ $service_key ]) {
+						$result[ $uri ]['errors'][ $service_key ] = "Greater count in cache";
+					} else if ($count > $result[ $uri ]['services'][ $service_key ]) {
+						$result[ $uri ]['services'][ $service_key ] = $count;
+					}
+
+				} else {
+					
+					$result[ $uri ]['errors'][ $service_key ] = "Empty count";
+			
+				}
+
+				AeriaCache::set([
+				'expire' => time() + static::$config['cache_ttl'],
+				'count' 	=> $result[ $uri ]['services'][ $service_key ]
+				], static::$hash_prefix . $hashes[ $uri ] . '_'. $service_key);
 			}
 
-			return $data;
+		}			
 
-		} catch (Exception $e) {
-			return [
-				'services'	=>	[],
-				'error'		=>	$e->getMessage()
-			];
+		foreach ($result as $uri => $data) {
+			
+			$result[ $uri ]['sum'] = array_reduce($data['services'], function($carry, $item) { 
+				return $carry + intval($item); 
+			}, 0);
+
+			AeriaCache::set([
+			'uri' 	=> $uri,
+			'sum' 	=> $data['sum']
+			], static::$hash_prefix . 'SUMS_' . $hashes[ $uri ]);
+	
 		}
+			
+		return $result;
 	}
 
-	protected static function parseCount($uri, $info) {
-		$r = [];
-		$r['uri'] = $uri;
-		$r['services'] = [
-			'facebook' 		=> $info->Facebook->total_count,
-			'twitter'  		=> $info->Twitter,
-			'stumbleupon' 	=> $info->StumbleUpon,
-			'reddit'			=> $info->Reddit,
-			'gplus'			=> $info->GooglePlusOne,
-			'pinterest'		=> $info->Pinterest,
-			'linkedin'		=> $info->LinkedIn
-		];
-		$r['sum'] = array_reduce($r['services'], function($carry, $item) { return $carry + $item; }, 0);
-		return $r;
+	public static function getCountForServiceEmpty($uris) {
+		$result = [ 'errors' => [], 'count' => [] ];
+		foreach ($uris as $uri) {
+			$result['count'][ $uri ] = 0;
+		}
+		return $result;
+	}
+
+	public static function getCountForServiceFacebook($uris) {
+		$result = [ 'errors' => [], 'count' => [] ];
+
+		$url = "https://graph.facebook.com/?ids=" . implode(',', $uris);
+
+		if (!empty(static::$config['facebook_app_token'])) {
+			$url .= "&access_token=" . static::$config['facebook_app_token'];
+		}
+
+		$data = AeriaNetwork::json($url);
+
+		foreach ($uris as $uri) {
+			if (isset($data->{$uri}->share->share_count)) {
+				$result['count'][ $uri ] = intval($data->{$uri}->share->share_count);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
+			}
+		}
+
+		return $result;
+	}
+
+	public static function getCountForServiceLinkedin($uris) {
+		$result = [ 'errors' => [], 'count' => [] ];
+		
+		foreach ($uris as $uri) {
+			$data = AeriaNetwork::json("http://www.linkedin.com/countserv/count/share?format=json&url=" . urlencode($uri));
+
+			if (isset($data->count)) {
+				$result['count'][ $uri ] = intval($data->count);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
+			}
+		}
+
+		return $result;
+	}
+
+	public static function getCountForServiceGplus($uris) {
+		$result = [ 'errors' => [], 'count' => [] ];
+		
+		foreach ($uris as $uri) {
+			$data = AeriaNetwork::send("https://plusone.google.com/_/+1/fastbutton?count=true&url=" . urlencode($uri));
+
+			if (preg_match("/{c: (\d+)/", $data, $matches)) {
+				$result['count'][ $uri ] = intval($matches[1]);
+			} else {
+				$result['errors'][ $uri ] = "Unable to retrieve share count";
+			}
+		}
+
+		return $result;
+	}
+
+
+	public static function getCountForServiceTwitter($uris) {
+		return static::getCountForServiceEmpty($uris);
 	}
 
 	public static function getMostSharedContents() {
-		if (AeriaCache::$driver !== 'AeriaCacheRedis') {
-			throw new Exception('You can obtain getMostSharedContents() only with Redis.');
-		}
-
 		$Redis = AeriaCacheRedis::redis();
 
-		$keys = $Redis->keys('aeriasocial_*');
 		$data = array_map(function($key) use ($Redis) {
 			return unserialize($Redis->get($key));
-		}, $Redis->keys('aeriasocial_*'));
+		}, $Redis->keys( static::$hash_prefix . 'SUMS_*' ));
 
 		usort($data, function($a, $b) {
 			return $a['sum'] - $b['sum'];
@@ -180,3 +271,4 @@ class AeriaSocial {
 	}
 
 }
+
