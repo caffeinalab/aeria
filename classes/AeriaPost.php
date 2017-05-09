@@ -9,7 +9,8 @@ class AeriaPost {
     public      $raw_content    = '';
     public      $content        = '';
     public      $excerpt        = '';
-    public      $data           = '';
+    public      $date           = '';
+    public      $modified_date  = '';
     public      $slug           = '';
     public      $permalink      = '';
     public      $order          = '';
@@ -41,18 +42,19 @@ class AeriaPost {
                 $q = $type?array($fld=>$id,'post_type'=>$type):array($fld=>$id);
                 $t_post         = is_numeric($id)?get_post($id):current(get_posts($q));
             }
-            $this->id           = $t_post->ID;
-            $this->title        = apply_filters('the_title', $t_post->post_title);
-            $this->raw_content  = $t_post->post_content;
-            $this->post_author  = $t_post->post_author;
-            $this->content      = do_shortcode(apply_filters('the_content', $t_post->post_content));
-            $this->excerpt      = apply_filters('the_excerpt', $t_post->post_excerpt);
-            $this->date         = $t_post->post_date;
-            $this->slug         = $t_post->post_name;
-            $this->order        = $t_post->menu_order?:0;
-            $this->permalink    = AERIA_HOME_URL.$t_post->post_type.'/'.$t_post->post_name;
-            $this->type         = $type?:$t_post->post_type;
-            $this->parent       = ($t_post->post_parent)?new static($t_post->post_parent):null;
+            $this->id               = $t_post->ID;
+            $this->title            = apply_filters('the_title', $t_post->post_title);
+            $this->raw_content      = $t_post->post_content;
+            $this->post_author      = $t_post->post_author;
+            $this->content          = do_shortcode(apply_filters('the_content', $t_post->post_content));
+            $this->excerpt          = apply_filters('the_excerpt', $t_post->post_excerpt);
+            $this->date             = $t_post->post_date;
+            $this->modified_date    = $t_post->post_modified;
+            $this->slug             = $t_post->post_name;
+            $this->order            = $t_post->menu_order?:0;
+            $this->permalink        = AERIA_HOME_URL . $t_post->post_type . '/' . $t_post->post_name;
+            $this->type             = $type ?: $t_post->post_type;
+            $this->parent           = ($t_post->post_parent) ? new static($t_post->post_parent) : null;
         }
     }
 
