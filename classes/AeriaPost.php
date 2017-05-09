@@ -53,7 +53,7 @@ class AeriaPost {
             $this->modified_date    = $t_post->post_modified;
             $this->slug             = $t_post->post_name;
             $this->order            = $t_post->menu_order?:0;
-            $this->permalink        = AERIA_HOME_URL . $t_post->post_type . '/' . $t_post->post_name;
+            $this->permalink        = get_permalink($this->id);
             $this->type             = $type ?: $t_post->post_type;
             $this->parent           = ($t_post->post_parent) ? new static($t_post->post_parent) : null;
         }
