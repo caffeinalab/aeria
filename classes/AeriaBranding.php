@@ -36,7 +36,7 @@ class AeriaBranding {
 				case 'background':
 					$css = isset($section['css'])?implode('',(array)$section['css']):'';
 
-					add_action('admin_head', function() use ($url,$css){
+					add_action('admin_head', function() use ($css){
 						echo '<style>';
 						echo 'html{',$css,'}';
 						echo '#wpbody-content .wrap h2{text-shadow:0 1px 1px #fff}';
