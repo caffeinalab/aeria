@@ -4,6 +4,8 @@ if( false === defined('AERIA') ) exit;
 
 class AeriaSection {
 
+	protected static $defs = [];
+
 	public static function register($args){
 
 		if(empty($args['type'])) die("AeriaSection: You must define a post_type id");
@@ -30,6 +32,7 @@ class AeriaSection {
 		});
 
 		foreach ( (array) $args['type'] as $type ) {
+			static::$defs[$type] = $args;
 			add_filter( 'postbox_classes_' . $type . '_aeria_section', function( $classes ) use ( $args ) {
 				array_push( $classes, 'aeria_section_' . $args['title'] );
 				return $classes;
@@ -84,7 +87,7 @@ class AeriaSection {
 
 				$sections['section_'.$s] = [
 					'columns' =>  $columns,
-					'title' => htmlentities($_POST[$id_section.'post_section_title_'.$s]),
+					'title' => sanitize_text_field($_POST[$id_section.'post_section_title_'.$s]),
 					'background' => $_POST[$id_section.'post_section_background_'.$s],
 					'content' => $content
 				];
@@ -116,9 +119,9 @@ class AeriaSection {
 
 		});
 
-
 		add_action('admin_enqueue_scripts', function(){
 			wp_enqueue_style('aeria_section', AERIA_RESOURCE_URL.'css/section.css');
+			wp_enqueue_script('tinymce_js', includes_url('js/tinymce/') . 'wp-tinymce.php', ['jquery'], false, true);
 			wp_enqueue_script('aeria_section', AERIA_RESOURCE_URL.'js/section.js', ['jquery-ui-sortable']);
 			wp_enqueue_media();
 			wp_localize_script( 'aeria_section', 'meta_image',
@@ -130,7 +133,37 @@ class AeriaSection {
 		});
 
 		add_action( 'wp_ajax_add_section', function() {
-			AeriaSection::render_section([],$_POST['section'],$_POST['ncol'],['id' => $_POST['id_section']]); exit;
+			$args = ['id' => $_POST['id_section']];
+			$type_defs = isset($_POST['post_type']) && isset(static::$defs[$_POST['post_type']])
+				? static::$defs[$_POST['post_type']]
+				: [];
+			$args = array_merge($args, $type_defs);
+			$passed_section = [];
+			if (isset($_POST['ncol']) && isset($_POST['section_type'])) {
+				$passed_section = [
+					'columns'				=> $_POST['ncol'],
+					'section_type' 	=> $_POST['section_type']
+				];
+			}
+			AeriaSection::render_section($passed_section,$_POST['section'],$_POST['ncol'],$args); exit;
+		});
+
+		add_action( 'wp_ajax_add_section_fields', function() {
+			$args = ['id' => $_POST['id_section']];
+			$type_defs = isset($_POST['post_type']) && isset(static::$defs[$_POST['post_type']])
+				? static::$defs[$_POST['post_type']]
+				: [];
+			$args = array_merge($args, $type_defs);
+			$passed_section = [];
+			if (isset($_POST['section_type'])) {
+				$passed_section = [
+					'section_type' 	=> $_POST['section_type']
+				];
+				if (isset($_POST['ncol'])) {
+					$passed_section['columns'] = $_POST['ncol'];
+				}
+			}
+			AeriaSection::render_section_fields($passed_section,$args,$_POST['section'],$_POST['section_type']); exit;
 		});
 
 		add_action( 'wp_ajax_sort_section', function(){
@@ -206,8 +239,15 @@ class AeriaSection {
 						$s++;
 					}
 					echo '</ul>';
+					echo '<div class="box-reorder-controls">';
+					echo '<button class="button button-large" type="button" data-section-sortable-cancel="'.$id_section.'"><span class="dashicons dashicons-no"></span> Cancel</button>';
 					echo '<button class="button button-large button-primary" type="button" data-section-sortable-save="'.$id_section.'" ><span class="dashicons dashicons-yes"></span> Confirm</button>';
+					echo '</div>';
 
+				}else{
+					echo '<div class="box-reorder-controls">';
+					echo '<button class="button button-large" type="button" data-section-sortable-cancel="'.$id_section.'"><span class="dashicons dashicons-no"></span> Cancel</button>';
+					echo '</div>';
 				}
 			?>
 		</div>
@@ -269,25 +309,7 @@ class AeriaSection {
 
 			case 'media':
 				$background = stripslashes($val);
-				$background_info = pathinfo($background);
-
-				switch ($background_info['extension']) {
-					case 'mp3':
-					case 'mpeg':
-						$background_image = '';
-						$background_title = $background_info['basename'];
-						break;
-
-					default:
-						$background_image = $background;
-						$background_title = '';
-						break;
-				}
-
-				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background_image.');">';
-				echo '<span class="label">';
-				if(!empty($background_title)) echo $background_title;
-				echo '</span>';
+				echo '<div class="wrap-media"><div class="remove_background" data-remove-background>x</div><div class="background" data-section-background style="background-image:url('.$background.');">';
 				echo '<input type="hidden" name="'.$field['id'].'_'.$key.'" id="'.$field['id'].'_'.$key.'" value="'.$background.'" />';
 				echo '</div></div>';
 				break;
@@ -313,7 +335,7 @@ class AeriaSection {
 
 		echo '<div class="'.$row_class.'">';
 
-			echo '<select '.$preview_attr.' id="'.$field_id.'section_type_'.$key.'" name="'.$field_id.'section_type_'.$key.'">';
+			echo '<select data-section-type '.$preview_attr.' id="'.$field_id.'section_type_'.$key.'" name="'.$field_id.'section_type_'.$key.'">';
 			echo '<option value="">Seleziona una tipologia di sezione</option>';
 			foreach ($fields as $k => $value) {
 				$selected = ($val == $k)?'selected="selected"':'';
@@ -321,8 +343,7 @@ class AeriaSection {
 			}
 			echo '</select>';
 
-			//print buttons | 2 buttons 1 function, i know :)
-			echo '<button data-generate-section class="button">Genera campi</button>';
+			echo '<button data-generate-section-fields class="button">Genera campi</button>';
 			echo ' <button data-generate-section class="button button-primary">Salva</button>';
 
 		echo '</div>';
@@ -333,8 +354,22 @@ class AeriaSection {
 
 	}
 
-	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
+	protected static function render_section_fields($section, $args, $key, $value_type) {
+		if(!empty($value_type)){
+			$id_section = (empty($args['id']))?'':$args['id'];
+			echo '<div class="row-full"><h4>'.strtoupper( $args['fields'][$value_type]['description'] ).'</h4></div>';
+			echo '<div class="wrap-fields">';
+			foreach ($args['fields'][$value_type]['fields'] as $field) {
+				$value = ( isset( $section['fields'][$field['id']] ) && !empty( $section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
+				AeriaSection::render_field( $field,$key,$value,$id_section );
+			}
+			echo '</div>';
+		}else{
+			echo '<div class="row-full"><p>Nessuna tipologia di sezione attiva</p></div>';
+		}
+	}
 
+	public static function render_section($section_passed = [], $key = 0, $ncol = 1, $args = []){
 		//check supports
 		$support_columns = (!isset($args['supports']) || empty($args['supports']) || in_array('columns', $args['supports']));
 		$support_fields = (!isset($args['supports']) || empty($args['supports']) || in_array('fields', $args['supports']));
@@ -373,7 +408,6 @@ class AeriaSection {
 				$section['section_type'] = $section_passed['section_type'];
 			}
 		}
-
 	?>
 		<div class="box-section<?= ($section_passed['section_type']) ? ' section_' . $section_passed['section_type'] : '' ?>" data-section-num=<?= $key ?>>
 			<input type="hidden" data-section-columns="<?= $id_section ?>" name="<?= $id_input ?>post_section_columns_<?= $key ?>" value="<?= $section['columns'] ?>">
@@ -392,7 +426,6 @@ class AeriaSection {
 			</div>
 			<div class="body-section">
 				<?php
-
 					/**
 					 * check pre render field
 					 * classic or conditional fields?
@@ -422,18 +455,9 @@ class AeriaSection {
 								AeriaSection::render_relation_fields( $args['fields'],$key,$value_type,$preview_path,$id_section );
 							}
 
-							if(!empty($value_type)){
-								echo '<div class="row-full"><h4>'.strtoupper( $args['fields'][$value_type]['description'] ).'</h4></div>';
-								echo '<div class="wrap-fields">';
-								foreach ($args['fields'][$value_type]['fields'] as $field) {
-									$value = ( isset( $section['fields'][$field['id']] ) && !empty( $section['fields'][$field['id']]))?$section['fields'][$field['id']]:'';
-									AeriaSection::render_field( $field,$key,$value,$id_section );
-								}
-								echo '</div>';
-							}else{
-								echo '<div class="row-full"><p>Nessuna tipologia di sezione attiva</p></div>';
-							}
-
+							echo '<div data-section-fields>';
+							static::render_section_fields($section, $args, $key, $value_type);
+							echo '</div>';
 
 						}
 					}
@@ -441,6 +465,7 @@ class AeriaSection {
 					if($support_columns){
 						for ($i=1; $i <= $section['columns']; $i++) {
 							if($section['columns'] > 1) echo '<h2>Column '.$i.'</h2>';
+							//_WP_Editors::editor_js
 						 	wp_editor( stripslashes($section['content']['column_'.$i]) , $id_meta_section.'post_section_'.$key.'_'.$i );
 						}
 					}
