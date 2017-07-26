@@ -133,6 +133,8 @@ class AeriaSection {
 		});
 
 		add_action( 'wp_ajax_add_section', function() {
+			$nonce = isset($_POST['nonce']) ? $_POST['nonce'] : null;
+			if (!wp_verify_nonce($nonce, 'aeria_section')) wp_die('', '', ['response' => 403]);
 			$args = ['id' => $_POST['id_section']];
 			$type_defs = isset($_POST['post_type']) && isset(static::$defs[$_POST['post_type']])
 				? static::$defs[$_POST['post_type']]
@@ -149,6 +151,8 @@ class AeriaSection {
 		});
 
 		add_action( 'wp_ajax_add_section_fields', function() {
+			$nonce = isset($_POST['nonce']) ? $_POST['nonce'] : null;
+			if (!wp_verify_nonce($nonce, 'aeria_section')) wp_die('', '', ['response' => 403]);
 			$args = ['id' => $_POST['id_section']];
 			$type_defs = isset($_POST['post_type']) && isset(static::$defs[$_POST['post_type']])
 				? static::$defs[$_POST['post_type']]
@@ -196,8 +200,13 @@ class AeriaSection {
 		$id_section = (empty($args['id']))?'':$args['id'];
 		$id_metabox = !empty($id_section)?'aeria_section_'.$id_section:'aeria_section';
 
+		$nonce_field_name = 'aeria_section_nonce_' . $id_section;
+
+		$nonce = wp_create_nonce('aeria_section');
+
 		?>
 		<div class="box-controls">
+			<input data-section-nonce type="hidden" id="<?= $nonce_field_name ?>" name="<?= $nonce_field_name ?>" value="<?= $nonce ?>"/>
 			<?php if(empty($args['supports']) || in_array('columns', $args['supports'])){ ?>
 			<select id="ncol">
 				<option value="1">1 Col</option>

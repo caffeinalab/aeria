@@ -5,13 +5,14 @@ jQuery(function($){
     var initTMCE = function() {
         $('.wp-editor-wrap').each(function() {
             var editor_el = $(this);
+            // manually check for TinyMCE initialization
             if (editor_el.find('iframe').length > 0) {
                 return true;
             }
             var id = '#' + editor_el.find('.wp-editor-area').attr('id');
             var settings = tinymce.activeEditor && tinymce.activeEditor.settings
                 ? tinymce.activeEditor.settings
-                : {};
+                : { menubar: false };
             settings.selector = '#' + editor_el.find('.wp-editor-area').attr('id');
             tinymce.init(settings);
         });
@@ -21,7 +22,7 @@ jQuery(function($){
         box_section.find('[data-section-fields]').html(section_fields);
         box_section.attr('data-current-section-type', section_type);
 
-        // re-init eventual new fields
+        // eventually re-init new fields
         window.aeria_init_select2_ajax();
         window.aeria_init_select2();
         initTMCE();
@@ -41,6 +42,7 @@ jQuery(function($){
             button.on('click', function(e2) {
                 e2.preventDefault();
                 var columns = box_section.find('[data-section-columns]').val();
+                var nonce = box_section.parent('.box-sections').parent('div').find('[data-section-nonce]').val();
                 var post_type = $('#post_type').val();
                 var section_num = box_section.attr('data-section-num');
                 var section_type = box_section.find('[data-section-type]').val();
@@ -59,6 +61,7 @@ jQuery(function($){
                 $.post(
                     window.ajaxurl,
                     {
+                        nonce: nonce,
                         action: 'add_section_fields',
                         section: section_num,
                         section_type: section_type,
@@ -99,6 +102,7 @@ jQuery(function($){
         var content_section = (id_section.length > 0)?'aeria_section_'+id_section:'aeria_section';
         e.preventDefault();
         if(!box_reorder.is(':visible')) {
+            var nonce = $('#' + content_section + ' [data-section-nonce]').val();
             var last_section = $('#'+content_section+' .box-sections > .box-section').last();
             var new_section_num;
             if(typeof last_section.data('section-num') === 'undefined'){
@@ -111,6 +115,7 @@ jQuery(function($){
             $.post(
                 window.ajaxurl,
                 {
+                    nonce: nonce,
                     action: 'add_section',
                     section: new_section_num,
                     post_type: post_type,
