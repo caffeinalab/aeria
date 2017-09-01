@@ -25,6 +25,7 @@ jQuery(function($){
         // eventually re-init new fields
         window.aeria_init_select2_ajax();
         window.aeria_init_select2();
+        engineSelectBg();
         initTMCE();
     };
 
@@ -234,8 +235,11 @@ jQuery(function($){
 
     function engineSelectBg(){
 
+        var dataSectionsBackgrounds = $('[data-section-background]:not([data-section-init])');
+        var dataRemoveBackgrounds = $('[data-remove-background]:not([data-section-init])');
+
         // Runs when the image button is clicked.
-        $('[data-section-background]').click(function(e){
+        dataSectionsBackgrounds.click(function(e){
 
             // Instantiates the variable that holds the media library frame.
             var meta_image_frame;
@@ -274,7 +278,7 @@ jQuery(function($){
             meta_image_frame.open();
         });
 
-        $('[data-remove-background]').on('click', function () {
+        dataRemoveBackgrounds.on('click', function () {
             var container = $(this).parent().find('[data-section-background]');
             var input = container.find('input');
 
@@ -282,6 +286,9 @@ jQuery(function($){
             container.css('background-image' , 'url()');
 
         });
+
+        dataSectionsBackgrounds.attr('data-section-init', '');
+        dataRemoveBackgrounds.attr('data-section-init', '');
     }
 
 
