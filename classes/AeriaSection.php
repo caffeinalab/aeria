@@ -383,7 +383,7 @@ class AeriaSection {
 					<input type="hidden" name="<?= $id_input ?>post_section_background_<?= $key ?>" id="<?= $id_input ?>post_section_background_<?= $key ?>" value="<?= $section['background'] ?>" />
 				</div>
 				<div class="title">
-					<input type="text" placeholder="Here the title" class="post_section_title" name="<?= $id_input ?>post_section_title_<?= $key ?>" id="<?= $id_input ?>post_section_title_<?= $key ?>" value="<?= stripslashes($section['title']) ?>" >
+					<textarea placeholder="Here the title" class="post_section_title" name="<?= $id_input ?>post_section_title_<?= $key ?>" id="<?= $id_input ?>post_section_title_<?= $key ?>"><?= stripslashes($section['title']) ?></textarea>
 				</div>
 				<div class="controls">
 					<button class="button button-small" data-section-expand="<?= $id_section ?>" ><span class="dashicons dashicons-welcome-write-blog"></span></button>

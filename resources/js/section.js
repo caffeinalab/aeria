@@ -169,4 +169,7 @@ jQuery(function($){
 
     engineSelectBg();
 
+    $('.post_section_title').on('keypress', function (ev) {
+        if (ev.keyCode == 13) return false;
+    });
 });

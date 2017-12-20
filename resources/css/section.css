@@ -73,10 +73,11 @@
 	color: rgba(255, 255, 255, 0.4);
 }
 .box-section .header-section .post_section_title {
-	font-size: 1.5rem;
+	font-size: 1rem;
 	border: none;
 	box-shadow: none;
 	width: 100%;
+	height: 90px;
 }
 .box-section .header-section .title {
 	width: 60%;
