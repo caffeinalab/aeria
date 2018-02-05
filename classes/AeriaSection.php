@@ -8,6 +8,7 @@ class AeriaSection {
 
 		if(empty($args['type'])) die("AeriaSection: You must define a post_type id");
 		if(empty($args['title'])) $args['title'] = 'Sections';
+		if(empty($args['add_section_label'])) $args['add_section_label'] = false;
 		$id_section = (empty($args['id']))?'':$args['id'];
 
 		add_action('add_meta_boxes', function() use ($args, $id_section){
@@ -175,8 +176,8 @@ class AeriaSection {
 			<?php }else{ ?>
 				<input type="hidden" value="1" id="ncol">
 			<?php } ?>
-			<button class="button button-primary button-large" type="button" data-section-add="<?= $id_section ?>" ><span class="dashicons dashicons-welcome-add-page"></span> <?= __('Add', 'aeria') ?> <?= $args['title'] ?></button>
-			<button class="button button-large" type="button" data-section-expand-all="<?= $id_section ?>" ><span class="dashicons dashicons-editor-expand"></span> <?= __('Expand All', 'aeria') ?> <?= $args['title'] ?></button>
+			<button class="button button-primary button-large" type="button" data-section-add="<?= $id_section ?>" ><span class="dashicons dashicons-welcome-add-page"></span> <?= __('Add', 'aeria') ?> <?= isset($args['add_section_label']) ? $args['add_section_label'] : $args['title'] ?></button>
+			<button class="button button-large" type="button" data-section-expand-all="<?= $id_section ?>" ><span class="dashicons dashicons-editor-expand"></span> <?= __('Expand All', 'aeria') ?> <?= isset($args['add_section_label']) ? $args['add_section_label'] : $args['title'] ?></button>
 			<button class="button button-large" type="button" data-section-sort="<?= $id_section ?>" ><span class="dashicons dashicons-randomize"></span> <?= __('Reorder/Remove', 'aeria') ?></button>
 			<div style="clear:both"></div>
 		</div>
