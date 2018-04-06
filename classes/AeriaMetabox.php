@@ -371,6 +371,12 @@ class Meta_Box {
 		echo "<input type=\"{$input_type}\" name=\"{$field['id']}\" id=\"{$field['id']}\" value=\"".html_addslashes($meta)."\"/>";
 		$this->show_field_end($field, $meta);
 	}
+	
+	function show_field_color($field, $meta) {
+		$this->show_field_begin($field, $meta);
+		echo "<input type=\"color\" name=\"{$field['id']}\" id=\"{$field['id']}\" value=\"".html_addslashes($meta)."\"/>";
+		$this->show_field_end($field, $meta);
+	}
 
 	function show_field_date($field, $meta) {
 		$this->show_field_datetime($field, $meta);
