@@ -1,4 +1,0 @@
-.options-table { width: auto; }
-.options-table td, .options-table th { font-weight: 400; border-bottom: 1px solid rgba(0,0,0,0.04); }
-.options-table tr:nth-last-child(1) td { border-bottom: none; }
-.options-table td { width: 40px; }

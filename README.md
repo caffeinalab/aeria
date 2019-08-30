@@ -1,41 +1,66 @@
-<img src="resources/img/aeria-logo-2-400.png">
+# Aeria v3
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/CaffeinaLab/aeria?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Aeria is a lightweight, fast and modular Wordpress development kit. 
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/CaffeinaLab/aeria/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/CaffeinaLab/aeria/?branch=master)
+It offers a modern interface from within Wordpress giving content managers and editors the potential to customise the website with all kinds of components. 
 
-> Aeria is a modular, lightweight, fast WordPress Application development kit.
+> We spent a huge amount of time with the UX team to design a user interface that would be the most user friendly and simple so that it was easy for anyone to add and edit custom content. 
+
+### Development
+
+Developing with Aeria is so easy. Through simple and intuitive JSON configuration files, you can define all your post types and any of the components defined below. We chose the configuration through file because this way it can be versioned and remains in the repository.
+
+Steps to use it
+
+1. Download and install the plugin to your Wordpress website.
+2. Enable the plugin from the WP dashboard.
+3. Start writing your post type definitions.
+4. Get to the dashboard and experience the modern UI.
+5. Start adding your custom content to your website.
 
 
-## Documentation
+### Updates
 
-See the [wiki](https://github.com/CaffeinaLab/aeria/wiki).
+It is possible to update Aeria through Wordpress as any other Wordpress plugin.
+
 
 
 ## Contributing
 
-How to get involved:
+Refer to [this](https://git.caffeina.co/open-source/aeria/aeria-v3/) repository to contribute to the project.
 
-1. [Star](https://github.com/CaffeinaLab/aeria/stargazers) the project!
-2. Answer questions that come through [GitHub issues](https://github.com/CaffeinaLab/aeria/issues?state=open)
-3. [Report a bug](https://github.com/CaffeinaLab/aeria/issues/new) that you find
+## Configuration
+* [Getting started](configuration/getting-started)
+* [Post type](configuration/post-type)
+* [Metabox](configuration/metabox)
+* [Taxonomy](configuration/taxonomy)
+* [Section](configuration/section)
+* [Router](configuration/router)
+* [Controller](configuration/controller)
+* [Options page](configuration/options-page)
 
+## Fields
+* [Getting started](fields/getting-started)
+* [Text](fields/text)
+* [Textarea](fields/textarea)
+* [Wysiwyg](fields/wysiwyg)
+* [Switch](fields/switch)
+* [Select](fields/select)
+* [Picture](fields/picture)
+* [Gallery](fields/gallery)
+* [Repeater](fields/repeater)
+* [Sections](fields/sections)
+* [Field validation](fields/validators)
 
-Aeria follows the [GitFlow branching model](http://nvie.com/posts/a-successful-git-branching-model). The ```master``` branch always reflects a production-ready state while the latest development is taking place in the ```develop``` branch.
+## Actions
+* [Admin Enqueue Script](actions/admin-enqueue-script)
+* [APIs](actions/APIs)
+* [Render Engine](actions/render-engine)
 
-Each time you want to work on a fix or a new feature, create a new branch based on the ```develop``` branch: ```git checkout -b BRANCH_NAME develop```. Only pull requests to the ```develop``` branch will be merged.
+## Functions
+* [Getting started](functions/getting-started)
+* [get_aeria_fields](functions/get_aeria_fields)
+* [get_aeria_field](functions/get_aeria_field)
+* [get_aeria_metabox](functions/get_aeria_metabox)
+* [get_aeria_options](functions/get_aeria_options)
 
-Pull requests are **highly appreciated**.
-
-Solve a problem. Features are great, but even better is cleaning-up and fixing issues in the code that you discover.
-
-## Versioning
-
-Aeria is maintained by using the [Semantic Versioning Specification (SemVer)](http://semver.org).
-
-
-## Copyright and license
-
-Copyright 2015 [Caffeina](http://caffeina.it) srl under the [MIT license](LICENSE.md).
-
-<p align="center"><a href="http://caffeina.co" target="_blank" title="Caffeina - Ideas Never Sleep"><img src="https://github.com/CaffeinaLab/BrandResources/blob/master/caffeina-handmade.png?raw=true" align="center" height="65"></a></p>

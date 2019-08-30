@@ -1,0 +1,56 @@
+<?php
+
+namespace Aeria\Field\Fields;
+
+use Aeria\Field\Fields\PictureField;
+use Aeria\Field\Interfaces\FieldInterface;
+
+class GalleryField extends BaseField
+{
+
+    public $isMultipleField = false;
+
+
+    public function get(array $savedFields, bool $skipFilter = false) {
+      $length = (int)parent::get($savedFields, true);
+      $children = [];
+
+      for ($i = 0; $i < $length; ++$i) {
+        $children[] = (new PictureField(
+          $this->key, ['id' => 'picture'], $this->sections, $i
+        ))->get($savedFields);
+      }
+      if(!$skipFilter)
+        $children = apply_filters('aeria_get_gallery', $children, $this->config);
+      return $children;
+    }
+
+    public function getAdmin(array $savedFields, array $errors) {
+      $stored_value = parent::get($savedFields, true);
+      $result = [];
+      $result['value'] = (int)$stored_value;
+      $result['children'] = [];
+
+      for ($i = 0; $i < $result['value']; ++$i) {
+        $result['children'][] = (new PictureField(
+          $this->key, ['id' => 'picture'], $this->sections, $i
+        ))->getAdmin($savedFields, $errors);
+      }
+      return array_merge(
+        $this->config,
+        $result
+      );
+    }
+
+    public function set($context_ID, $context_type, array $savedFields, array $newValues, $validator_service, $query_service) {
+      $stored_values = (int)parent::set($context_ID, $context_type, $savedFields, $newValues, $validator_service, $query_service)["value"];
+      if(!$stored_values) {
+        return;
+      }
+      for ($i = 0; $i < $stored_values; ++$i) {
+        (new PictureField(
+          $this->key, ['id' => 'picture'], $this->sections, $i
+        ))->set($context_ID, $context_type, $savedFields, $newValues, $validator_service, $query_service);
+      }
+    }
+}
