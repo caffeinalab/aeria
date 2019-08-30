@@ -24,11 +24,6 @@ Steps to use it
 It is possible to update Aeria through Wordpress as any other Wordpress plugin.
 
 
-
-## Contributing
-
-Refer to [this](https://git.caffeina.co/open-source/aeria/aeria-v3/) repository to contribute to the project.
-
 ## Configuration
 * [Getting started](configuration/getting-started)
 * [Post type](configuration/post-type)
