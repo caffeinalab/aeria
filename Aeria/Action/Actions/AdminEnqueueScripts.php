@@ -23,6 +23,8 @@ class AdminEnqueueScripts implements ActionInterface
 
     public function dispatch(Container $container)
     {
+        wp_enqueue_editor();
+        wp_enqueue_media();
         foreach ($this->list as $enqueuer) {
             ($enqueuer->getEnqClosure($container))();
         }

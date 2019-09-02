@@ -63,9 +63,9 @@ class Meta implements ValidateConfInterface
         $processor = new MetaProcessor($post->ID, $metabox, $sections);
         $metabox["fields"] = $processor->getAdmin();
         ?>
-        <pre>
+        <!-- <pre>
           <?php var_dump($processor->get()); ?>
-        </pre>
+        </pre> -->
         <?php
         $render_service->render('meta_template',
         [
