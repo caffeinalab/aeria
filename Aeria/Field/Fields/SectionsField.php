@@ -67,41 +67,43 @@ class SectionsField extends BaseField
     }
 
     public function getAdmin(array $metas, array $errors) {
-      $stored_value = parent::get($metas, true);
-      $stored_value = (bool)$stored_value ? explode(',', $stored_value) : [];
+        $stored_value = parent::get($metas, true);
+        $stored_value = (bool)$stored_value ? explode(',', $stored_value) : [];
 
-      $children = [];
+        $children = [];
 
-      foreach ($stored_value as $type_index => $type) {
-        $section_config = $this->getSectionConfig($type);
+        foreach ($stored_value as $type_index => $type) {
+            $section_config = $this->getSectionConfig($type);
 
-        $fields = [];
-
-        foreach ($section_config['fields'] as $field_index => $field_config) {
-          $fields[] = array_merge(
-            $field_config,
-            FieldNodeFactory::make(
-              $this->key, $field_config, $this->sections, $type_index
-            )->getAdmin($metas, $errors)
-          );
+            $fields = [];
+            if (isset($section_config['fields'])) {
+                foreach ($section_config['fields'] as $field_index => $field_config) {
+                    $fields[] = array_merge(
+                        $field_config,
+                        FieldNodeFactory::make(
+                            $this->key, $field_config, $this->sections, $type_index
+                        )->getAdmin($metas, $errors)
+                    );
+                }
+            }
+            if (is_array($section_config)) {
+                $children[] = array_merge(
+                    $section_config,
+                    [
+                      'title' => $this->getTitle($type_index)->get($metas),
+                      'isDraft' => $this->getDraftMode($type_index)->get($metas),
+                      'fields' => $fields
+                    ]
+                );
+            }
         }
-
-        $children[] = array_merge(
-          $section_config,
-          [
-            'title' => $this->getTitle($type_index)->get($metas),
-            'isDraft' => $this->getDraftMode($type_index)->get($metas),
-            'fields' => $fields
-          ]
+        return array_merge(
+            $this->config,
+            [
+              "value" => $stored_value,
+              "children" => $children
+            ]
         );
-      }
-      return array_merge(
-        $this->config,
-        [
-          "value" => $stored_value,
-          "children" => $children
-        ]
-      );
     }
 
     public function set($context_ID, $context_type, array $metas, array $newValues, $validator_service, $query_service) {

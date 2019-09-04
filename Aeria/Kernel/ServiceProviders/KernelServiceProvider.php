@@ -8,6 +8,19 @@ use Aeria\Kernel\Kernel;
 use Aeria\Config\Config;
 use Aeria\PostType\PostType;
 use Aeria\Taxonomy\Taxonomy;
+use Aeria\Kernel\Loader;
+use Aeria\Kernel\Tasks\{
+    CreateControllers,
+    CreateField,
+    CreateMeta,
+    CreateOptions,
+    CreatePostType,
+    CreateRenderer,
+    CreateRouter,
+    CreateTaxonomy,
+    CreateUpdater
+};
+
 
 class KernelServiceProvider implements ServiceProviderInterface
 {
@@ -20,29 +33,17 @@ class KernelServiceProvider implements ServiceProviderInterface
     {
         $kernel = $container->make('kernel');
         $config = $container->make('config');
-
-        $kernel->driverType($config->getDriverInUse());
-
-        $kernel->loadConfig($config);
-        $kernel->createPostType($container);
-        $kernel->createField($container);
-        $kernel->createMeta($container);
-        $kernel->createTaxonomy($container);
-        $kernel->createValidator($container);
-        $kernel->createQuery($container);
-        if (is_admin()) {
-            $kernel->createUpdater($container);
-            $kernel->createOptionsPage($container);
-        }
-        $kernel->createRenderer($container);
-
-        // ... other create
-
-
-        // and finally create the router and allow all services
-        // to create own route
-        $kernel->createControllers($container);
-        $kernel->createRouter($container);
+        Loader::loadConfig($config, $container);
+        $kernel->register(new CreateControllers());
+        $kernel->register(new CreateField());
+        $kernel->register(new CreateMeta());
+        $kernel->register(new CreateOptions());
+        $kernel->register(new CreatePostType());
+        $kernel->register(new CreateRenderer());
+        $kernel->register(new CreateRouter());
+        $kernel->register(new CreateTaxonomy());
+        $kernel->register(new CreateUpdater());
+        $kernel->boot($container);
         do_action('aeria_booted');
         return true;
     }

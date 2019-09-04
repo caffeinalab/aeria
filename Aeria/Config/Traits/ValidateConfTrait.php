@@ -190,16 +190,19 @@ trait ValidateConfTrait
     ) {
         foreach ($validation_structure as $key => $value) {
             if (isset($array_to_validate[$key])) {
-                $error = static::handleClosure(
-                    $array_to_validate[$key],
-                    $value,
-                    $key
-                );
-                if (!is_null($error)) {
-                    return $error;
+                if (is_array($value)) {
+                    $error = static::validateStructure($value, $array_to_validate[$key]);
+                } else {
+                    $error = static::handleClosure(
+                        $array_to_validate[$key],
+                        $value,
+                        $key
+                    );
                 }
-            } else {
-                return "key:{$key} is not present in the configuration";
+                    if (!is_null($error)) {
+                        return $error;
+                    }
+                
             }
         }
         return null;

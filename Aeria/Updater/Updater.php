@@ -5,7 +5,7 @@ class Updater{
   public function __construct()
   {
     // define the alternative API for updating checking
-    add_filter( "pre_site_transient_update_plugins", array( $this, "checkVersion" ) );
+    add_filter( "pre_set_site_transient_update_plugins", array( $this, "checkVersion" ) );
     // Define the alternative response for information checking
     add_filter( "plugins_api", array( $this, "setPluginInfo" ), 10, 3 );
     // reactivate plugin
@@ -40,6 +40,11 @@ class Updater{
     if ( !empty( $this->githubAPIResult ) ) {
         return;
     }
+
+    $transient = get_transient( "{$this->github["user"]}_{$this->github["repository"]}_transient_update");
+    if($transient !== false){
+      return $transient;
+    }
     // Query the GitHub API
     $url = "https://api.github.com/repos/{$this->github["user"]}/{$this->github["repository"]}/releases";
     // We need the access token for private repos
@@ -56,6 +61,7 @@ class Updater{
     if ( is_array( $this->githubAPIResult ) ) {
         $this->githubAPIResult = $this->githubAPIResult[0];
     }
+    set_transient( "{$this->github["user"]}_{$this->github["repository"]}_transient_update", $this->githubAPIResult, 3.600 );
   }
 
   public function checkVersion( $transient ) {
@@ -68,11 +74,10 @@ class Updater{
     $this->getPluginData();
     $this->getRepoReleaseInfo();
 
-    if(!isset($this->githubAPIResult->name)){
+    if(!isset($this->githubAPIResult->tag_name)){
       return $transient;
     }
-
-    $doUpdate = version_compare( $this->githubAPIResult->name, $this->config['version'] );
+    $doUpdate = version_compare( $this->githubAPIResult->tag_name, $transient->checked[$this->config['slug']] );
 
     if ( $doUpdate == 1 ) {
       $package = $this->githubAPIResult->zipball_url;

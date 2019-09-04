@@ -53,6 +53,21 @@ if (!function_exists('dd')) {
   }
 }
 
+if (!function_exists('toSnake')) {
+    function toSnake($convertibleText)
+    {
+        $convertibleText = preg_replace('/\s+/u', '', ucwords($convertibleText));
+        return strtolower(
+            preg_replace(
+                '/(.)(?=[A-Z])/u',
+                '$1' . '_',
+                $convertibleText
+            )
+        );
+    }
+}
+
+
 if (!function_exists('aeria')) {
     function aeria(/* ?string */ $abstract = null)
     {

@@ -27,6 +27,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
     protected $drivers = [];
     protected $root_path = '';
     protected $active_driver = 'json';
+    private $_kind;
 
     public function __construct()
     {
@@ -36,19 +37,151 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
 
     public function getValidationStructure() : array
     {
+        switch ($this->_kind){
+        case 'meta':
+            $spec = [
+                'title' => $this->makeRegExValidator(
+                    "/^.{1,30}$/"
+                ),
+                'context' => $this->makeRegExValidator(
+                    "/^normal|side|advanced$/"
+                ),
+                'post_type' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'post_type should be an array'
+                    ];
+                },
+                'fields' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'fields should be an array'
+                    ];
+                }
+            ];
+            break;
+        case 'post-type':
+            $spec =  [
+                'menu_icon' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,30}$/"
+                ),
+                'labels' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'labels should be an array'
+                    ];
+                },
+                'public' => function ($value) {
+                    return [
+                        'result' => is_bool($value),
+                        'message' => 'public should be a bool'
+                    ];
+                },
+                'show_ui' => function ($value) {
+                    return [
+                        'result' => is_bool($value),
+                        'message' => 'show_ui should be a bool'
+                    ];
+                },
+                'show_in_menu' => function ($value) {
+                    return [
+                        'result' => is_bool($value),
+                        'message' => 'show_in_menu should be a bool'
+                    ];
+                },
+                'menu_position' => function ($value) {
+                    return [
+                        'result' => is_int($value),
+                        'message' => 'menu_position should be an int'
+                    ];
+                }
+            ];
+            break;  
+        case 'taxonomy':
+            $spec =  [
+                'label' => $this->makeRegExValidator(
+                    "/^.{1,30}$/"
+                ),
+                'labels' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'labels should be an array'
+                    ];
+                }
+            ];
+            break;   
+        case 'section':
+            $spec =  [
+                'id' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,20}$/"
+                ),
+                'label' => $this->makeRegExValidator(
+                    "/^.{1,30}$/"
+                ),
+                'description' => $this->makeRegExValidator(
+                    "/^.{1,60}$/"
+                ),
+                'fields' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'fields should be an array'
+                    ];
+                }
+            ];
+            break;
+        case 'controller':
+            $spec =  [
+                'namespace' => $this->makeRegExValidator(
+                    "/^[A-Za-z0-9_-]{1,30}$/"
+                ),
+            ];
+            break;
+        case 'route':
+            $spec =  [
+                'path' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,20}$/"
+                ),
+                'method' => $this->makeRegExValidator(
+                    "/^POST|GET|PUT|DELETE$/"
+                ),
+                'handler' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,50}$/"
+                )
+            ];
+            break;  
+        case 'options':
+            $spec =  [
+                'title' => $this->makeRegExValidator(
+                    "/^.{1,40}$/"
+                ),
+                'menu-slug' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,20}$/"
+                ),
+                'capability' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,30}$/"
+                ),
+                'parent' => $this->makeRegExValidator(
+                    "/^[a-z0-9_-]{1,30}$/"
+                ),
+                'fields' => function ($value) {
+                    return [
+                        'result' => is_array($value),
+                        'message' => 'fields should be an array'
+                    ];
+                }
+            ];
+            break; 
+        default:
+            $spec = [];
+            break;
+        }  
         return [
             'name' => $this->makeRegExValidator(
                 "/^[a-z0-9_-]{1,20}$/"
             ),
-            'spec' => function ($value) {
-                return [
-                    'result' => is_array($value),
-                    'message' => 'Spec should be an array'
-                ];
-            },
+            'spec' => $spec,
             'kind' => $this->makeRegExValidator(
-                // TODO: Aggiungere i vari tipi nella validazione
-                "/^post-type|renderer|taxonomy|meta|section|controller|route|options$/"
+                "/^post-type|taxonomy|meta|section|controller|route|options$/"
             )
         ];
     }
@@ -124,6 +257,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
 
     public function isValidStandardConfiguration($data)
     {
+        $this->_kind = $data['kind'];
         $exeption = $this->isValid($data);
         if (!is_null($exeption)) {
             throw $exeption;

@@ -25,7 +25,7 @@ use Aeria\RenderEngine\ServiceProviders\RenderEngineServiceProvider;
 
 class Aeria extends Container
 {
-    public const VERSION = '3.0.1';
+    public const VERSION = '3.0.2';
 
     public function __construct()
     {
