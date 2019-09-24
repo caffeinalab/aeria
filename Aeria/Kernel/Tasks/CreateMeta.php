@@ -5,12 +5,29 @@ namespace Aeria\Kernel\Tasks;
 use Aeria\Kernel\AbstractClasses\Task;
 use Aeria\Meta\Meta;
 
-
+/**
+ * This task is in charge of creating Metaboxes.
+ * 
+ * @category Kernel
+ * @package  Aeria
+ * @author   Simone Montali <simone.montali@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class CreateMeta extends Task
 {
     public $priority = 4;
     public $admin_only = true;
-
+    /**
+     * The main task method. It registers the metaboxes and sections.
+     *
+     * @param array $args the arguments to be passed to the Task
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function do(array $args)
     {
         if (isset($args['config']['aeria']['meta'])) {
@@ -31,7 +48,7 @@ class CreateMeta extends Task
                         );
                     }
                 );
-                add_action('save_post', Meta::save($meta_config, $_POST, $args['service']['validator'], $args['service']['query'], $section_config), 10, 2);
+                add_action('save_post', Meta::save($meta_config, $_POST, $args['service']['validator'], $args['service']['query'], $section_config, $args['service']['render_engine']), 10, 2);
             }
 
             add_action(

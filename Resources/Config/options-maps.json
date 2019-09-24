@@ -1,0 +1,21 @@
+{
+    "name": "map_options",
+    "spec": {
+      "title": "Aeria Map Options",
+      "menu_slug": "map_options",
+      "context": "normal",
+      "fields": [
+        {
+          "type": "text",
+          "id": "api_key",
+          "label": "Google Maps API key",
+          "description": "You can request your API key like explained on the Google Cloud docs.",
+          "size": "half",
+          "placeholder": "API Key",
+          "required": true
+        }
+    ]
+    },
+    "kind": "options"
+  }
+  

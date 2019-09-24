@@ -5,11 +5,28 @@ namespace Aeria\Kernel;
 use Aeria\Container\Container;
 use Aeria\Kernel\AbstractClasses\Task;
 use Aeria\Structure\Traits\DictionaryTrait;
-
+/**
+ * The kernel is in charge of the boot of Aeria.
+ * 
+ * @category Kernel
+ * @package  Aeria
+ * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class Kernel
 {
     use DictionaryTrait;
-
+    /**
+     * This function registers a task to the kernel.
+     *
+     * @param Task $task the task we want to register
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function register(Task $task)
     {
         $key = get_class($task);
@@ -18,7 +35,16 @@ class Kernel
         $this->set($key, $task);
     }
 
-    // Booter
+    /**
+     * This function boots all of the services and tasks. 
+     *
+     * @param Container $container where we've bound the services
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */    
     public function boot(Container $container)
     {
         // Services
@@ -35,14 +61,24 @@ class Kernel
         ];
         $tasks = $this->all();
         uasort($tasks, array($this, 'compareTasks'));
-        foreach ($tasks as $task){
+        foreach ($tasks as $task) {
             if(is_admin() && $task->admin_only)
                 $task->do($args);
             else if (!$task->admin_only)
                 $task->do($args);
         }
     }
-
+    /**
+     * This function is required to order the tasks by their priorities
+     *
+     * @param Task $a the first task
+     * @param Task $b the second task
+     *
+     * @return 1 if a>b, -1 if not
+     *
+     * @access private
+     * @since  Method available since Release 3.0.0
+     */   
     private function compareTasks(Task $a, Task $b)
     {
         if ($a->priority == $b->priority)

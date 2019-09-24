@@ -5,12 +5,30 @@ namespace Aeria\Kernel\Tasks;
 use Aeria\Kernel\AbstractClasses\Task;
 use Aeria\Router\Factory\RouteFactory;
 
-
+/**
+ * This task is in charge of creating the router and its routes.
+ * 
+ * @category Kernel
+ * @package  Aeria
+ * @author   Simone Montali <simone.montali@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class CreateRouter extends Task
 {
     public $priority = 9;
     public $admin_only = false;
-
+    /**
+     * The main task method. It registers various routes, the default ones
+     * and the custom ones.
+     *
+     * @param array $args the arguments to be passed to the Task
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function do(array $args)
     {
         $args['service']['router']->get(

@@ -8,13 +8,42 @@ use Aeria\Action\ActionDispatcher;
 use Aeria\Action\Enqueuers\ScriptsEnqueuer;
 use Aeria\Action\Actions\AdminEnqueueScripts as AdminEnqueueScriptsAction;
 
+/**
+ * ActionProvider is in charge of registering the Action service
+ * to the container
+ * 
+ * @category Action
+ * @package  Aeria
+ * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class ActionProvider implements ServiceProviderInterface
 {
+    /**
+     * Registers the service to the provided container, as a singleton
+     *
+     * @param Container $container Aeria's container
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function register(Container $container)
     {
         $container->singleton('action', ActionDispatcher::class);
     }
-
+    /**
+     * In charge of booting the service.
+     *
+     * @param Container $container Aeria's container
+     *
+     * @return bool true: service booted
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function boot(Container $container): bool
     {
         $dispatcher = $container->make('action');

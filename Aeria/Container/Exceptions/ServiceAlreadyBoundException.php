@@ -1,18 +1,19 @@
 <?php
 
-namespace Aeria\PostType\Exceptions;
+namespace Aeria\Container\Exceptions;
 
 use Exception;
 /**
- * NoPostTypeException gets thrown when Aeria looks for an unregistered post type
+ * ServiceAlreadyBoundException gets thrown when a Aeria tries to register
+ * an existent service
  * 
- * @category PostType
+ * @category Field
  * @package  Aeria
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
  * @link     https://github.com/caffeinalab/aeria
  */
-class NoPostTypeException extends Exception
+class ServiceAlreadyBoundException extends Exception
 {
 
 }

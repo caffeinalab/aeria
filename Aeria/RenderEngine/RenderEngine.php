@@ -7,21 +7,47 @@ use Aeria\RenderEngine\Interfaces\Renderable;
 use Aeria\RenderEngine\Exceptions\RendererNotAvailableException;
 use Aeria\Config\Config;
 use Aeria\Structure\Traits\DictionaryTrait;
-
-class RenderEngine 
+/**
+ * RenderEngine is in charge of rendering views
+ * 
+ * @category Render
+ * @package  Aeria
+ * @author   Simone Montali <simone.montali@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
+class RenderEngine
 {
     use DictionaryTrait {
         DictionaryTrait::__construct as instanciateDictionary;
     }
 
     private $root_paths = [];
-
+    /**
+     * Constructs the Render service
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function __construct()
     {
         $this->instanciateDictionary();
         $this->addRootPath(dirname(__DIR__, 2)."/Resources/Templates");
     }
-
+    /**
+     * Renders the specified view
+     * 
+     * @param string $mode   is the view name
+     * @param array  $extras are the required data for the view
+     *
+     * @return void
+     * @throws \Exception when the view doesn't exist
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function render($mode, $extras)
     {
         try{
@@ -33,17 +59,42 @@ class RenderEngine
             echo "Unable to render template: ".$mode."-".$e->getMessage();
         }
     }
-
+    /**
+     * Registers a new view to the RenderEngine
+     * 
+     * @param Renderable $view the view object
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function register(Renderable $view)
     {
         $this->set($view->name(), $view);
     }
-
+    /**
+     * Returns the RenderEngine root paths, i.e. where it looks for views
+     * 
+     * @return array the root paths
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getRootPaths()
     {
         return $this->root_paths;
     }
-
+    /**
+     * Adds a new path to the root paths
+     * 
+     * @param string $root_path the path we want to add
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function addRootPath(string $root_path)
     {
         $this->root_paths[]=$root_path;

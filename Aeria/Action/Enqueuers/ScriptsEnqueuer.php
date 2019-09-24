@@ -6,6 +6,15 @@ use Aeria\Action\Interfaces\EnqueuerInterface;
 use Aeria\Container\Container;
 use Closure;
 
+/**
+ * ScriptsEnqueuer is in charge of enqueuing scripts to WP
+ * 
+ * @category Action
+ * @package  Aeria
+ * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class ScriptsEnqueuer implements EnqueuerInterface
 {
 
@@ -14,7 +23,21 @@ class ScriptsEnqueuer implements EnqueuerInterface
     protected $deps;
     protected $ver;
     protected $in_footer;
-
+    /**
+     * Constructs the ScriptsEnqueuer object
+     * 
+     * @param string           $name      the handle
+     * @param string           $path      the scripts path
+     * @param array            $deps      the script dependencies
+     * @param string|bool|null $ver       the script version number
+     * @param bool             $in_footer whether the script has to be in 
+     *                                    the head, or footer
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function __construct(
         string $name,
         string $path,
@@ -28,7 +51,16 @@ class ScriptsEnqueuer implements EnqueuerInterface
         $this->ver = $ver;
         $this->in_footer = $in_footer;
     }
-
+    /**
+     * Constructs the ScriptsEnqueuer object
+     * 
+     * @param Container $container Aeria's container
+     *
+     * @return Closure the script enqueuer
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getEnqClosure(Container $container): Closure
     {
         $name = $this->name;

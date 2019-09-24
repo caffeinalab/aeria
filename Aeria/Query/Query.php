@@ -7,10 +7,19 @@ class Query
 {
     protected $queries;
 
-
-    public function deleteMeta ($post_id, $key)
+    /**
+     * Deletes a meta from a post
+     *
+     * @param int    $post_id required post ID
+     * @param string $key     custom meta's key
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
+    public function deleteMeta($post_id, $key)
     {
-
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
@@ -21,9 +30,18 @@ class Query
 
     }
 
-    public function deleteOption ($key)
+    /**
+     * Deletes an option from WP settings
+     *
+     * @param string $key custom meta's key
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
+    public function deleteOption($key)
     {
-
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
@@ -31,10 +49,19 @@ class Query
                 WHERE option_name LIKE %s", $key."%"
             )
         );
-
     }
 
-
+    /**
+     * Gets the saved post types
+     *
+     * @param array $parameters the additional query parameters - check 
+     *                          WP codex to know more
+     *
+     * @return array of the post types
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getPostTypes($parameters)
     {
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : null;
@@ -53,7 +80,17 @@ class Query
         }
         return $response;
     }
-
+    /**
+     * Gets the saved taxonomies
+     *
+     * @param array $parameters the additional query parameters - check 
+     *                          WP codex to know more
+     *
+     * @return array of the taxonomies
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getTaxonomies($parameters)
     {
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : "";
@@ -62,14 +99,24 @@ class Query
         $taxonomies = get_taxonomies([], 'objects');
         $response = [];
         foreach ($taxonomies as $index => $taxonomy) {
-            if ((preg_match('/'.$searchField.'/', $taxonomy->name)&&((in_array($postType, $taxonomy->object_type)) || $postType == "") || $searchField=="")){
+            if ((preg_match('/'.$searchField.'/', $taxonomy->name)&&((in_array($postType, $taxonomy->object_type)) || $postType == "") || $searchField=="")) {
                 $response[$index]["label"] = $taxonomy->labels->name;
                 $response[$index]["value"] = $taxonomy->name; 
             }
         }
         return $response;
     }
-
+    /**
+     * Gets the requested posts
+     *
+     * @param array $parameters the additional query parameters - check 
+     *                          WP codex to know more
+     *
+     * @return array of the requested posts
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getPosts($parameters)
     {
         $searchField = (isset($parameters["s"])) ? $parameters["s"] : null;
@@ -113,20 +160,41 @@ class Query
         ];
         $posts = get_posts($args);
         $response=[];
-        foreach ($posts as $index => $post){
+        foreach ($posts as $index => $post) {
             $postArray = $post->to_array();
-            foreach($postParams as $thePostParam){
+            foreach ($postParams as $thePostParam) {
                 $response[$index][$responseParams[$thePostParam]]=$postArray[$thePostParam];
             }
         }
         return $response;
     }
-
-    public function register ($name, $querier)
+    /**
+     * Registers a new query
+     *
+     * @param array $parameters the additional query parameters - check 
+     *                          WP codex to know more
+     *
+     * @return array of the requested posts
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
+    public function register($name, $querier)
     {
         $this->queries[$name]=$querier;
     }
-
+    /**
+     * Overrides php __call. If the function is present in the class prototypes, it
+     * gets called. 
+     *
+     * @param string $name the function name
+     * @param array  $args the arguments to be passed to the function
+     *
+     * @return mixed the callable return value
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function __call($name, $args)
     {
         global $wpdb;

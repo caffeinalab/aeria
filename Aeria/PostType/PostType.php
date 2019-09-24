@@ -12,11 +12,26 @@ use Aeria\PostType\Exceptions\{
 };
 use Aeria\Config\Traits\ValidateConfTrait;
 use Aeria\Container\Interfaces\ValidateConfInterface;
-
+/**
+ * PostType is the service in charge of registering post types
+ * 
+ * @category PostType
+ * @package  Aeria
+ * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class PostType implements ValidateConfInterface
 {
     use ValidateConfTrait;
-
+    /**
+     * Returns a validation structure for post type configs
+     *
+     * @return array the validation structure
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getValidationStructure() : array
     {
         return [
@@ -25,7 +40,18 @@ class PostType implements ValidateConfInterface
             )
         ];
     }
-
+    /**
+     * Creates the requested post types
+     *
+     * @param array $post_type the post type's configuration
+     *
+     * @return WP_Post_Type the registered post type object
+     * @throws AlreadyExistingPostTypeException if the post type already exists
+     * @throws WordpressPostTypeException if WP fails
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function create($post_type)
     {
         $this->validate($post_type);
@@ -50,7 +76,16 @@ class PostType implements ValidateConfInterface
 
         return $post_type;
     }
-
+    /**
+     * Gets the requested post type object
+     *
+     * @param string $post_type the post type ID
+     *
+     * @return WP_Post_Type the requested post type
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function get(string $post_type)
     {
         $post_type_obj = get_post_type_object($post_type);
@@ -62,20 +97,49 @@ class PostType implements ValidateConfInterface
 
         return $post_type_obj;
     }
-
+    /**
+     * Checks if a post type exists
+     *
+     * @param string $post_type the post type ID
+     *
+     * @return bool whether it exists or not
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function exists(string $post_type)
     {
         return post_type_exists($post_type);
     }
-
+    /**
+     * Validates the post type configuration
+     *
+     * @param array $conf the post type's configuration
+     *
+     * @return void
+     * @throws ConfigValidationException if the configuration is invalid
+     *
+     * @access private
+     * @since  Method available since Release 3.0.0
+     */
     private function validate($conf)
     {
-        $exeption = $this->isValid($conf);
-        if (!is_null($exeption)) {
-            throw $exeption;
+        $exception = $this->isValid($conf);
+        if (!is_null($exception)) {
+            throw $exception;
         }
     }
-
+    /**
+     * Helper function. Removes an element from an array
+     *
+     * @param string $key   the requested key to delete
+     * @param array  $array the array to work on
+     *
+     * @return array the filtered array
+     *
+     * @access private
+     * @since  Method available since Release 3.0.0
+     */
     private function removeKeyFrom(string $key, array $array)
     {
         return array_filter(

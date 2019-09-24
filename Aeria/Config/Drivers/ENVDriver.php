@@ -3,23 +3,47 @@
 namespace Aeria\Config\Drivers;
 
 use Aeria\Config\Interfaces\DriverInterface;
-
+/**
+ * ENVDriver is a driver for .env files
+ * 
+ * @category Config
+ * @package  Aeria
+ * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class ENVDriver implements DriverInterface
 {
     protected const FILE_FLAGS = FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES;
 
     public $driver_name = 'env';
-
+    /**
+     * Return this driver's name
+     *
+     * @return string the driver name
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function getDriverName() : string
     {
         return $this->driver_name;
     }
-
+    /**
+     * Parse the requested file
+     *
+     * @param string $env_file_path the file path
+     *
+     * @return array the parsed file
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function parse(string $env_file_path) : array
     {
         $result = [];
 
-        foreach($this->fileLinesGenerator($env_file_path) as $key => $value) {
+        foreach ($this->fileLinesGenerator($env_file_path) as $key => $value) {
             $key = $this->cleanKey($key);
 
             $value = $this->cleanValue($value);
@@ -29,7 +53,16 @@ class ENVDriver implements DriverInterface
 
         return $result;
     }
-
+    /**
+     * Parse the requested file
+     *
+     * @param string $file_path the file path
+     *
+     * @return array the parsed file
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     protected function fileLinesGenerator(string $file_path) : Iterable {
         foreach(file($dir, static::FILE_FLAGS) as $line) {
             $line = trim($line);

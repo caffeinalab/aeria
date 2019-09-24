@@ -4,51 +4,51 @@ namespace Aeria\Field\Fields;
 
 use Aeria\Field\Interfaces\FieldInterface;
 /**
- * Switch is the class that represents an ON/OFF switch
+ * DateRange is the class that represents a Date Range field
  * 
  * @category Field
  * @package  Aeria
- * @author   Alberto Parziale <alberto.parziale@caffeina.com>
+ * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
  * @link     https://github.com/caffeinalab/aeria
  */
-class SwitchField extends BaseField
+class DateRangeField extends BaseField
 {
     public $is_multiple_field = false;
     /**
      * Gets the field's value
      *
-     * @param array $saved_fields the FieldGroup's saved fields
+     * @param array $metas       the FieldGroup's saved fields
      * @param bool  $skip_filter  whether to skip or not WP's filter
      *
-     * @return mixed the field's values, containing true or false
+     * @return mixed the field's values, an array containing the start at [0], end at [1]
      *
      * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function get(array $saved_fields, bool $skip_filter = false) 
+    public function get(array $metas, bool $skip_filter = false)
     {
-        $result = filter_var(parent::get($saved_fields, true), FILTER_VALIDATE_BOOLEAN);
+        $from = (new BaseField($this->key, ['id' => 'from'], $this->sections))->get($metas);
+        $to = (new BaseField($this->key, ['id' => 'to'], $this->sections))->get($metas);
+        $values = [$from,$to];
         if(!$skip_filter)
-          $result = apply_filters('aeria_get_switch', $result, $this->config);
-        return $result;
+            $values = apply_filters("aeria_get_daterange", $values, $this->config);
+        return $values;
     }
     /**
      * Gets the field's value and its errors
      *
-     * @param array $saved_fields the FieldGroup's saved fields
-     * @param array $errors      the saving errors
+     * @param array $metas  the FieldGroup's saved fields
+     * @param array $errors the saving errors
      *
      * @return array the field's config, hydrated with values and errors
      *
      * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function getAdmin(array $saved_fields, array $errors) 
+    public function getAdmin(array $metas, array $errors)
     {
-        $savedValues = parent::getAdmin($saved_fields, $errors, true);
-        $savedValues['value'] = filter_var($savedValues['value'], FILTER_VALIDATE_BOOLEAN);
-        return $savedValues;
+        return parent::getAdmin($metas, $errors, true);
     }
     /**
      * Saves the new values to the fields.
@@ -67,11 +67,7 @@ class SwitchField extends BaseField
      */
     public function set($context_ID, $context_type, array $saved_fields, array $new_values, $validator_service, $query_service)
     {
-        if (!isset($new_values[$this->key]) || !filter_var($new_values[$this->key], FILTER_VALIDATE_BOOLEAN)) {
-            $new_values[$this->key] = 'false';
-        } else {
-            $new_values[$this->key] = 'true';
-        }
-        parent::set($context_ID, $context_type, $saved_fields, $new_values, $validator_service, $query_service);
+        (new BaseField($this->key, ['id' => 'from'], $this->sections))->set($context_ID, $context_type, $saved_fields, $new_values, $validator_service, $query_service);
+        (new BaseField($this->key, ['id' => 'to'], $this->sections))->set($context_ID, $context_type, $saved_fields, $new_values, $validator_service, $query_service);
     }
 }

@@ -22,17 +22,39 @@ use Aeria\Updater\ServiceProviders\UpdaterServiceProvider;
 use Aeria\Router\ServiceProviders\ControllerServiceProvider;
 use Aeria\RenderEngine\ServiceProviders\RenderEngineServiceProvider;
 
-
+/**
+ * Aeria is a lightweight and modular WP development tool.
+ * 
+ * @category Action
+ * @package  Aeria
+ * @author   Caffeina Devs <dev@caffeinalab.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class Aeria extends Container
 {
-    public const VERSION = '3.0.2';
-
+    public const VERSION = '3.0.3';
+    /**
+     * Constructs the Aeria container
+     * 
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function __construct()
     {
         $this->registerBindings();
         $this->registerServiceProviders();
     }
-
+    /**
+     * Registers Aeria's bindings
+     * 
+     * @return void
+     *
+     * @access protected
+     * @since  Method available since Release 3.0.0
+     */
     protected function registerBindings()
     {
         static::setInstance($this);
@@ -41,7 +63,14 @@ class Aeria extends Container
 
         $this->bind(Container::class, $this);
     }
-
+    /**
+     * Registers all the required ServiceProviders to the container
+     *
+     * @return void
+     *
+     * @access protected
+     * @since  Method available since Release 3.0.0
+     */
     protected function registerServiceProviders() // : void
     {
         $this->register(new ConfigProvider());
@@ -59,12 +88,27 @@ class Aeria extends Container
         $this->register(new OptionsPageServiceProvider());
         $this->register(new RenderEngineServiceProvider());
     }
-
+    /**
+     * Returns Aeria's version
+     * 
+     * @return string the version
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function version() : string
     {
         return static::VERSION;
     }
-
+    /**
+     * Returns Aeria's instance
+     * 
+     * @return Aeria the instance
+     *
+     * @access public
+     * @static
+     * @since  Method available since Release 3.0.0
+     */
     public static function getInstance() : ContainerInterface
     {
         if (is_null(static::$instance)) {
@@ -73,7 +117,17 @@ class Aeria extends Container
 
         return static::$instance;
     }
-
+    /**
+     * Sets Aeria's instance
+     * 
+     * @param ContainerInterface $container the container
+     * 
+     * @return ContainerInterface the instance we've set
+     *
+     * @access public
+     * @static
+     * @since  Method available since Release 3.0.0
+     */
     public static function setInstance(
         ContainerInterface $container
     ) : ContainerInterface {

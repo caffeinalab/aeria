@@ -6,41 +6,88 @@ use Aeria\Validator\Exceptions\InvalidValidatorException;
 use Aeria\Validator\Types\Callables\IsEmailValidator;
 use Aeria\Validator\Types\RegEx\IsShortValidator;
 
+/**
+ * Validator is the service in charge of validating fields
+ * 
+ * @category Validator
+ * @package  Aeria
+ * @author   Simone Montali <simone.montali@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class Validator
 {
     private $validators = [];
     private $coreValidators = [ IsEmailValidator::class, IsShortValidator::class ];
-
+    /**
+     * Constructs the service
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function __construct()
     {
-        foreach($this->coreValidators as $validator){
+        foreach ($this->coreValidators as $validator) {
             $this->register($validator::getKey(), $validator::getValidator(), $validator::getMessage());
         }
     }
 
-
-    public function register($name, $newValidator,$message=null)
+    /**
+     * Registers a new validator
+     * 
+     * @param string $name          the validator name
+     * @param mixed  $new_validator the validator to add
+     * @param string $message       the error message
+     * 
+     * @return void
+     * @throws InvalidValidatorException if the validator is wrong
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
+    public function register($name, $new_validator,$message=null)
     {
-        if (is_callable($newValidator)) {
-            $this->validators[$name] = $newValidator;
-        } elseif (preg_match($newValidator, null) !== false) {
-            $this->validators[$name] = function ($field) use ($newValidator, $message) {
-                $isValid["status"] = (bool)preg_match($newValidator, $field);
+        if (is_callable($new_validator)) {
+            $this->validators[$name] = $new_validator;
+        } elseif (preg_match($new_validator, null) !== false) {
+            $this->validators[$name] = function ($field) use ($new_validator, $message) {
+                $isValid["status"] = (bool)preg_match($new_validator, $field);
                 if ($isValid["status"] == false) {
-                    $isValid["message"] = ($message!=null) ? $message : "The RegEx ".$newValidator." was not satisfied. ";
+                    $isValid["message"] = ($message!=null) ? $message : "The RegEx ".$new_validator." was not satisfied. ";
                 }
                 return $isValid;
             };
         } else {
-          throw new InvalidValidatorException("The " . $name . " validator contains a wrong condition: " . $newValidator);
+            throw new InvalidValidatorException("The " . $name . " validator contains a wrong condition: " . $new_validator);
         }
     }
-
+    /**
+     * Registers a validator
+     * 
+     * @param AbstractValidator $validator the new validator
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function registerValidatorClass($validator)
     {
         $this->register($validator::getKey(), $validator::getValidator(), $validator::getMessage());
     }
-
+    /**
+     * Validates a field with a list of validators
+     *
+     * @param mixed $field        the field to validate
+     * @param mixed $validations the required validations 
+     * 
+     * @return array the result of the validation
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public function validate($field, $validations)
     {
         $validators=$this->validatorsToArray($validations);
@@ -62,8 +109,19 @@ class Validator
         return $validation;
     }
 
-
-    public function validateByID ($full_id, $value, $metaboxes)
+    /**
+     * Validates a field by its ID
+     * 
+     * @param string $full_id   the field's ID
+     * @param mixed  $value     the field's value
+     * @param array  $metaboxes the meta configuration
+     *
+     * @return array the results of the validation
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
+    public function validateByID($full_id, $value, $metaboxes)
     {
         foreach ($metaboxes as $id => $metabox) {
             $meta_id_length = strlen($id);
@@ -82,17 +140,27 @@ class Validator
             ];
         }
         foreach ($metaboxes[$metabox_id]['fields'] as $index => $field) {
-            if ($field['id'] == $field_id){
+            if ($field['id'] == $field_id) {
                 $validators = array_key_exists("validators", $field) ? $field['validators'] : "";
             }
         }
         return $this->validate($value, $validators);
     }
-    private function validatorsToArray ($validators)
+
+    /**
+     * Transforms a string of validators to an array
+     *
+     * @param string $validators the input validators
+     * 
+     * @return array the validators
+     *
+     * @access private
+     * @since  Method available since Release 3.0.0
+     */
+    private function validatorsToArray($validators)
     {
         if (is_array($validators)) {
             return $validators;
         } return explode("|", $validators);
-
     }
 }

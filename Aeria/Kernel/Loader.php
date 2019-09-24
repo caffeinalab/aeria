@@ -8,17 +8,49 @@ use Aeria\RenderEngine\ViewFactory;
 use \Exception;
 
 
-
+/**
+ * Loader is the class in charge of fetching configuration files from your theme.
+ * 
+ * @category Config
+ * @package  Aeria
+ * @author   Simone Montali <simone.montali@caffeina.com>
+ * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
+ * @link     https://github.com/caffeinalab/aeria
+ */
 class Loader
 {
+    /**
+     * This method loads a config
+     *
+     * @param Config     $config     the config to be loaded
+     * @param Container $container our container
+     *
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public static function loadConfig(Config $config, Container $container)
     {
-        $root_path = $config->getRootPath();
+        $root_paths = $config->getRootPath();
         $render_service = $container->make('render_engine');
-        static::recursiveLoad($config, $root_path, $render_service);
+        foreach ($root_paths as $root_path) {
+            static::recursiveLoad($config, $root_path, $render_service);
+        }
     }
     
-    
+    /**
+     * This method recursively loads the views for the renderer
+     *
+     * @param string $base_path      the base path of the view
+     * @param Render $render_service the render service to load the views to
+     * @param string $context        the context of the file
+     * 
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public static function loadViews($base_path, $render_service, $context = '')
     {
         $new_base_path = static::joinPaths($base_path, $context);
@@ -40,6 +72,19 @@ class Loader
             }
         }
     }
+    /**
+     * This method recursively loads the configs
+     *
+     * @param Config  $config          the config to be passed to loadSettings
+     * @param string $base_path      the base path of the view
+     * @param Render $render_service the render service to load the views to
+     * @param string $context        the context of the file
+     * 
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     public static function recursiveLoad(
         Config $config,
         string $base_path,
@@ -96,7 +141,18 @@ class Loader
             }
         }
     }
-
+    /**
+     * This method loads settings from a config
+     *
+     * @param Config  $config    the fetched config
+     * @param string $file_path the file path
+     * @param string $context  the context of the file
+     * 
+     * @return void
+     *
+     * @access public
+     * @since  Method available since Release 3.0.0
+     */
     private static function loadSettings(Config $config, string $file_path, string $context)
     {
         $parsed_file = $config->
@@ -107,16 +163,27 @@ class Loader
         $name = $parsed_file['name'];
         $spec_list = $parsed_file['spec'];
         $kind = $parsed_file['kind'];
+        $enabled = isset($parsed_file['enabled']) ? $parsed_file['enabled'] : true;
         $namespace = $kind == 'controller' || $kind == 'route' ?
           "global.{$kind}.{$name}" :
           "aeria.{$kind}.{$name}";
-
-        $config->
-            { Config::getLoaderMethod($config->getDriverInUse($file_path)) }(
-                $spec_list,
-                $namespace
-            );
+        if ($enabled) {
+            $config->
+                { Config::getLoaderMethod($config->getDriverInUse($file_path)) }(
+                    $spec_list,
+                    $namespace
+                );
+        }
     }
+    /**
+     * This method joins paths
+     *
+     * @return string joined paths
+     *
+     * @access public
+     * @static
+     * @since  Method available since Release 3.0.0
+     */
     private static function joinPaths()
     {
         $args = func_get_args();
