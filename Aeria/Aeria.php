@@ -33,7 +33,7 @@ use Aeria\RenderEngine\ServiceProviders\RenderEngineServiceProvider;
  */
 class Aeria extends Container
 {
-    public const VERSION = '3.0.3';
+    public const VERSION = '3.0.4';
     /**
      * Constructs the Aeria container
      * 

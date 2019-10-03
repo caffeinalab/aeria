@@ -9,7 +9,7 @@ use Aeria\Meta\MetaProcessor;
 use Aeria\RenderEngine\RenderEngine;
 /**
  * Meta is in charge of creating, saving and rendering metaboxes
- * 
+ *
  * @category Meta
  * @package  Aeria
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
@@ -41,7 +41,7 @@ class Meta implements ValidateConfInterface
      *
      * @param array        $config          the Meta configs
      * @param array        $sections       the sections configuration
-     * @param RenderEngine $render_service the service in charge of rendering HTML 
+     * @param RenderEngine $render_service the service in charge of rendering HTML
      *
      * @return array the field's values, an array containing the gallery's children
      *
@@ -50,17 +50,44 @@ class Meta implements ValidateConfInterface
      */
     public function create($config, $sections, $render_service)
     {
+        global $wp_meta_boxes;
         $this->validate($config);
         $this->sections = $sections;
-        add_meta_box(
-            'aeria-' . $config['id'],
-            $config['title'],
-            Meta::class . '::renderHTML',
-            isset($config['post_type']) ? $config['post_type'] : 'post',
-            isset($config['context']) ? $config['context'] : 'advanced',
-            isset($config['priority']) ? $config['priority'] : 'default',
-            ["config" => $config,"sections"=> $sections, "render_service" => $render_service]
-        );
+
+        $context = isset($config['context']) ? $config['context'] : 'advanced';
+        $priority = isset($config['priority']) ? $config['priority'] : 'default';
+        $templates = isset($config['templates']) ? $config['templates'] : [];
+
+        if(isset($config['post_type']) && count($config['post_type']) === 0){
+          $post_types = false;
+        } else if (!isset($config['post_type'])){
+          $post_types = 'post';
+        } else {
+          $post_types = $config['post_type'];
+        }
+        if($post_types !== false){
+          add_meta_box(
+              'aeria-' . $config['id'],
+              $config['title'],
+              Meta::class . '::renderHTML',
+              $post_types,
+              $context,
+              $priority,
+              ["config" => $config,"sections"=> $sections, "render_service" => $render_service]
+          );
+        }
+
+        if (!isset($wp_meta_boxes[get_post_type()][$context][$priority]['aeria-' . $config['id']]) && in_array(get_page_template_slug(), $templates)){
+          add_meta_box(
+              'aeria-' . $config['id'],
+              $config['title'],
+              Meta::class . '::renderHTML',
+              get_post_type(),
+              $context,
+              $priority,
+              ["config" => $config,"sections"=> $sections, "render_service" => $render_service]
+          );
+        }
     }
     /**
      * Validates the meta configuration
@@ -83,7 +110,7 @@ class Meta implements ValidateConfInterface
     /**
      * Returns the required fields to get a WP nonce
      *
-     * @param WP_Post $post current post object 
+     * @param WP_Post $post current post object
      *
      * @return array the nonce fields
      *
@@ -148,14 +175,20 @@ class Meta implements ValidateConfInterface
     public static function save($metabox,  $new_values, $validator_service, $query_service, $sections, $render_service)
     {
         return function ($post_id,$post) use ($metabox, $new_values, $validator_service, $query_service, $sections, $render_service) {
+            $templates = isset($metabox['templates']) ? $metabox['templates'] : [];
+            $context = isset($metabox['context']) ? $metabox['context'] : 'advanced';
+            $priority = isset($metabox['priority']) ? $metabox['priority'] : 'default';
             // Since this function is triggered when a post is created too, I'm gonna skip it in that case. I'm gonna skip it even if the post_Type is not supported.
-            if ($new_values==[] || !in_array($post->post_type, $metabox["post_type"])) {
+            if ($new_values==[]
+                || !(in_array($post->post_type, $metabox["post_type"]) || in_array(get_page_template_slug(), $templates))
+                || !isset($new_values['update_aeria_meta'])
+            ) {
                 return $post_id;
             }
 
             $nonceIDs = static::nonceIDs($post);
             $post_type_object = get_post_type_object($new_values['post_type']);
-
+            // TODO: Check if current post type is supported: in the 1.0, the supported fields were hardcoded to ['post']
             if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
                 || (empty($new_values['post_ID']) ||  empty($new_values['post_type']))
                 || (!isset($new_values['post_ID']) || $post_id != $new_values['post_ID'])
