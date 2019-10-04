@@ -10,7 +10,7 @@ use Aeria\OptionsPage\OptionsPageProcessor;
 if (!function_exists('dump')) {
     /**
      * Dumps the provided arguments
-     * 
+     *
      * @param mixed ...$args the dumpable args
      *
      * @return void
@@ -58,7 +58,7 @@ if (!function_exists('dump')) {
 if (!function_exists('dd')) {
     /**
      * Dumps the provided arguments than dies
-     * 
+     *
      * @param mixed ...$args the dumpable args
      *
      * @return void
@@ -76,7 +76,7 @@ if (!function_exists('dd')) {
 if (!function_exists('toSnake')) {
     /**
      * Converts camelCase to snake_case
-     * 
+     *
      * @param string $convertible_text the text to convert
      *
      * @return string the converted text
@@ -101,7 +101,7 @@ if (!function_exists('toSnake')) {
 if (!function_exists('aeria')) {
     /**
      * Returns Aeria's instance
-     * 
+     *
      * @param string $abstract the requested service
      *
      * @return mixed the service or Aeria's instance
@@ -118,7 +118,7 @@ if (!function_exists('aeria')) {
     }
     /**
      * Returns Aeria's fields
-     * 
+     *
      * @param WP_Post $post the current post
      *
      * @return array the retrieved fields
@@ -139,7 +139,10 @@ if (!function_exists('aeria')) {
               ['id' => $name],
               $data
           );
-          if( !in_array($post->post_type, $metabox["post_type"])){
+          if( $post->post_type !== 'page' && !in_array($post->post_type, $metabox["post_type"])){
+            continue;
+          }
+          if($post->post_type === 'page' && !in_array(get_page_template_slug($post), $metabox["templates"])){
             continue;
           }
           $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
@@ -150,7 +153,7 @@ if (!function_exists('aeria')) {
     }
     /**
      * Returns an Aeria field
-     * 
+     *
      * @param WP_Post $post    the current post
      * @param string  $metabox the metabox ID
      * @param string  $id      the field's ID
@@ -172,7 +175,7 @@ if (!function_exists('aeria')) {
     }
     /**
      * Returns an Aeria metabox's fields
-     * 
+     *
      * @param WP_Post $post    the current post
      * @param string  $metabox the metabox ID
      *
@@ -199,7 +202,7 @@ if (!function_exists('aeria')) {
     }
     /**
      * Returns Aeria's options
-     * 
+     *
      * @param string $option_page the page we're checking
      *
      * @return array the retrieved fields
@@ -222,7 +225,7 @@ if (!function_exists('aeria')) {
     }
     /**
      * Saves Aeria's provided fields
-     * 
+     *
      * @param array $saving_data the data we're saving
      *
      * @return void
@@ -241,7 +244,7 @@ if (!function_exists('aeria')) {
 
     /**
      * Flattens an array
-     * 
+     *
      * @param array $to_be_normalized the array we want to normalize
      * @param int   $times            the times to normalize the array
      *
