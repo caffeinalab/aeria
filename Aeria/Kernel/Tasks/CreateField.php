@@ -5,7 +5,7 @@ namespace Aeria\Kernel\Tasks;
 use Aeria\Kernel\AbstractClasses\Task;
 /**
  * This task is in charge of creating fields.
- * 
+ *
  * @category Kernel
  * @package  Aeria
  * @author   Simone Montali <simone.montali@caffeina.com>
@@ -36,6 +36,7 @@ class CreateField extends Task
         $args['service']['field']->register('select', \Aeria\Field\Fields\SelectField::class);
         $args['service']['field']->register('switch', \Aeria\Field\Fields\SwitchField::class);
         $args['service']['field']->register('relation', \Aeria\Field\Fields\RelationField::class);
+        $args['service']['field']->register('post_types', \Aeria\Field\Fields\PostTypesField::class);
         $args['service']['field']->register('maps', \Aeria\Field\Fields\MapField::class);
         $args['service']['field']->register('daterange', \Aeria\Field\Fields\DateRangeField::class);
         // example of multiple registered fields with the same handler; not
