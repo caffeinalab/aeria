@@ -7,7 +7,7 @@ use Aeria\Router\Factory\RouteFactory;
 
 /**
  * This task is in charge of creating the router and its routes.
- * 
+ *
  * @category Kernel
  * @package  Aeria
  * @author   Simone Montali <simone.montali@caffeina.com>
@@ -54,6 +54,13 @@ class CreateRouter extends Task
                 $wp_req = $request->wp_request;
                 return $args['service']['query']->getTaxonomies($wp_req->get_params());
             }
+        );
+        $args['service']['router']->get(
+          '/terms', function ($request) use ($args) {
+              $wp_req = $request->wp_request;
+
+              return $args['service']['query']->getTerms($wp_req->get_params());
+          }
         );
         $args['service']['router']->get(
             "/validate-by-id", function ($request) use ($args) {

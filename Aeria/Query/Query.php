@@ -54,7 +54,7 @@ class Query
     /**
      * Gets the saved post types
      *
-     * @param array $parameters the additional query parameters - check 
+     * @param array $parameters the additional query parameters - check
      *                          WP codex to know more
      *
      * @return array of the post types
@@ -83,7 +83,7 @@ class Query
     /**
      * Gets the saved taxonomies
      *
-     * @param array $parameters the additional query parameters - check 
+     * @param array $parameters the additional query parameters - check
      *                          WP codex to know more
      *
      * @return array of the taxonomies
@@ -101,15 +101,53 @@ class Query
         foreach ($taxonomies as $index => $taxonomy) {
             if ((preg_match('/'.$searchField.'/', $taxonomy->name)&&((in_array($postType, $taxonomy->object_type)) || $postType == "") || $searchField=="")) {
                 $response[$index]["label"] = $taxonomy->labels->name;
-                $response[$index]["value"] = $taxonomy->name; 
+                $response[$index]["value"] = $taxonomy->name;
             }
         }
         return $response;
     }
+
+    /**
+     * Gets the saved terms.
+     *
+     * @param array $parameters the additional query parameters - check
+     *                          WP codex to know more
+     *
+     * @return array of terms
+     *
+     * @since  Method available since Release 3.0.0
+     */
+    public function getTerms($parameters)
+    {
+        $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
+        $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
+        $taxonomy = (isset($parameters['taxonomy'])) ? $parameters['taxonomy'] : 'category';
+        $hide_empty = (isset($parameters['hide_empty'])) ? $parameters['hide_empty'] : true;
+        $terms = get_terms(array(
+          'search' => $searchField,
+          'taxonomy' => $taxonomy,
+          'hide_empty' => $hide_empty,
+        ));
+
+        switch ($sender) {
+          case 'SelectOptions':
+            return array_map(function ($term) {
+              return array(
+                'value' => $term->term_id,
+                'label' => $term->name,
+              );
+            }, array_values($terms));
+            break;
+          default:
+            return $terms;
+            break;
+          }
+    }
+
     /**
      * Gets the requested posts
      *
-     * @param array $parameters the additional query parameters - check 
+     * @param array $parameters the additional query parameters - check
      *                          WP codex to know more
      *
      * @return array of the requested posts
@@ -171,7 +209,7 @@ class Query
     /**
      * Registers a new query
      *
-     * @param array $parameters the additional query parameters - check 
+     * @param array $parameters the additional query parameters - check
      *                          WP codex to know more
      *
      * @return array of the requested posts
@@ -185,7 +223,7 @@ class Query
     }
     /**
      * Overrides php __call. If the function is present in the class prototypes, it
-     * gets called. 
+     * gets called.
      *
      * @param string $name the function name
      * @param array  $args the arguments to be passed to the function

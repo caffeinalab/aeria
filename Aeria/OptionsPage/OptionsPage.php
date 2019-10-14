@@ -6,8 +6,8 @@ use Aeria\OptionsPage\OptionsPageProcessor;
 use Aeria\Field\FieldError;
 use Aeria\RenderEngine\RenderEngine;
 /**
- * OptionsPage is in charge of generating pages in WP's options 
- *  
+ * OptionsPage is in charge of generating pages in WP's options
+ *
  * @category Options
  * @package  Aeria
  * @author   Simone Montali <simone.montali@caffeina.com>
@@ -56,7 +56,7 @@ class OptionsPage
             &&isset($option_page["validator_service"])
             &&isset($option_page["query_service"])
         )
-            $this->optionPages[]=$option_page;
+            $this->option_pages[]=$option_page;
             return null;
     }
     /**
@@ -72,10 +72,11 @@ class OptionsPage
      */
     public function boot($aeria_config, $render_service)
     {
+        $editor_enabled = false;
         $default_icon_data = file_get_contents(dirname(__DIR__).'/aeria.svg');
         $default_icon = 'data:image/svg+xml;base64,'.base64_encode($default_icon_data);
         // Registering aeria's editor page
-        if (empty($GLOBALS['admin_page_hooks']["aeria_options"])) {
+        if ($editor_enabled) {
             add_menu_page(
                 "Aeria editor",
                 "Aeria",
@@ -83,24 +84,25 @@ class OptionsPage
                 "aeria_options",
                 '',
                 $default_icon
-            );        
+            );
+            add_submenu_page(
+                "aeria_options",
+                "Editor",
+                "Editor",
+                "manage_options",
+                "aeria_options",
+                function () use ($aeria_config, $render_service) {
+                    static::renderHTML(
+                        "aeria_editor",
+                        $aeria_config,
+                        $render_service
+                    );
+                }
+            );
         }
-        add_submenu_page(
-            "aeria_options",
-            "Editor",
-            "Editor",
-            "manage_options",
-            "aeria_options",
-            function () use ($aeria_config, $render_service) {
-                static::renderHTML(
-                    "aeria_editor",
-                    $aeria_config,
-                    $render_service
-                );
-            }
-        );
+
         // Registering other option pages
-        foreach ($this->optionPages as $singleOptionPage) {
+        foreach ($this->option_pages as $singleOptionPage) {
         // Check if nav menu parent exists
             if (empty($GLOBALS['admin_page_hooks'][$singleOptionPage["parent"]])) {
                 add_menu_page(

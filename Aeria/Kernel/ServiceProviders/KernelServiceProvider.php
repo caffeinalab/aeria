@@ -10,6 +10,7 @@ use Aeria\PostType\PostType;
 use Aeria\Taxonomy\Taxonomy;
 use Aeria\Kernel\Loader;
 use Aeria\Kernel\Tasks\{
+    CreateAdminScripts,
     CreateControllers,
     CreateField,
     CreateMeta,
@@ -23,7 +24,7 @@ use Aeria\Kernel\Tasks\{
 
 /**
  * KernelServiceProvider is in charge of registering the Kernel to the container
- * 
+ *
  * @category Kernel
  * @package  Aeria
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
@@ -63,6 +64,7 @@ class KernelServiceProvider implements ServiceProviderInterface
         $kernel = $container->make('kernel');
         $config = $container->make('config');
         Loader::loadConfig($config, $container);
+        $kernel->register(new CreateAdminScripts());
         $kernel->register(new CreateControllers());
         $kernel->register(new CreateField());
         $kernel->register(new CreateMeta());

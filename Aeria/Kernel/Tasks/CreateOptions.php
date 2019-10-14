@@ -6,7 +6,7 @@ use Aeria\Kernel\AbstractClasses\Task;
 
 /**
  * This task is in charge of creating options pages.
- * 
+ *
  * @category Kernel
  * @package  Aeria
  * @author   Simone Montali <simone.montali@caffeina.com>
@@ -32,7 +32,7 @@ class CreateOptions extends Task
         $default_icon_data = file_get_contents(dirname(__DIR__, 2).'/aeria.svg');
         $default_icon = 'data:image/svg+xml;base64,'.base64_encode($default_icon_data);
         if (isset($args['config']['aeria']['options'])) {
-            $section_config = isset($args['config']['aeria']['section']) ? $args['config']['aeria']['section'] : null;
+            $section_config = isset($args['config']['aeria']['section']) ? $args['config']['aeria']['section'] : [];
 
             foreach ($args['config']['aeria']['options'] as $name => $data) {
                 $config =[];
