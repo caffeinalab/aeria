@@ -201,28 +201,62 @@ if (!function_exists('aeria')) {
       return $fields;
     }
     /**
-     * Returns Aeria's options
+     * Returns Aeria's options.
      *
      * @param string $option_page the page we're checking
      *
      * @return array the retrieved fields
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
-    function get_aeria_options($option_page)
+    function get_aeria_options($optionPage = null)
     {
-      $aeria = aeria();
-      $options = $aeria->make('config')->get('aeria.options', []);
-      $sections = $aeria->make('config')->get('aeria.section', []);
-      $render_service = $aeria->make('render_engine');
-      $optionPage = array_merge(
-        ['id' => $optionPage],
-        $options[$optionPage]
-      );
-      $processor = new OptionsPageProcessor($optionPage['id'], $optionPage, $sections, $render_service);
-      return $processor->get();
+        $aeria = aeria();
+        $options = $aeria->make('config')->get('aeria.options', []);
+        $sections = $aeria->make('config')->get('aeria.section', []);
+        $render_service = $aeria->make('render_engine');
+        if (is_null($optionPage)) {
+            $result = array();
+            foreach (array_keys($options) as $key) {
+                $result[$key] = get_aeria_options_by_page($key);
+            }
+
+            return $result;
+        } elseif (!array_key_exists($optionPage, $options)) {
+            return [];
+        } else {
+            return get_aeria_options_by_page($optionPage);
+        }
     }
+    /**
+     * Returns Aeria's options for a specified option page.
+     *
+     * @param string $option_page the page we're checking
+     *
+     * @return array the retrieved fields
+     *
+     * @since  Method available since Release 3.0.8
+     */
+    function get_aeria_options_by_page($optionPage)
+    {
+        $aeria = aeria();
+        $options = $aeria->make('config')->get('aeria.options', []);
+        $sections = $aeria->make('config')->get('aeria.section', []);
+        $render_service = $aeria->make('render_engine');
+
+        if (!isset($options[$optionPage])) {
+            return [];
+        }
+
+        $optionPage = array_merge(
+          ['id' => $optionPage],
+          $options[$optionPage]
+        );
+        $processor = new OptionsPageProcessor($optionPage['id'], $optionPage, $sections, $render_service);
+
+        return $processor->get();
+    }
+
     /**
      * Saves Aeria's provided fields
      *

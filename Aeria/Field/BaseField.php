@@ -43,13 +43,12 @@ class BaseField extends Node
         . (!is_null($this->id) ? '-'.$this->id : '');
     }
 
-    public function get(array $savedFields, bool $skipFilter = false) {
+    public function get(array $savedFields) {
       if (!isset($savedFields[$this->key]))
       {
         return null;
       }
-      if(!$skipFilter)
-        $savedFields[$this->key] = apply_filters("aeria_get_base", $savedFields[$this->key], $this->config);
+
       if (is_array($savedFields[$this->key])) {
         return $savedFields[$this->key][0];
       } else {
@@ -66,14 +65,9 @@ class BaseField extends Node
         ];
       } else {
         $result = [
-          'value' => $this->get($savedFields, true),
+          'value' => $this->get($savedFields),
         ];
       }
-
-      if(is_null($result['value'])){
-        return $this->config;
-      }
-
       return array_merge(
         $this->config,
         $result

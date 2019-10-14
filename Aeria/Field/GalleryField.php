@@ -10,7 +10,7 @@ class GalleryField extends BaseField
     public $isMultipleField = false;
 
 
-    public function get(array $savedFields, bool $skipFilter = false) {
+    public function get(array $savedFields) {
       $length = (int)parent::get($savedFields);
       $children = [];
 
@@ -19,13 +19,11 @@ class GalleryField extends BaseField
           $this->key, ['id' => 'picture'], $this->sections, $i
         ))->get($savedFields);
       }
-      if(!$skipFilter)
-        $children = apply_filters('aeria_get_gallery', $children, $this->config);
       return $children;
     }
 
     public function getAdmin(array $savedFields, array $errors) {
-      $stored_value = parent::get($savedFields, true);
+      $stored_value = parent::get($savedFields);
       $result = [];
       $result['value'] = (int)$stored_value;
       $result['children'] = [];

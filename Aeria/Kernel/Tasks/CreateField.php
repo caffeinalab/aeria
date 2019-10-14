@@ -37,6 +37,7 @@ class CreateField extends Task
         $args['service']['field']->register('switch', \Aeria\Field\Fields\SwitchField::class);
         $args['service']['field']->register('relation', \Aeria\Field\Fields\RelationField::class);
         $args['service']['field']->register('post_types', \Aeria\Field\Fields\PostTypesField::class);
+        $args['service']['field']->register('terms', \Aeria\Field\Fields\TermsField::class);
         $args['service']['field']->register('maps', \Aeria\Field\Fields\MapField::class);
         $args['service']['field']->register('daterange', \Aeria\Field\Fields\DateRangeField::class);
         // example of multiple registered fields with the same handler; not

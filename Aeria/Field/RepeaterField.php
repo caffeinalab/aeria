@@ -9,7 +9,7 @@ class RepeaterField extends BaseField
 {
   public $isMultipleField = true;
 
-    public function get(array $metas, bool $skipFilter = false) {
+    public function get(array $metas) {
       $stored_value = (int)parent::get($metas);
       $children = [];
 
@@ -31,13 +31,12 @@ class RepeaterField extends BaseField
           $children[] = $child;
         }
       }
-      if(!$skipFilter)
-        $children = apply_filters('aeria_get_repeater', $children, $this->config);
+
       return $children;
     }
 
     public function getAdmin(array $metas, array $errors) {
-      $stored_value = (int)parent::get($metas, true);
+      $stored_value = (int)parent::get($metas);
       $children = [];
 
       $fields = $this->config['fields'];

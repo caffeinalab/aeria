@@ -6,15 +6,12 @@ class SwitchField extends BaseField
 {
     public $isMultipleField = false;
 
-    public function get(array $savedFields, bool $skipFilter = false) {
-      $result = filter_var(parent::get($savedFields), FILTER_VALIDATE_BOOLEAN);
-      if(!$skipFilter)
-        $result = apply_filters('aeria_get_switch', $result, $this->config);
-      return $result;
+    public function get(array $savedFields) {
+      return filter_var(parent::get($savedFields), FILTER_VALIDATE_BOOLEAN);
     }
 
     public function getAdmin(array $savedFields, array $errors) {
-      $savedValues = parent::getAdmin($savedFields, $errors, true);
+      $savedValues = parent::getAdmin($savedFields, $errors);
       $savedValues['value'] = filter_var($savedValues['value'], FILTER_VALIDATE_BOOLEAN);
       return $savedValues;
     }

@@ -34,7 +34,7 @@ class SectionsField extends BaseField
       );
     }
 
-    public function get(array $metas, bool $skipFilter = false) {
+    public function get(array $metas) {
       $types = parent::get($metas);
       if(is_null($types) || $types == ''){
         return [];
@@ -60,13 +60,12 @@ class SectionsField extends BaseField
           $children[] = $field_result;
         }
       }
-      if(!$skipFilter)
-        $children = apply_filters('aeria_get_sections', $children, $this->config);
+
       return $children;
     }
 
     public function getAdmin(array $metas, array $errors) {
-      $stored_value = parent::get($metas, true);
+      $stored_value = parent::get($metas);
       $stored_value = (bool)$stored_value ? explode(',', $stored_value) : [];
 
       $children = [];
