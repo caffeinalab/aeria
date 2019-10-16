@@ -39,7 +39,7 @@ class TermsField extends SelectField
         $this->config['type'] = 'select';
 
         $taxonomy = (isset($config['taxonomy'])) ? $config['taxonomy'] : 'category';
-        $hide_empty = (isset($config['hide_empty'])) ? $config['hide_emty'] : true;
+        $hide_empty = (isset($config['hide_empty'])) ? $config['hide_empty'] : true;
 
         $terms = get_terms(array(
           'taxonomy' => $taxonomy,
