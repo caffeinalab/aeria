@@ -1,4 +1,6 @@
 # Aeria v3
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcaffeinalab%2Faeria.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcaffeinalab%2Faeria?ref=badge_shield)
+
 
 Aeria is a lightweight, fast and modular Wordpress development kit. 
 
@@ -60,3 +62,7 @@ It is possible to update Aeria through Wordpress as any other Wordpress plugin.
 * [get_aeria_metabox](https://github.com/caffeinalab/aeria/wiki/get_aeria_metabox)
 * [get_aeria_options](https://github.com/caffeinalab/aeria/wiki/get_aeria_options)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcaffeinalab%2Faeria.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcaffeinalab%2Faeria?ref=badge_large)
