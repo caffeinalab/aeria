@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit338ddf3b9a5279de85d5b87a0ca28b14
+class ComposerStaticInit90e03e2dfe985392e1653de22bc948ce
 {
     public static $files = array (
         'd675c376038c78b0d320f3c784804a3c' => __DIR__ . '/../..' . '/Aeria/helpers.php',
@@ -27,8 +27,8 @@ class ComposerStaticInit338ddf3b9a5279de85d5b87a0ca28b14
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit338ddf3b9a5279de85d5b87a0ca28b14::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit338ddf3b9a5279de85d5b87a0ca28b14::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit90e03e2dfe985392e1653de22bc948ce::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit90e03e2dfe985392e1653de22bc948ce::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

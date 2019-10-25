@@ -30,12 +30,14 @@ class PictureField extends BaseField
     {
         $id = parent::get($saved_fields, true);
         if (is_null($id)) {
-            return [];
+            return null;
         }
-
         $value = (int) $id;
+        $attachment = get_post($id);
         $sizes = isset($this->config['get_sizes']) ? $this->config['get_sizes'] : get_intermediate_image_sizes();
-        $result = ['id' => $value];
+        $result = [
+            'meta' => $attachment,
+        ];
 
         foreach ($sizes as $size) {
             $result[$size] = wp_get_attachment_image_src($value, $size);
@@ -47,10 +49,10 @@ class PictureField extends BaseField
         }
 
         return apply_filters(
-          'aeria_get_picture',
-          $result,
-          $this->config
-      );
+            'aeria_get_picture',
+            $result,
+            $this->config
+        );
     }
 
     /**
