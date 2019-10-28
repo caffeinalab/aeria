@@ -3,92 +3,109 @@
 namespace Aeria\Field\Fields;
 
 use Aeria\Meta\Meta;
-use Aeria\Field\Fields\BaseField;
-use Aeria\Field\Fields\SwitchField;
 use Aeria\Field\FieldNodeFactory;
-use Aeria\Field\Interfaces\FieldInterface;
 use Aeria\Field\Exceptions\NonExistentConfigException;
 
 /**
- * Sections is the class that represents a section field
- * 
+ * Sections is the class that represents a section field.
+ *
  * @category Field
- * @package  Aeria
+ *
  * @author   Alberto Parziale <alberto.parziale@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class SectionsField extends BaseField
 {
-  public $isMultipleField = true;
+    public $isMultipleField = true;
+
     /**
-     * Gets a section configuration
+     * Gets a section configuration.
      *
      * @param string $type the searched section's configuration
      *
      * @return array the section's configuration
      *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
     private function getSectionConfig($type)
     {
-        if (isset($this->sections[$type]))
-          return $this->sections[$type];
-        else 
-          throw new NonExistentConfigException();
-
+        if (isset($this->sections[$type])) {
+            return $this->sections[$type];
+        } else {
+            throw new NonExistentConfigException();
+        }
     }
+
     /**
-     * Gets a section's title
+     * Gets a section's title.
      *
      * @param int $index the section's index
      *
      * @return BaseField the section's title field
      *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
     private function getTitle($index)
     {
         return new BaseField(
             $this->key,
-            ["id" => 'headerTitle', "validators" =>"" ],
+            ['id' => 'headerTitle', 'validators' => ''],
             $this->sections,
             $index
         );
     }
+
     /**
-     * Gets the "draft" switch
+     * Gets the "draft" switch.
      *
      * @param int $index the section's index
      *
      * @return array the section's draft switch
      *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
     private function getDraftMode($index)
     {
         return new SwitchField(
             $this->key,
-            ["id" => 'draft', "validators" => "" ],
+            ['id' => 'draft', 'validators' => ''],
             $this->sections,
             $index
         );
     }
+
     /**
-     * Gets the field's value
+     * Gets the "accordion" switch.
+     *
+     * @param int $index the section's index
+     *
+     * @return array the section's accordion switch
+     *
+     * @since  Method available since Release 3.0.0
+     */
+    private function getAccordionStatus($index)
+    {
+        return new SwitchField(
+            $this->key,
+            ['id' => 'accordion-state', 'validators' => ''],
+            $this->sections,
+            $index
+        );
+    }
+
+    /**
+     * Gets the field's value.
      *
      * @param array $metas       the FieldGroup's saved fields
-     * @param bool  $skip_filter  whether to skip or not WP's filter
+     * @param bool  $skip_filter whether to skip or not WP's filter
      *
      * @return mixed the field's values, an array containing the sections' values
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function get(array $metas, bool $skip_filter = false) 
+    public function get(array $metas, bool $skip_filter = false)
     {
         $types = parent::get($metas, true);
         if (is_null($types) || $types == '') {
@@ -115,25 +132,27 @@ class SectionsField extends BaseField
                 $children[] = $field_result;
             }
         }
-        if(!$skip_filter)
-          $children = apply_filters('aeria_get_sections', $children, $this->config);
+        if (!$skip_filter) {
+            $children = apply_filters('aeria_get_sections', $children, $this->config);
+        }
+
         return $children;
     }
+
     /**
-     * Gets the field's value and its errors
+     * Gets the field's value and its errors.
      *
      * @param array $metas  the FieldGroup's saved fields
      * @param array $errors the saving errors
      *
      * @return array the sections' config, hydrated with values and errors
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function getAdmin(array $metas, array $errors) 
+    public function getAdmin(array $metas, array $errors)
     {
         $stored_value = parent::get($metas, true);
-        $stored_value = (bool)$stored_value ? explode(',', $stored_value) : [];
+        $stored_value = (bool) $stored_value ? explode(',', $stored_value) : [];
 
         $children = [];
 
@@ -157,19 +176,22 @@ class SectionsField extends BaseField
                     [
                       'title' => $this->getTitle($type_index)->get($metas),
                       'isDraft' => $this->getDraftMode($type_index)->get($metas),
-                      'fields' => $fields
+                      'accordionState' => $this->getAccordionStatus($type_index)->get($metas),
+                      'fields' => $fields,
                     ]
                 );
             }
         }
+
         return array_merge(
             $this->config,
             [
-              "value" => $stored_value,
-              "children" => $children
+              'value' => $stored_value,
+              'children' => $children,
             ]
         );
     }
+
     /**
      * Saves the new values to the fields.
      *
@@ -179,16 +201,13 @@ class SectionsField extends BaseField
      * @param array     $new_values        the values we're saving
      * @param Validator $validator_service Aeria's validator service
      * @param Query     $query_service     Aeria's query service
-     * 
-     * @return void
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function set($context_ID, $context_type, array $metas, array $new_values, $validator_service, $query_service) 
+    public function set($context_ID, $context_type, array $metas, array $new_values, $validator_service, $query_service)
     {
-        $stored_value = parent::set($context_ID, $context_type, $metas, $new_values, $validator_service, $query_service)["value"];
-        $stored_value = (bool)$stored_value ? explode(',', $stored_value) : [];
+        $stored_value = parent::set($context_ID, $context_type, $metas, $new_values, $validator_service, $query_service)['value'];
+        $stored_value = (bool) $stored_value ? explode(',', $stored_value) : [];
 
         foreach ($stored_value as $type_index => $type) {
             $section_config = $this->getSectionConfig($type);
@@ -198,6 +217,7 @@ class SectionsField extends BaseField
 
             // save status
             $this->getDraftMode($type_index)->set($context_ID, $context_type, $metas, $new_values, $validator_service, $query_service);
+            $this->getAccordionStatus($type_index)->set($context_ID, $context_type, $metas, $new_values, $validator_service, $query_service);
 
             // save children
             foreach ($section_config['fields'] as $field_index => $field_config) {
@@ -209,39 +229,37 @@ class SectionsField extends BaseField
             $this->deleteOrphanMeta($this->key.'-'.$type_index, $metas, $new_values);
         }
     }
+
     /**
-     * Deletes the metas that lose a parent :(
+     * Deletes the metas that lose a parent :(.
      *
      * @param string $parent_key the parent's key
      * @param array  $metas      the saved fields
      * @param array  $new_values the values we're saving
-     * 
-     * @return void
      *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
     private function deleteOrphanMeta($parent_key, $metas, $new_values)
     {
-        $oldFields=static::pregGrepKeys("/^".$parent_key."/", $metas);
-        $newFields=static::pregGrepKeys("/^".$parent_key."/", $new_values);
+        $oldFields = static::pregGrepKeys('/^'.$parent_key.'/', $metas);
+        $newFields = static::pregGrepKeys('/^'.$parent_key.'/', $new_values);
         $deletableFields = array_diff_key($oldFields, $newFields);
         foreach ($deletableFields as $deletableKey => $deletableField) {
             delete_post_meta($new_values['post_ID'], $deletableKey);
         }
     }
+
     /**
-     * Helper function for deleteOrphanMeta: gets the orphan keys
+     * Helper function for deleteOrphanMeta: gets the orphan keys.
      *
      * @param string $pattern the parent's key RegEx
      * @param array  $input   the values we're saving
-     * 
+     *
      * @return array the orphans to be deleted
      *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
-    private static function pregGrepKeys($pattern, $input) 
+    private static function pregGrepKeys($pattern, $input)
     {
         return array_intersect_key($input, array_flip(preg_grep($pattern, array_keys($input))));
     }
