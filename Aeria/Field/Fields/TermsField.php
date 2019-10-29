@@ -15,7 +15,38 @@ namespace Aeria\Field\Fields;
 class TermsField extends SelectField
 {
     protected $original_config;
+    /**
+     * Transform the config array; note that this does not operate on
+     * `$this->config`: this way it can be called from outside
+     *
+     * @param array $config    the field's config
+     *
+     * @return array        the transformed config
+     */
+    public static function transformConfig(array $config) {
+        $config['type'] = 'select';
 
+        $taxonomy = (isset($config['taxonomy'])) ? $config['taxonomy'] : 'category';
+        $hide_empty = (isset($config['hide_empty'])) ? $config['hide_empty'] : true;
+
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => $hide_empty,
+        ));
+
+        $config['options'] = array_map(
+            function ($term) {
+                return array(
+                    'label' => $term->name,
+                    'value' => $term->term_id,
+                );
+            },
+            array_values($terms)
+        );
+
+        unset($config['taxonomy']);
+        return parent::transformConfig($config);
+    }
     /**
      * Constructs the field.
      *
@@ -28,27 +59,7 @@ class TermsField extends SelectField
      */
     public function __construct($parent_key, $config, $sections, $index = null)
     {
-        parent::__construct($parent_key, $config, $sections, $index);
-
         $this->original_config = json_decode(json_encode($config));
-
-        $this->config['type'] = 'select';
-
-        $taxonomy = (isset($config['taxonomy'])) ? $config['taxonomy'] : 'category';
-        $hide_empty = (isset($config['hide_empty'])) ? $config['hide_empty'] : true;
-
-        $terms = get_terms(array(
-          'taxonomy' => $taxonomy,
-          'hide_empty' => $hide_empty,
-        ));
-
-        $this->config['options'] = array_map(function ($term) {
-            return array(
-            'label' => $term->name,
-            'value' => $term->term_id,
-          );
-        }, array_values($terms));
-
-        unset($this->config['taxonomy']);
+        parent::__construct($parent_key, $config, $sections, $index);
     }
 }

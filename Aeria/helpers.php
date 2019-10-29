@@ -6,16 +6,12 @@ use Aeria\Meta\MetaProcessor;
 use Aeria\Config\Config;
 use Aeria\OptionsPage\OptionsPageProcessor;
 
-
 if (!function_exists('dump')) {
     /**
-     * Dumps the provided arguments
+     * Dumps the provided arguments.
      *
      * @param mixed ...$args the dumpable args
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function dump(...$args)
@@ -29,7 +25,7 @@ if (!function_exists('dump')) {
                 $args
             )
         );
-        $is_cli = in_array(php_sapi_name(), [ 'cli', 'cli-server' ]);
+        $is_cli = in_array(php_sapi_name(), ['cli', 'cli-server']);
         if (!$is_cli) {
             $message = preg_replace(
                 [
@@ -44,8 +40,8 @@ if (!function_exists('dump')) {
                 ],
                 highlight_string(
                     "<!--begin--><?php/*end*/\n"
-                    . $message
-                    . "\n/*begin*/?><!--end-->\n\n",
+                    .$message
+                    ."\n/*begin*/?><!--end-->\n\n",
                     true
                 )
             );
@@ -54,16 +50,12 @@ if (!function_exists('dump')) {
     }
 }
 
-
 if (!function_exists('dd')) {
     /**
-     * Dumps the provided arguments than dies
+     * Dumps the provided arguments than dies.
      *
      * @param mixed ...$args the dumpable args
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function dd(...$args)
@@ -75,38 +67,36 @@ if (!function_exists('dd')) {
 
 if (!function_exists('toSnake')) {
     /**
-     * Converts camelCase to snake_case
+     * Converts camelCase to snake_case.
      *
      * @param string $convertible_text the text to convert
      *
      * @return string the converted text
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function toSnake($convertible_text)
     {
         $convertible_text = preg_replace('/\s+/u', '', ucwords($convertible_text));
+
         return strtolower(
             preg_replace(
                 '/(.)(?=[A-Z])/u',
-                '$1' . '_',
+                '$1'.'_',
                 $convertible_text
             )
         );
     }
 }
 
-
 if (!function_exists('aeria')) {
     /**
-     * Returns Aeria's instance
+     * Returns Aeria's instance.
      *
      * @param string $abstract the requested service
      *
      * @return mixed the service or Aeria's instance
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function aeria(/* ?string */ $abstract = null)
@@ -114,16 +104,16 @@ if (!function_exists('aeria')) {
         if (is_null($abstract)) {
             return Aeria::getInstance();
         }
+
         return Aeria::getInstance()->make($abstract);
     }
     /**
-     * Returns Aeria's fields
+     * Returns Aeria's fields.
      *
      * @param WP_Post $post the current post
      *
      * @return array the retrieved fields
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function get_aeria_fields($post)
@@ -135,24 +125,24 @@ if (!function_exists('aeria')) {
         $render_service = $aeria->make('render_engine');
         $fields = [];
         foreach ($metaboxes as $name => $data) {
-          $metabox = array_merge(
+            $metabox = array_merge(
               ['id' => $name],
               $data
           );
-          if( $post->post_type !== 'page' && !in_array($post->post_type, $metabox["post_type"])){
-            continue;
-          }
-          if($post->post_type === 'page' && !in_array(get_page_template_slug($post), $metabox["templates"])){
-            continue;
-          }
-          $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
-          $fields[$name] = $processor->get();
+            if ($post->post_type !== 'page' && !in_array($post->post_type, $metabox['post_type'])) {
+                continue;
+            }
+            if ($post->post_type === 'page' && !in_array(get_page_template_slug($post), $metabox['templates'])) {
+                continue;
+            }
+            $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
+            $fields[$name] = $processor->get();
         }
 
         return $fields;
     }
     /**
-     * Returns an Aeria field
+     * Returns an Aeria field.
      *
      * @param WP_Post $post    the current post
      * @param string  $metabox the metabox ID
@@ -160,7 +150,6 @@ if (!function_exists('aeria')) {
      *
      * @return array the retrieved fields
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function get_aeria_field($post, $metabox, $id)
@@ -171,34 +160,35 @@ if (!function_exists('aeria')) {
         $render_service = $aeria->make('render_engine');
         $metaboxes[$metabox]['id'] = $metabox;
         $processor = new MetaProcessor($post->ID, $metaboxes[$metabox], $sections, $render_service);
-        return ($processor->get()[$id]);
+
+        return $processor->get()[$id];
     }
     /**
-     * Returns an Aeria metabox's fields
+     * Returns an Aeria metabox's fields.
      *
      * @param WP_Post $post    the current post
      * @param string  $metabox the metabox ID
      *
      * @return array the retrieved fields
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function get_aeria_metabox($post, $metabox)
     {
-      $aeria = aeria();
-      $meta_service = $aeria->make('meta');
-      $metaboxes = $aeria->make('config')->get('aeria.meta', []);
-      $sections = $aeria->make('config')->get('aeria.section', []);
-      $render_service = $aeria->make('render_engine');
-      $fields = [];
-      $metabox = array_merge(
+        $aeria = aeria();
+        $meta_service = $aeria->make('meta');
+        $metaboxes = $aeria->make('config')->get('aeria.meta', []);
+        $sections = $aeria->make('config')->get('aeria.section', []);
+        $render_service = $aeria->make('render_engine');
+        $fields = [];
+        $metabox = array_merge(
           ['id' => $metabox],
           $metaboxes[$metabox]
       );
-      $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
-      $fields = $processor->get();
-      return $fields;
+        $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
+        $fields = $processor->get();
+
+        return $fields;
     }
     /**
      * Returns Aeria's options.
@@ -258,13 +248,10 @@ if (!function_exists('aeria')) {
     }
 
     /**
-     * Saves Aeria's provided fields
+     * Saves Aeria's provided fields.
      *
      * @param array $saving_data the data we're saving
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function save_aeria_fields(array $saving_data)
@@ -274,17 +261,74 @@ if (!function_exists('aeria')) {
         }
     }
 
+    /**
+     * Applies config transformation on a meta field configuration recursively.
+     *
+     * @param array $config the field's config
+     *
+     * @return array the transformed config
+     */
+    function transform_aeria_meta_config(array $config)
+    {
+        $fields_registry = aeria('field');
+        if (isset($config['fields'])) {
+            $config['fields'] = transform_aeria_meta_config_list($config['fields']);
+        }
+        if (!isset($config['type'])) {
+            return $config;
+        }
+        $type = $config['type'];
+        if (!$fields_registry->exists($type)) {
+            return $config;
+        }
+        $field_type_class = $fields_registry->get($type);
+        $new_config = is_array($config)
+            ? $field_type_class::transformConfig($config)
+            : $config;
 
+        return $new_config;
+    }
 
     /**
-     * Flattens an array
+     * Applies config transformation on list a meta field configuration.
+     *
+     * @param array $config a list of field config
+     *
+     * @return array the transformed list of config
+     */
+    function transform_aeria_meta_config_list(array $configs)
+    {
+        foreach ($configs as $index => $config) {
+            $configs[$index] = transform_aeria_meta_config($config);
+        }
+
+        return $configs;
+    }
+
+    /**
+     * Applies config transformation on a list of section definitions.
+     *
+     * @param array $config a list of section definitions
+     *
+     * @return array the transformed list of section definitions
+     */
+    function transform_aeria_sections_definitions(array $configs)
+    {
+        foreach ($configs as $index => $config) {
+            $configs[$index]['fields'] = transform_aeria_meta_config_list($config['fields']);
+        }
+
+        return $configs;
+    }
+
+    /**
+     * Flattens an array.
      *
      * @param array $to_be_normalized the array we want to normalize
      * @param int   $times            the times to normalize the array
      *
      * @return array the retrieved fields
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     function array_flat(array $to_be_normalized, $times = -1)
@@ -300,6 +344,7 @@ if (!function_exists('aeria')) {
                 $pivot[$key] = $value;
             }
         }
+
         return $pivot;
     }
 }

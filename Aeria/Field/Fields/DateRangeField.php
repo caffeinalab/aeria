@@ -5,7 +5,7 @@ namespace Aeria\Field\Fields;
 use Aeria\Field\Interfaces\FieldInterface;
 /**
  * DateRange is the class that represents a Date Range field
- * 
+ *
  * @category Field
  * @package  Aeria
  * @author   Simone Montali <simone.montali@caffeina.com>
@@ -31,8 +31,9 @@ class DateRangeField extends BaseField
         $from = (new BaseField($this->key, ['id' => 'from'], $this->sections))->get($metas);
         $to = (new BaseField($this->key, ['id' => 'to'], $this->sections))->get($metas);
         $values = [$from,$to];
-        if(!$skip_filter)
+        if(!$skip_filter) {
             $values = apply_filters("aeria_get_daterange", $values, $this->config);
+        }
         return $values;
     }
     /**
@@ -59,7 +60,7 @@ class DateRangeField extends BaseField
      * @param array     $new_values        the values we're saving
      * @param Validator $validator_service Aeria's validator service
      * @param Query     $query_service     Aeria's query service
-     * 
+     *
      * @return void
      *
      * @access public

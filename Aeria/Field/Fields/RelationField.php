@@ -6,7 +6,7 @@ use Aeria\Field\Fields\SelectField;
 use Aeria\Field\Interfaces\FieldInterface;
 /**
  * Relation is the class that represents a relationship field
- * 
+ *
  * @category Field
  * @package  Aeria
  * @author   Andrea Longo <andrea.longo@caffeina.com>
@@ -17,6 +17,20 @@ class RelationField extends SelectField
 {
 
     protected $original_config;
+    /**
+     * Transform the config array; note that this does not operate on
+     * `$this->config`: this way it can be called from outside
+     *
+     * @param array $config    the field's config
+     *
+     * @return array        the transformed config
+     */
+    public static function transformConfig(array $config) {
+        $config['type'] = 'select';
+        $config['ajax'] = $config['relation'];
+        unset($config['relation']);
+        return parent::transformConfig($config);
+    }
     /**
      * Constructs the field
      *
@@ -31,13 +45,8 @@ class RelationField extends SelectField
      * @since  Method available since Release 3.0.0
      */
     public function __construct($parent_key, $config, $sections, $index = null) {
-        parent::__construct($parent_key, $config, $sections, $index);
-
         $this->original_config = json_decode(json_encode($config));
-
-        $this->config['type'] = 'select';
-        $this->config['ajax'] = $this->config['relation'];
-        unset($this->config['relation']);
+        parent::__construct($parent_key, $config, $sections, $index);
     }
     /**
      * Gets the field's value

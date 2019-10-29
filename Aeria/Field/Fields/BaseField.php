@@ -10,7 +10,7 @@ use Aeria\Field\Interfaces\FieldInterface;
 
 /**
  * BaseField is the class that represents every Aeria field
- * 
+ *
  * @category Field
  * @package  Aeria
  * @author   Andrea Longo <andrea.longo@caffeina.com>
@@ -20,6 +20,18 @@ use Aeria\Field\Interfaces\FieldInterface;
 class BaseField extends Node implements FieldInterface
 {
     public $is_multiple_field = false;
+
+    /**
+     * Transform the config array; note that this does not operate on
+     * `$this->config`: this way it can be called from outside
+     *
+     * @param array $config    the field's config
+     *
+     * @return array        the transformed config
+     */
+    public static function transformConfig(array $config) {
+        return $config;
+    }
     /**
      * Constructs the field
      *
@@ -35,7 +47,7 @@ class BaseField extends Node implements FieldInterface
      */
     public function __construct($parent_key, $config, $sections, $index = null) {
         $this->parent_key = $parent_key;
-        $this->config = $config;
+        $this->config = static::transformConfig($config);
         $this->id = isset($config['id'])
           ? $config['id']
           : null;
@@ -75,7 +87,7 @@ class BaseField extends Node implements FieldInterface
      * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function getKey() 
+    public function getKey()
     {
         return $this->parent_key
           . (!is_null($this->index) ? '-'.$this->index : '')
@@ -117,7 +129,7 @@ class BaseField extends Node implements FieldInterface
      * @access public
      * @since  Method available since Release 3.0.0
      */
-    public function getAdmin(array $saved_fields, array $errors) 
+    public function getAdmin(array $saved_fields, array $errors)
     {
         if (isset($errors[$this->key])) {
             $result = [
@@ -148,7 +160,7 @@ class BaseField extends Node implements FieldInterface
      * @param array     $new_values        the values we're saving
      * @param Validator $validator_service Aeria's validator service
      * @param Query     $query_service     Aeria's query service
-     * 
+     *
      * @return array the results of the saving
      *
      * @access public
@@ -184,7 +196,7 @@ class BaseField extends Node implements FieldInterface
      * @param string $context_type the context type. Right now, options|meta
      * @param mixed  $value        the new value
      * @param mixed  $old          the old value
-     * 
+     *
      * @return void
      * @throws Exception if the node context is invalid
      *
@@ -211,7 +223,7 @@ class BaseField extends Node implements FieldInterface
      * @param int    $context_ID    the context ID. For posts, post's ID
      * @param string $context_type  the context type. Right now, options|meta
      * @param Query  $query_service Aeria's query service
-     * 
+     *
      * @return void
      * @throws Exception if the node context is invalid
      *
