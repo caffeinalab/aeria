@@ -128,11 +128,11 @@ if (!function_exists('aeria')) {
             $metabox = array_merge(
               ['id' => $name],
               $data
-          );
-            if ($post->post_type !== 'page' && !in_array($post->post_type, $metabox['post_type'])) {
-                continue;
-            }
-            if ($post->post_type === 'page' && !in_array(get_page_template_slug($post), $metabox['templates'])) {
+            );
+            $postTypes = isset($metabox['post_type']) ? $metabox['post_type'] : [];
+            $templates = isset($metabox['templates']) ? $metabox['templates'] : [];
+
+            if (!in_array($post->post_type, $postTypes) && !in_array(get_page_template_slug($post), $templates)) {
                 continue;
             }
             $processor = new MetaProcessor($post->ID, $metabox, $sections, $render_service);
