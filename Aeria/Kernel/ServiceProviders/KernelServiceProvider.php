@@ -6,47 +6,43 @@ use Aeria\Container\Interfaces\ServiceProviderInterface;
 use Aeria\Container\Container;
 use Aeria\Kernel\Kernel;
 use Aeria\Config\Config;
-use Aeria\PostType\PostType;
-use Aeria\Taxonomy\Taxonomy;
 use Aeria\Kernel\Loader;
-use Aeria\Kernel\Tasks\{
-    CreateAdminScripts,
-    CreateControllers,
-    CreateField,
-    CreateMeta,
-    CreateOptions,
-    CreatePostType,
-    CreateRenderer,
-    CreateRouter,
-    CreateTaxonomy,
-    CreateUpdater
-};
+use Aeria\Kernel\Tasks\CreateAdminScripts;
+use Aeria\Kernel\Tasks\CreateConfig;
+use Aeria\Kernel\Tasks\CreateControllers;
+use Aeria\Kernel\Tasks\CreateField;
+use Aeria\Kernel\Tasks\CreateMeta;
+use Aeria\Kernel\Tasks\CreateOptions;
+use Aeria\Kernel\Tasks\CreatePostType;
+use Aeria\Kernel\Tasks\CreateRenderer;
+use Aeria\Kernel\Tasks\CreateRouter;
+use Aeria\Kernel\Tasks\CreateTaxonomy;
+use Aeria\Kernel\Tasks\CreateUpdater;
 
 /**
- * KernelServiceProvider is in charge of registering the Kernel to the container
+ * KernelServiceProvider is in charge of registering the Kernel to the container.
  *
  * @category Kernel
- * @package  Aeria
+ *
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class KernelServiceProvider implements ServiceProviderInterface
 {
     /**
-     * Registers the service to the provided container, as a singleton
+     * Registers the service to the provided container, as a singleton.
      *
      * @param Container $container Aeria's container
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function register(Container $container)
     {
         $container->singleton('kernel', Kernel::class);
     }
+
     /**
      * In charge of booting the service. It loads the config,
      * then registers the tasks to the kernel. Finally, it boots the
@@ -56,7 +52,6 @@ class KernelServiceProvider implements ServiceProviderInterface
      *
      * @return bool true: service booted
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function boot(Container $container): bool
@@ -65,6 +60,7 @@ class KernelServiceProvider implements ServiceProviderInterface
         $config = $container->make('config');
         Loader::loadConfig($config, $container);
         $kernel->register(new CreateAdminScripts());
+        $kernel->register(new CreateConfig());
         $kernel->register(new CreateControllers());
         $kernel->register(new CreateField());
         $kernel->register(new CreateMeta());
@@ -76,6 +72,7 @@ class KernelServiceProvider implements ServiceProviderInterface
         $kernel->register(new CreateUpdater());
         $kernel->boot($container);
         do_action('aeria_booted');
+
         return true;
     }
 }

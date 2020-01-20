@@ -1,9 +1,7 @@
 <?php
 
 use Aeria\Aeria;
-use Aeria\Meta\Meta;
 use Aeria\Meta\MetaProcessor;
-use Aeria\Config\Config;
 use Aeria\OptionsPage\OptionsPageProcessor;
 
 if (!function_exists('dump')) {
@@ -259,66 +257,6 @@ if (!function_exists('aeria')) {
         foreach ($saving_data['fields'] as $field => $value) {
             update_post_meta($saving_data['post_ID'], $saving_data['metabox'].'-'.$field, $value);
         }
-    }
-
-    /**
-     * Applies config transformation on a meta field configuration recursively.
-     *
-     * @param array $config the field's config
-     *
-     * @return array the transformed config
-     */
-    function transform_aeria_meta_config(array $config)
-    {
-        $fields_registry = aeria('field');
-        if (isset($config['fields'])) {
-            $config['fields'] = transform_aeria_meta_config_list($config['fields']);
-        }
-        if (!isset($config['type'])) {
-            return $config;
-        }
-        $type = $config['type'];
-        if (!$fields_registry->exists($type)) {
-            return $config;
-        }
-        $field_type_class = $fields_registry->get($type);
-        $new_config = is_array($config)
-            ? $field_type_class::transformConfig($config)
-            : $config;
-
-        return $new_config;
-    }
-
-    /**
-     * Applies config transformation on list a meta field configuration.
-     *
-     * @param array $config a list of field config
-     *
-     * @return array the transformed list of config
-     */
-    function transform_aeria_meta_config_list(array $configs)
-    {
-        foreach ($configs as $index => $config) {
-            $configs[$index] = transform_aeria_meta_config($config);
-        }
-
-        return $configs;
-    }
-
-    /**
-     * Applies config transformation on a list of section definitions.
-     *
-     * @param array $config a list of section definitions
-     *
-     * @return array the transformed list of section definitions
-     */
-    function transform_aeria_sections_definitions(array $configs)
-    {
-        foreach ($configs as $index => $config) {
-            $configs[$index]['fields'] = transform_aeria_meta_config_list($config['fields']);
-        }
-
-        return $configs;
     }
 
     /**

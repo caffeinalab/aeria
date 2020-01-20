@@ -3,27 +3,27 @@
 namespace Aeria\Kernel\Tasks;
 
 use Aeria\Kernel\AbstractClasses\Task;
+
 /**
  * This task is in charge of creating fields.
  *
  * @category Kernel
- * @package  Aeria
+ *
  * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class CreateField extends Task
 {
-    public $priority = 2;
+    public $priority = 1;
     public $admin_only = false;
+
     /**
      * The main task method. It registers the fields to the field service.
      *
      * @param array $args the arguments to be passed to the Task
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function do(array $args)
@@ -52,8 +52,6 @@ class CreateField extends Task
         $args['service']['field']->register('url', \Aeria\Field\Fields\BaseField::class);
         $args['service']['field']->register('date', \Aeria\Field\Fields\BaseField::class);
 
-
         do_action('aeria_register_field', $args['service']['field'], $args['container']);
     }
-
 }
