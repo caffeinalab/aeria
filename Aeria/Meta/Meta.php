@@ -177,6 +177,7 @@ class Meta implements ValidateConfInterface
             $templates = isset($metabox['templates']) ? $metabox['templates'] : [];
             $context = isset($metabox['context']) ? $metabox['context'] : 'advanced';
             $priority = isset($metabox['priority']) ? $metabox['priority'] : 'default';
+
             // Since this function is triggered when a post is created too, I'm gonna skip it in that case. I'm gonna skip it even if the post_Type is not supported.
             if ($new_values == []
                 || !(in_array($post->post_type, $postTypes) || in_array(get_page_template_slug(), $templates))

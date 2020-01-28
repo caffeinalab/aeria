@@ -6,11 +6,16 @@ export default function withPreventPostUpdate(WrappedComponent) {
   return class extends PureComponent {
     constructor(props) {
       super(props)
+      this.state = { fields: props.fields}
       addValidator(this.validate)
     }
 
     scrollToElement(elementId) {
       const el = document.getElementById(elementId)
+      if (!el) {
+        console.log(`[AERIA] Element with error ( id -> ${elementId}) not found!`)
+        return
+      }
       el.focus()
       el.blur()
       scrollTo(el, 100, 300)
@@ -18,16 +23,15 @@ export default function withPreventPostUpdate(WrappedComponent) {
 
     validate = () => {
       this.lastInvalidField = false
-
-      if (this.hasErrors()) {
-        this.scrollToElement(this.lastInvalidField)
+      if (this.hasErrors(this.state.fields)) {
+        this.scrollToElement(this.props.id + '-' + this.lastInvalidField)
       }
 
       return !!this.lastInvalidField
     }
 
-    hasErrors() {
-      return this.fields.some(field => {
+    hasErrors(fields) {
+      return fields.some(field => {
         if (field.error || (field.required && !field.value)) {
           this.lastInvalidField = field.id
           return true
@@ -42,12 +46,12 @@ export default function withPreventPostUpdate(WrappedComponent) {
       })
     }
 
-    onChange = fields => {
-      this.fields = fields
+    onChange = ({fields}) => {
+      this.setState({fields})
     }
 
     render() {
-      return <WrappedComponent {...this.props} onChange={this.onChange} />
+      return <WrappedComponent {...this.props} {...this.state} onChange={this.onChange} />
     }
   }
 }

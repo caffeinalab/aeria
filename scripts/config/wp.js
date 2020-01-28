@@ -4,22 +4,23 @@ import {
   Checkbox,
   Wysiwyg,
   Select,
-  Picture,
-  Gallery,
   Switch,
   DatePicker,
   DateRangePicker,
-  // Maps
 } from '@aeria/uikit'
 
 import {
+  Maps,
   Fieldset,
   Repeater,
   Sections
 } from '@aeria/core'
 
+import Picture from '../components/Picture'
+import Gallery from '../components/Gallery'
+
 export default {
-  metaboxes: window.aeriaMetaboxes,
+  metaboxes: window.aeriaMetaboxes || [],
   module: {
     sectionTypes: window.aeriaSections || [],
     theme: window.aeriaTheme
@@ -42,6 +43,6 @@ export default {
     'fieldset': Fieldset,
     'date': DatePicker,
     'daterange': DateRangePicker,
-    // 'maps': Maps
+    'maps': Maps
   }
 }
