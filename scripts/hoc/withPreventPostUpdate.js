@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
+import { Validator } from '@aeria/uikit'
 import { addValidator } from '../utils/prevent-post-update'
 import scrollTo from '../utils/scroll-to'
+
 
 export default function withPreventPostUpdate(WrappedComponent) {
   return class extends PureComponent {
@@ -16,23 +18,25 @@ export default function withPreventPostUpdate(WrappedComponent) {
         console.log(`[AERIA] Element with error ( id -> ${elementId}) not found!`)
         return
       }
-      el.focus()
-      el.blur()
-      scrollTo(el, 100, 300)
+      scrollTo(el.hidden ? el.parentNode : el, 100, 300)
     }
 
-    validate = () => {
+    validate = async() => {
       this.lastInvalidField = false
-      if (this.hasErrors(this.state.fields)) {
+      const fieldsUpdate = await this.updateFields(this.state.fields)
+      this.onChange({fields: fieldsUpdate})
+      this.updateErrorState(fieldsUpdate)
+
+      if (this.lastInvalidField) {
         this.scrollToElement(this.props.id + '-' + this.lastInvalidField)
       }
 
       return !!this.lastInvalidField
     }
 
-    hasErrors(fields) {
+    updateErrorState(fields) {
       return fields.some(field => {
-        if (field.error || (field.required && !field.value)) {
+        if (field.error) {
           this.lastInvalidField = field.id
           return true
         }
@@ -44,6 +48,22 @@ export default function withPreventPostUpdate(WrappedComponent) {
         }
         return false
       })
+    }
+
+    async updateFields(fields) {
+      const fieldsUpdate = await Promise.all(
+        fields.map(async field => {
+          const v = new Validator(field)
+          field.error = await v.validate((field.value || field.defaultValue))
+
+          if (field.children) {
+            field.children = await this.updateFields(field.children)
+          }
+          return field
+        })
+      )
+
+      return fieldsUpdate
     }
 
     onChange = ({fields}) => {

@@ -2,13 +2,20 @@ const formPost = document.getElementById('post')
 const saveButton = document.getElementById('publish')
 const validators = []
 
-function validate() {
-  return validators.some(validate => !validate())
+async function validate() {
+  const results = await Promise.all(
+    validators.map(async validation => {
+      return await validation()
+    })
+  )
+  return results.some(r => !r)
 }
 
-function handleSubmit(e) {
-  if (!validate()) {
-    e.preventDefault()
+async function handleSubmit(e) {
+  e.preventDefault()
+  const isValid = await validate()
+  if (isValid) {
+    formPost.submit()
   }
 }
 
