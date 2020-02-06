@@ -22,11 +22,11 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.8.3",
+    "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-styled-components": "^1.10.7",
@@ -38,10 +38,10 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@aeria/core": "0.0.6",
-    "@aeria/uikit": "0.0.6",
+    "@aeria/core": "0.0.7",
+    "@aeria/uikit": "0.0.9",
     "lodash.throttle": "^4.1.1",
-    "polished": "^3.4.3",
+    "polished": "^3.4.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   }

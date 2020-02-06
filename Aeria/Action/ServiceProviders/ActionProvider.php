@@ -2,6 +2,7 @@
 
 namespace Aeria\Action\ServiceProviders;
 
+use Aeria\Aeria;
 use Aeria\Container\Interfaces\ServiceProviderInterface;
 use Aeria\Container\Container;
 use Aeria\Action\ActionDispatcher;
@@ -10,30 +11,29 @@ use Aeria\Action\Actions\AdminEnqueueScripts as AdminEnqueueScriptsAction;
 
 /**
  * ActionProvider is in charge of registering the Action service
- * to the container
- * 
+ * to the container.
+ *
  * @category Action
- * @package  Aeria
+ *
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class ActionProvider implements ServiceProviderInterface
 {
     /**
-     * Registers the service to the provided container, as a singleton
+     * Registers the service to the provided container, as a singleton.
      *
      * @param Container $container Aeria's container
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function register(Container $container)
     {
         $container->singleton('action', ActionDispatcher::class);
     }
+
     /**
      * In charge of booting the service.
      *
@@ -41,17 +41,15 @@ class ActionProvider implements ServiceProviderInterface
      *
      * @return bool true: service booted
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function boot(Container $container): bool
     {
         $dispatcher = $container->make('action');
         $aeria_base_path = plugins_url('aeria');
-
         $aeria_js = new ScriptsEnqueuer(
             'aeria-js',
-            "{$aeria_base_path}/assets/js/aeria.js",
+            "{$aeria_base_path}/assets/js/aeria.js?v=".Aeria::version(),
             null,
             null,
             true
@@ -63,7 +61,7 @@ class ActionProvider implements ServiceProviderInterface
 
         $dispatcher->register($admin_enqueue_scripts);
         $dispatcher->dispatch($container);
+
         return true;
     }
-
 }

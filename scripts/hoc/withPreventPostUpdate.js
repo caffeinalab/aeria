@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import klona from 'klona'
 import { Validator } from '@aeria/uikit'
 import { addValidator } from '../utils/prevent-post-update'
 import scrollTo from '../utils/scroll-to'
@@ -13,17 +14,20 @@ export default function withPreventPostUpdate(WrappedComponent) {
     }
 
     scrollToElement(elementId) {
-      const el = document.getElementById(elementId)
+      const el = document.getElementById(elementId + '-focus') || document.getElementById(elementId)
       if (!el) {
         console.log(`[AERIA] Element with error ( id -> ${elementId}) not found!`)
         return
       }
-      scrollTo(el.hidden ? el.parentNode : el, 100, 300)
+      el.focus()
+      el.blur()
+      scrollTo(el.type === 'hidden' ? el.parentNode : el, 100, 300)
     }
 
     validate = async() => {
       this.lastInvalidField = false
-      const fieldsUpdate = await this.updateFields(this.state.fields)
+      this.lastInvalidFieldIndex = false
+      const fieldsUpdate = await this.updateFields(klona(this.state.fields))
       this.onChange({fields: fieldsUpdate})
       this.updateErrorState(fieldsUpdate)
 
@@ -34,21 +38,6 @@ export default function withPreventPostUpdate(WrappedComponent) {
       return !!this.lastInvalidField
     }
 
-    updateErrorState(fields) {
-      return fields.some(field => {
-        if (field.error) {
-          this.lastInvalidField = field.id
-          return true
-        }
-        if (field.children) {
-          if (this.hasErrors(field.children)) {
-            this.lastInvalidField = field.id + '-' + this.lastInvalidField
-            return true
-          }
-        }
-        return false
-      })
-    }
 
     async updateFields(fields) {
       const fieldsUpdate = await Promise.all(
@@ -59,11 +48,44 @@ export default function withPreventPostUpdate(WrappedComponent) {
           if (field.children) {
             field.children = await this.updateFields(field.children)
           }
+
+          if (field.fields) {
+            field.fields = await this.updateFields(field.fields)
+          }
           return field
         })
       )
 
       return fieldsUpdate
+    }
+
+    updateErrorState(fields, parentIndex, includeFieldIndex = false) {
+      return fields.some((field, index) => {
+        if (field.error) {
+          this.lastInvalidField = field.id
+
+          if (includeFieldIndex) {
+            this.lastInvalidField = `${index}-${this.lastInvalidField}`
+          }
+          return true
+        }
+
+        if (field.children && this.updateErrorState(field.children, index, true)) {
+          this.lastInvalidField = `${field.id}-${this.lastInvalidField}`
+          return true
+        }
+
+        if (field.fields && this.updateErrorState(field.fields, index, !!field.type)) {
+          if (field.type) {
+            this.lastInvalidField = `${field.id}-${this.lastInvalidField}`
+          } else {
+            this.lastInvalidField = `${index}-${this.lastInvalidField}`
+          }
+          return true
+        }
+
+        return false
+      })
     }
 
     onChange = ({fields}) => {

@@ -12,10 +12,9 @@ async function validate() {
 }
 
 async function handleSubmit(e) {
-  e.preventDefault()
   const isValid = await validate()
-  if (isValid) {
-    formPost.submit()
+  if (!isValid) {
+    e.preventDefault()
   }
 }
 

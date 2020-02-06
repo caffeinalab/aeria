@@ -1,8 +1,7 @@
 <?php
 /**
- * Aeria
+ * Aeria.
  *
- * @package     Aeria
  * @author      Caffeina
  * @copyright   2019 Caffeina
  * @license     MIT
@@ -11,16 +10,15 @@
  * Plugin Name: Aeria
  * Plugin URI:  https://github.com/caffeinalab/aeria
  * Description: Aeria is a modular, lightweight, fast WordPress Application development kit.
- * Version:     3.0.18
+ * Version:     3.1.0
  * Author:      Caffeina
  * Author URI:  https://caffeina.com
  * Text Domain: aeria
  * License:     MIT
  */
+defined('ABSPATH') or die('No script kiddies please!');
 
-defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
-
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 add_action(
     'init',
@@ -30,4 +28,3 @@ add_action(
         $aeria->bootstrap();
     }
 );
-
