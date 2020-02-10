@@ -174,15 +174,17 @@ class OptionsPage
             return null;
         }
         $nonceIDs = static::nonceIDs();
-        $processor = new OptionsPageProcessor($id, $config, $sections, $render_service);
-        $config['fields'] = $processor->getAdmin();
+        if (isset($config['fields'])) {
+            $processor = new OptionsPageProcessor($id, $config, $sections, $render_service);
+            $config['fields'] = $processor->getAdmin();
+        }
         $render_service->render(
-                    'option_template',
-                    [
-                        'config' => $config,
-                        'nonceIDs' => $nonceIDs,
-                    ]
-                );
+            isset($config['template']) ? $config['template'] : 'option_template',
+            [
+                'config' => $config,
+                'nonceIDs' => $nonceIDs,
+            ]
+        );
     }
 
     /**
@@ -212,10 +214,13 @@ class OptionsPage
                 || !current_user_can('manage_options')) {
             return null;
         }
-        $processor = new OptionsPageProcessor($id, $metabox, $sections, $render_service, $_POST);
-        $processor->set(
+
+        if (isset($metabox['fields'])) {
+            $processor = new OptionsPageProcessor($id, $metabox, $sections, $render_service, $_POST);
+            $processor->set(
                 $validator_service,
                 $query_service
             );
+        }
     }
 }

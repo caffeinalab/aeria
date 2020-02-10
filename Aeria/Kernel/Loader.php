@@ -1,33 +1,29 @@
-<?php 
+<?php
 
 namespace Aeria\Kernel;
 
 use Aeria\Config\Config;
 use Aeria\Container\Container;
 use Aeria\RenderEngine\ViewFactory;
-use \Exception;
-
 
 /**
  * Loader is the class in charge of fetching configuration files from your theme.
- * 
+ *
  * @category Config
- * @package  Aeria
+ *
  * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class Loader
 {
     /**
-     * This method loads a config
+     * This method loads a config.
      *
-     * @param Config     $config     the config to be loaded
+     * @param Config    $config    the config to be loaded
      * @param Container $container our container
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public static function loadConfig(Config $config, Container $container)
@@ -38,30 +34,29 @@ class Loader
             static::recursiveLoad($config, $root_path, $render_service);
         }
     }
-    
+
     /**
-     * This method recursively loads the views for the renderer
+     * This method recursively loads the views for the renderer.
      *
      * @param string $base_path      the base path of the view
      * @param Render $render_service the render service to load the views to
      * @param string $context        the context of the file
-     * 
-     * @return void
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public static function loadViews($base_path, $render_service, $context = '')
     {
         $new_base_path = static::joinPaths($base_path, $context);
-        if (!is_dir('/'.$new_base_path))
+        if (!is_dir('/'.$new_base_path)) {
             return null;
+        }
         $listDir = array_filter(
-            scandir('/' . $new_base_path),
+            scandir('/'.$new_base_path),
             function ($path) { return $path !== '.' && $path !== '..'; }
         );
+
         foreach ($listDir as $dir_or_file_name) {
-            $absolute_path = '/' . static::joinPaths(
+            $absolute_path = '/'.static::joinPaths(
                 $new_base_path,
                 $dir_or_file_name
             );
@@ -72,17 +67,15 @@ class Loader
             }
         }
     }
+
     /**
-     * This method recursively loads the configs
+     * This method recursively loads the configs.
      *
-     * @param Config  $config          the config to be passed to loadSettings
+     * @param Config $config         the config to be passed to loadSettings
      * @param string $base_path      the base path of the view
      * @param Render $render_service the render service to load the views to
      * @param string $context        the context of the file
-     * 
-     * @return void
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public static function recursiveLoad(
@@ -93,64 +86,63 @@ class Loader
     ) {
         $permitted_file_extensions = ['json', 'php', 'yml', 'ini'];
         $new_base_path = static::joinPaths($base_path, $context);
-        if (!is_dir('/'.$new_base_path))
+        if (!is_dir('/'.$new_base_path)) {
             return null;
+        }
         $listDir = array_filter(
-            scandir('/' . $new_base_path),
+            scandir('/'.$new_base_path),
             function ($path) { return $path !== '.' && $path !== '..'; }
         );
         foreach ($listDir as $dir_or_file_name) {
-            $absolute_path = '/' . static::joinPaths(
+            $absolute_path = '/'.static::joinPaths(
                 $new_base_path,
                 $dir_or_file_name
             );
             if (is_dir($absolute_path)) {
                 static::recursiveLoad($config, $new_base_path, $render_service, $dir_or_file_name);
-            } else if (in_array(substr($dir_or_file_name, strrpos($dir_or_file_name, '.')+1), $permitted_file_extensions)) {
-                try{
+            } elseif (in_array(substr($dir_or_file_name, strrpos($dir_or_file_name, '.') + 1), $permitted_file_extensions)) {
+                try {
                     static::loadSettings(
                         $config,
                         $absolute_path,
                         $context
                     );
-                }catch (\Exception $e){
+                } catch (\Exception $e) {
                     add_action(
-                        'admin_notices', 
+                        'admin_notices',
                         function () use ($absolute_path, $render_service, $e) {
                             $render_service->render(
-                                'admin_notice_template', 
+                                'admin_notice_template',
                                 ['type' => 'error',
-                                'dismissible' => false, 
-                                'message' => 'A wrong configuration file was found in '.$absolute_path.' - '.$e->getMessage()]
+                                'dismissible' => false,
+                                'message' => 'A wrong configuration file was found in '.$absolute_path.' - '.$e->getMessage(), ]
                             );
                         }
                     );
                 }
             } else {
-                    add_action(
-                        'admin_notices', 
+                add_action(
+                        'admin_notices',
                         function () use ($absolute_path, $render_service) {
                             $render_service->render(
-                                'admin_notice_template', 
+                                'admin_notice_template',
                                 ['type' => 'warning',
-                                'dismissible' => true, 
-                                'message' => 'You inserted a file with an unsupported extension in the config folder: '.$absolute_path]
-                            ); 
+                                'dismissible' => true,
+                                'message' => 'You inserted a file with an unsupported extension in the config folder: '.$absolute_path, ]
+                            );
                         }
                     );
             }
         }
     }
+
     /**
-     * This method loads settings from a config
+     * This method loads settings from a config.
      *
-     * @param Config  $config    the fetched config
+     * @param Config $config    the fetched config
      * @param string $file_path the file path
-     * @param string $context  the context of the file
-     * 
-     * @return void
+     * @param string $context   the context of the file
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     private static function loadSettings(Config $config, string $file_path, string $context)
@@ -175,13 +167,14 @@ class Loader
                 );
         }
     }
+
     /**
-     * This method joins paths
+     * This method joins paths.
      *
      * @return string joined paths
      *
-     * @access public
      * @static
+     *
      * @since  Method available since Release 3.0.0
      */
     private static function joinPaths()
@@ -189,11 +182,12 @@ class Loader
         $args = func_get_args();
         $paths = array();
         foreach ($args as $arg) {
-            $paths = array_merge($paths, (array)$arg);
+            $paths = array_merge($paths, (array) $arg);
         }
 
-        $paths = array_map(function ($p) { return trim($p, "/"); }, $paths);
+        $paths = array_map(function ($p) { return trim($p, '/'); }, $paths);
         $paths = array_filter($paths);
+
         return join('/', $paths);
     }
 }

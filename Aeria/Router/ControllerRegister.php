@@ -3,27 +3,28 @@
 namespace Aeria\Router;
 
 use Aeria\Structure\Traits\DictionaryTrait;
+
 /**
- * ControllerRegister manages a register of controllers
- * 
+ * ControllerRegister manages a register of controllers.
+ *
  * @category Router
- * @package  Aeria
+ *
  * @author   Jacopo Martinelli <jacopo.martinelli@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class ControllerRegister
 {
     use DictionaryTrait;
+
     /**
-     * Registers a controller to the register
+     * Registers a controller to the register.
      *
      * @param string $namespace the controller's namespace
      *
-     * @return void
      * @throws \Exception when the controller was already registered
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function register(string $namespace)
@@ -34,33 +35,33 @@ class ControllerRegister
         }
         $this->set($name, $namespace);
     }
+
     /**
-     * Helper method that gets the classname
+     * Helper method that gets the classname.
      *
      * @param string $namespace the controller's namespace
      *
-     * @return void
-     *
-     * @access private
      * @since  Method available since Release 3.0.0
      */
     private function classNameFromNamespace(string $namespace): string
     {
         $list = explode('\\', $namespace);
+
         return $list[\count($list) - 1];
     }
+
     /**
-     * Calls a method on a controller
+     * Calls a method on a controller.
      *
      * @param Request $request the request object
      * @param string  $name    the controller name
      * @param string  $method  the method name
-     * 
+     *
      * @return mixed the method's response
+     *
      * @throws \Exception if the controller isn't found
      * @throws \Exception if the controller doesn't provide the requested method
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function callOn(Request $request, string $name, string $method)
@@ -74,16 +75,17 @@ class ControllerRegister
         if (!method_exists($controller, $method)) {
             throw new \Exception("The controller named {$name} does not have the method called {$method}");
         }
-        return $controller->{$method}();
+
+        return $controller->{$method}($request);
     }
+
     /**
-     * Get a prefix from a controller
+     * Get a prefix from a controller.
      *
      * @param string $name the controller's name
      *
      * @return string the controller prefix
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function getControllerPrefix(string $name)
@@ -92,7 +94,7 @@ class ControllerRegister
             throw new \Exception("The controller named {$name} has not been registered");
         }
         $namespace = $this->get($name);
+
         return call_user_func("{$namespace}::getPrefix");
     }
-
 }

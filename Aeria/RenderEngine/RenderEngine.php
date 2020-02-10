@@ -3,18 +3,17 @@
 namespace Aeria\RenderEngine;
 
 use Aeria\RenderEngine\Interfaces\Renderable;
-
-use Aeria\RenderEngine\Exceptions\RendererNotAvailableException;
-use Aeria\Config\Config;
 use Aeria\Structure\Traits\DictionaryTrait;
+
 /**
- * RenderEngine is in charge of rendering views
- * 
+ * RenderEngine is in charge of rendering views.
+ *
  * @category Render
- * @package  Aeria
+ *
  * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class RenderEngine
 {
@@ -23,81 +22,80 @@ class RenderEngine
     }
 
     private $root_paths = [];
+
     /**
-     * Constructs the Render service
+     * Constructs the Render service.
      *
-     * @return void
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function __construct()
     {
         $this->instanciateDictionary();
-        $this->addRootPath(dirname(__DIR__, 2)."/Resources/Templates");
+        $this->addRootPath(dirname(__DIR__, 2).'/Resources/Templates');
+        $custom_paths = [];
+        $custom_paths = apply_filters('aeria_register_template', $custom_paths);
+        foreach ($custom_paths as $path) {
+            $this->addRootPath($path);
+        }
     }
+
     /**
-     * Renders the specified view
-     * 
+     * Renders the specified view.
+     *
      * @param string $mode   is the view name
      * @param array  $extras are the required data for the view
      *
-     * @return void
      * @throws \Exception when the view doesn't exist
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function render($mode, $extras)
     {
-        try{
-            if ($this->exists($mode))
+        try {
+            if ($this->exists($mode)) {
                 $this->get($mode)->render($extras);
-            else
-                throw new \Exception("Trying to render unexisting view.");
-        }catch (\Exception $e){
-            echo "Unable to render template: ".$mode."-".$e->getMessage();
+            } else {
+                throw new \Exception('Trying to render unexisting view.');
+            }
+        } catch (\Exception $e) {
+            echo 'Unable to render template: '.$mode.'-'.$e->getMessage();
         }
     }
+
     /**
-     * Registers a new view to the RenderEngine
-     * 
+     * Registers a new view to the RenderEngine.
+     *
      * @param Renderable $view the view object
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function register(Renderable $view)
     {
         $this->set($view->name(), $view);
     }
+
     /**
-     * Returns the RenderEngine root paths, i.e. where it looks for views
-     * 
+     * Returns the RenderEngine root paths, i.e. where it looks for views.
+     *
      * @return array the root paths
      *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function getRootPaths()
     {
         return $this->root_paths;
     }
+
     /**
-     * Adds a new path to the root paths
-     * 
+     * Adds a new path to the root paths.
+     *
      * @param string $root_path the path we want to add
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function addRootPath(string $root_path)
     {
-        $this->root_paths[]=$root_path;
+        $this->root_paths[] = $root_path;
     }
 }
-
