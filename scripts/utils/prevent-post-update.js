@@ -1,6 +1,6 @@
 
 const validators = []
-const preventingSave = false
+let preventingSave = false
 
 async function validate() {
   const results = await Promise.all(
