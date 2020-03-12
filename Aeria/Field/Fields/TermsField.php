@@ -15,15 +15,17 @@ namespace Aeria\Field\Fields;
 class TermsField extends SelectField
 {
     protected $original_config;
+
     /**
      * Transform the config array; note that this does not operate on
-     * `$this->config`: this way it can be called from outside
+     * `$this->config`: this way it can be called from outside.
      *
-     * @param array $config    the field's config
+     * @param array $config the field's config
      *
-     * @return array        the transformed config
+     * @return array the transformed config
      */
-    public static function transformConfig(array $config) {
+    public static function transformConfig(array $config)
+    {
         $config['type'] = 'select';
 
         $taxonomy = (isset($config['taxonomy'])) ? $config['taxonomy'] : 'category';
@@ -34,19 +36,25 @@ class TermsField extends SelectField
             'hide_empty' => $hide_empty,
         ));
 
-        $config['options'] = array_map(
-            function ($term) {
-                return array(
-                    'label' => $term->name,
-                    'value' => $term->term_id,
-                );
-            },
-            array_values($terms)
-        );
+        $config['options'] = [];
+
+        if (!empty($terms) && !is_wp_error($terms)) {
+            $config['options'] = array_map(
+                function ($term) {
+                    return array(
+                        'label' => $term->name,
+                        'value' => $term->term_id,
+                    );
+                },
+                array_values($terms)
+            );
+        }
 
         unset($config['taxonomy']);
+
         return parent::transformConfig($config);
     }
+
     /**
      * Constructs the field.
      *
