@@ -87,11 +87,11 @@ class Query
     {
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
         $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
-        $postType = (isset($parameters['post_type'])) ? $parameters['post_type'] : '';
+        $post_type = (isset($parameters['post_type'])) ? $parameters['post_type'] : '';
         $taxonomies = get_taxonomies([], 'objects');
         $response = [];
         foreach ($taxonomies as $index => $taxonomy) {
-            if ((preg_match('/'.$searchField.'/', $taxonomy->name) && ((in_array($postType, $taxonomy->object_type)) || $postType == '') || $searchField == '')) {
+            if ((empty($searchField) || preg_match('/'.$searchField.'/', $taxonomy->name)) && (!empty($post_type) && in_array($post_type, $taxonomy->object_type))) {
                 $response[$index]['label'] = $taxonomy->labels->name;
                 $response[$index]['value'] = $taxonomy->name;
             }
@@ -114,27 +114,35 @@ class Query
     {
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
         $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
-        $taxonomy = (isset($parameters['taxonomy'])) ? $parameters['taxonomy'] : 'category';
-        $hide_empty = (isset($parameters['hide_empty'])) ? $parameters['hide_empty'] : true;
+        $post_type = (isset($parameters['post_type'])) ? $parameters['post_type'] : 'post';
+        $default_taxonomies = array_keys($this->getTaxonomies(['post_type' => $post_type]));
+
+        if (!isset($parameters['taxonomy']) && empty($default_taxonomies)) {
+            return [];
+        }
+
+        $taxonomies = (isset($parameters['taxonomy'])) ? $parameters['taxonomy'] : $default_taxonomies;
+        $hide_empty = (isset($parameters['hide_empty'])) ? filter_var($parameters['hide_empty'], FILTER_VALIDATE_BOOLEAN) : true;
+
         $terms = get_terms(array(
-          'search' => $searchField,
-          'taxonomy' => $taxonomy,
-          'hide_empty' => $hide_empty,
+            'search' => $searchField,
+            'taxonomy' => $taxonomies,
+            'hide_empty' => $hide_empty,
         ));
 
         switch ($sender) {
-          case 'SelectOptions':
-            return array_map(function ($term) {
-                return array(
-                'value' => $term->term_id,
-                'label' => $term->name,
-              );
-            }, array_values($terms));
-            break;
-          default:
-            return $terms;
-            break;
-          }
+            case 'SelectOptions':
+                return array_map(function ($term) {
+                    return array(
+                    'value' => $term->term_id,
+                    'label' => $term->name,
+                );
+                }, array_values($terms));
+                break;
+            default:
+                return $terms;
+                break;
+            }
     }
 
     /**

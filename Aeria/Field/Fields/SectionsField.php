@@ -7,7 +7,7 @@ use Aeria\Field\FieldNodeFactory;
 use Aeria\Field\Exceptions\NonExistentConfigException;
 
 /**
- * Sections is the class that represents a section field
+ * Sections is the class that represents a section field.
  *
  * @category Field
  *
@@ -18,7 +18,7 @@ use Aeria\Field\Exceptions\NonExistentConfigException;
  */
 class SectionsField extends BaseField
 {
-    public $isMultipleField = true;
+    public $is_multiple_field = true;
 
     /**
      * Gets a section configuration.
@@ -32,9 +32,9 @@ class SectionsField extends BaseField
     private function getSectionConfig($type)
     {
         if (isset($this->sections[$type])) {
-          return $this->sections[$type];
+            return $this->sections[$type];
         } else {
-          throw new NonExistentConfigException();
+            throw new NonExistentConfigException();
         }
     }
 
@@ -132,9 +132,10 @@ class SectionsField extends BaseField
                 $children[] = $field_result;
             }
         }
-        if(!$skip_filter) {
+        if (!$skip_filter) {
             $children = apply_filters('aeria_get_sections', $children, $this->config);
         }
+
         return $children;
     }
 
@@ -201,8 +202,6 @@ class SectionsField extends BaseField
      * @param Validator $validator_service Aeria's validator service
      * @param Query     $query_service     Aeria's query service
      *
-     * @return void
-     *
      * @since  Method available since Release 3.0.0
      */
     public function set($context_ID, $context_type, array $metas, array $new_values, $validator_service, $query_service)
@@ -237,8 +236,6 @@ class SectionsField extends BaseField
      * @param string $parent_key the parent's key
      * @param array  $metas      the saved fields
      * @param array  $new_values the values we're saving
-     *
-     * @return void
      *
      * @since  Method available since Release 3.0.0
      */

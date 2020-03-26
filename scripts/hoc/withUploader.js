@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 export default function withPreventPostUpdate(WrappedComponent) {
   return class extends PureComponent {
     openUploader = (e, childState, callback) => {
-      const { label, type, index } = this.props
+      const { label, type, mimeTypes = [], index } = this.props
       const {value, children = []} = childState
       const multiple = type === 'gallery'
       const selectedImages = []
@@ -13,12 +13,15 @@ export default function withPreventPostUpdate(WrappedComponent) {
       } else {
         value && selectedImages.push(value)
       }
-
-      // Create a new media frame
-      const frame = window.wp.media({
+      const mediaSettings = {
         title: `${label}`,
         multiple  // Set to true to allow multiple files to be selected
-      })
+      }
+      if (mimeTypes.length) {
+        mediaSettings.library = { type: mimeTypes }
+      }
+      // Create a new media frame
+      const frame = window.wp.media(mediaSettings)
 
       frame.on('open', () =>{
         const selection = frame.state().get('selection')
@@ -33,6 +36,9 @@ export default function withPreventPostUpdate(WrappedComponent) {
         const attachments = models.map(element => {
           const attachment = element.toJSON()
           return {
+            mimeType: attachment.mime,
+            filename: attachment.filename,
+            showFilename: attachment.mime.indexOf('image') < 0,
             value: attachment.id,
             url: attachment.url,
           }

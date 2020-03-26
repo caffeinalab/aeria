@@ -16,7 +16,7 @@ import {
   Sections
 } from '@aeria/core'
 
-import Picture from '../components/Picture'
+import Media from '../components/Media'
 import Gallery from '../components/Gallery'
 
 export default {
@@ -35,7 +35,7 @@ export default {
     'checkbox': Checkbox,
     'wysiwyg': Wysiwyg,
     'select': Select,
-    'picture': Picture,
+    'picture': Media,
     'gallery': Gallery,
     'repeater': Repeater,
     'sections': Sections,
@@ -43,6 +43,7 @@ export default {
     'fieldset': Fieldset,
     'date': DatePicker,
     'daterange': DateRangePicker,
-    'maps': Maps
+    'maps': Maps,
+    'media': Media,
   }
 }

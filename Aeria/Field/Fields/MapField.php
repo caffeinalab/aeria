@@ -4,8 +4,6 @@ namespace Aeria\Field\Fields;
 
 class MapField extends BaseField
 {
-    public $isMultipleField = false;
-
     public static function transformConfig(array $config)
     {
         $config['apiKey'] = get_option('map_options-api_key');

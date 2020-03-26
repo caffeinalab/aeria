@@ -28,9 +28,9 @@ class CreateConfig extends Task
      */
     public function do(array $args)
     {
-        $config = $args['container']->make('config')->all();
-        $args['config'] = $this->manipulateConfig($config);
+        $args['config'] = $this->manipulateConfig($args['config']);
         $args['config'] = $this->checkSectionIds($args['config']);
+        $args['container']->make('config')->merge($args['config']);
 
         return $args;
     }
@@ -66,16 +66,22 @@ class CreateConfig extends Task
     private function getRealFields($field_config)
     {
         $fields_registry = aeria('field');
+
         if (isset($field_config['fields'])) {
             $field_config['fields'] = $this->getRealFields($field_config['fields']);
         }
+
         if (!isset($field_config['type'])) {
             return $field_config;
         }
+
+        $field_config['original_config'] = $field_config;
         $type = $field_config['type'];
+
         if (!$fields_registry->exists($type)) {
             return $field_config;
         }
+
         $field_type_class = $fields_registry->get($type);
         $new_field_config = is_array($field_config)
             ? $field_type_class::transformConfig($field_config)

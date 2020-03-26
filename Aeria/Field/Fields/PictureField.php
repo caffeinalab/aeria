@@ -12,9 +12,15 @@ namespace Aeria\Field\Fields;
  *
  * @see     https://github.com/caffeinalab/aeria
  */
-class PictureField extends BaseField
+class PictureField extends MediaField
 {
-    public $is_multiple_field = false;
+    public static function transformConfig(array $config)
+    {
+        $config['type'] = 'media';
+        $config['mimeTypes'] = ['image'];
+
+        return parent::transformConfig($config);
+    }
 
     /**
      * Gets the field's value.
@@ -28,21 +34,7 @@ class PictureField extends BaseField
      */
     public function get(array $saved_fields, bool $skip_filter = false)
     {
-        $id = parent::get($saved_fields, true);
-        if (is_null($id)) {
-            return null;
-        }
-        $value = (int) $id;
-        $attachment = get_post($id);
-        $sizes = isset($this->config['get_sizes']) ? $this->config['get_sizes'] : get_intermediate_image_sizes();
-        $result = [
-            'meta' => $attachment,
-        ];
-
-        foreach ($sizes as $size) {
-            $result[$size] = wp_get_attachment_image_src($value, $size);
-            $result[$size][3] = $result[$size][2] / $result[$size][1];
-        }
+        $result = parent::get($saved_fields, true);
 
         if ($skip_filter) {
             return $result;
@@ -52,29 +44,6 @@ class PictureField extends BaseField
             'aeria_get_picture',
             $result,
             $this->config
-        );
-    }
-
-    /**
-     * Gets the field's value and its errors.
-     *
-     * @param array $saved_fields the FieldGroup's saved fields
-     * @param array $errors       the saving errors
-     *
-     * @return array the field's config, hydrated with values and errors
-     *
-     * @since  Method available since Release 3.0.0
-     */
-    public function getAdmin(array $saved_fields, array $errors)
-    {
-        $stored_value = parent::get($saved_fields, true);
-        $result = [];
-        $result['value'] = (int) $stored_value;
-        $result['url'] = wp_get_attachment_image_src($result['value'])[0];
-
-        return array_merge(
-            $this->config,
-            $result
         );
     }
 }

@@ -71,7 +71,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
         case 'meta':
             $spec = [
                 'title' => $this->makeRegExValidator(
-                    '/^.{1,30}$/'
+                    '/^.{1,100}$/'
                 ),
                 'context' => $this->makeRegExValidator(
                     '/^normal|side|advanced$/'
@@ -93,7 +93,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
         case 'post-type':
             $spec = [
                 'menu_icon' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]{1,30}$/'
+                    '/^[a-z0-9_-]+$/'
                 ),
                 'labels' => function ($value) {
                     return [
@@ -131,7 +131,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
             $spec = [
                 'args' => [
                     'label' => $this->makeRegExValidator(
-                        '/^.{1,30}$/'
+                        '/^.{1,100}$/'
                     ),
                     'labels' => function ($value) {
                         return [
@@ -151,13 +151,13 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
         case 'section':
             $spec = [
                 'id' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]{1,20}$/'
+                    '/^[a-z0-9_-]+$/'
                 ),
                 'label' => $this->makeRegExValidator(
-                    '/^.{1,30}$/'
+                    '/^.{1,100}$/'
                 ),
                 'description' => $this->makeRegExValidator(
-                    '/^.{1,60}$/'
+                    '/^.{1,100}$/'
                 ),
                 'fields' => function ($value) {
                     return [
@@ -170,7 +170,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
         case 'controller':
             $spec = [
                 'namespace' => $this->makeRegExValidator(
-                    '/^[A-Za-z0-9_-]{1,30}$/'
+                    '/^[A-Za-z0-9_-]+$/'
                 ),
             ];
             break;
@@ -185,16 +185,16 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
         case 'options':
             $spec = [
                 'title' => $this->makeRegExValidator(
-                    '/^.{1,40}$/'
+                    '/^.{1,100}$/'
                 ),
                 'menu-slug' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]{1,20}$/'
+                    '/^[a-z0-9_-]+$/'
                 ),
                 'capability' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]{1,30}$/'
+                    '/^[a-z0-9_-]+$/'
                 ),
                 'parent' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]{1,30}$/'
+                    '/^[a-z0-9_-]+$/'
                 ),
                 'fields' => function ($value) {
                     return [
@@ -211,7 +211,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
 
         return [
             'name' => $this->makeRegExValidator(
-                '/^[a-z0-9_-]{1,20}$/'
+                '/^[a-z0-9_-]+$/'
             ),
             'spec' => $spec,
             'kind' => $this->makeRegExValidator(

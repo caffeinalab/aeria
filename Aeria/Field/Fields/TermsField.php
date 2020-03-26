@@ -14,8 +14,6 @@ namespace Aeria\Field\Fields;
  */
 class TermsField extends SelectField
 {
-    protected $original_config;
-
     /**
      * Transform the config array; note that this does not operate on
      * `$this->config`: this way it can be called from outside.
@@ -53,21 +51,5 @@ class TermsField extends SelectField
         unset($config['taxonomy']);
 
         return parent::transformConfig($config);
-    }
-
-    /**
-     * Constructs the field.
-     *
-     * @param string $parent_key the field's parent key
-     * @param array  $config     the field's config
-     * @param array  $sections   Aeria's sections config
-     * @param array  $index      index for of the subfield
-     *
-     * @since  Method available since Release 3.0.8
-     */
-    public function __construct($parent_key, $config, $sections, $index = null)
-    {
-        $this->original_config = json_decode(json_encode($config));
-        parent::__construct($parent_key, $config, $sections, $index);
     }
 }
