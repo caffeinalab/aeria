@@ -66,24 +66,4 @@ class SelectField extends BaseField
 
         return $values;
     }
-
-    /**
-     * Gets the field's value and its errors.
-     *
-     * @param array $saved_fields the FieldGroup's saved fields
-     * @param array $errors       the saving errors
-     *
-     * @return array the field's config, hydrated with values and errors
-     *
-     * @since  Method available since Release 3.0.0
-     */
-    public function getAdmin(array $saved_fields, array $errors)
-    {
-        $savedValues = parent::getAdmin($saved_fields, $errors, true);
-
-        return array_merge(
-            $this->config,
-            $savedValues
-        );
-    }
 }

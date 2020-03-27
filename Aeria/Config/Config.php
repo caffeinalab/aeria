@@ -193,9 +193,6 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
                 'capability' => $this->makeRegExValidator(
                     '/^[a-z0-9_-]+$/'
                 ),
-                'parent' => $this->makeRegExValidator(
-                    '/^[a-z0-9_-]+$/'
-                ),
                 'fields' => function ($value) {
                     return [
                         'result' => is_array($value),

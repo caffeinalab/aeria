@@ -98,8 +98,8 @@ class BaseField extends Node implements FieldInterface
     public function getKey()
     {
         return $this->parent_key
-          .(!is_null($this->index) ? '-'.$this->index : '')
-          .(!is_null($this->id) ? '-'.$this->id : '');
+            .(!is_null($this->index) ? '-'.$this->index : '')
+            .(!is_null($this->id) ? '-'.$this->id : '');
     }
 
     /**
@@ -142,23 +142,25 @@ class BaseField extends Node implements FieldInterface
     {
         if (isset($errors[$this->key])) {
             $result = [
-              'value' => $errors[$this->key]['value'],
-              'error' => $errors[$this->key]['message'],
+                'value' => $errors[$this->key]['value'],
+                'error' => $errors[$this->key]['message'],
             ];
         } else {
             $result = [
-              'value' => $this->get($saved_fields, true),
+                'value' => $this->get($saved_fields, true),
             ];
         }
 
-        if (is_null($result['value'])) {
-            return $this->config;
-        }
-
-        return array_merge(
+        $config = array_merge(
             $this->config,
             $result
         );
+
+        $config = apply_filters('aeria_get_admin_base', $config);
+        $config = apply_filters('aeria_get_admin_'.$this->id, $config);
+        $config = apply_filters('aeria_get_admin_'.$this->key, $config);
+
+        return $config;
     }
 
     /**

@@ -174,10 +174,10 @@ class SectionsField extends BaseField
                 $children[] = array_merge(
                     $section_config,
                     [
-                      'title' => $this->getTitle($type_index)->get($metas),
-                      'isDraft' => $this->getDraftMode($type_index)->get($metas),
-                      'accordionState' => $this->getAccordionStatus($type_index)->get($metas),
-                      'fields' => $fields,
+                        'title' => $this->getTitle($type_index)->get($metas),
+                        'isDraft' => $this->getDraftMode($type_index)->get($metas),
+                        'accordionState' => $this->getAccordionStatus($type_index)->get($metas),
+                        'fields' => $fields,
                     ]
                 );
             }
@@ -186,8 +186,8 @@ class SectionsField extends BaseField
         return array_merge(
             $this->config,
             [
-              'value' => $stored_value,
-              'children' => $children,
+                'value' => $stored_value,
+                'children' => $children,
             ]
         );
     }
@@ -226,26 +226,32 @@ class SectionsField extends BaseField
                 )->set($context_ID, $context_type, $metas, $new_values, $validator_service, $query_service, $query_service);
             }
             // remove orphans
-            $this->deleteOrphanMeta($this->key.'-'.$type_index, $metas, $new_values);
+            $this->deleteOrphanMeta($this->key.'-'.$type_index, $metas, $new_values, $context_type);
         }
     }
 
     /**
      * Deletes the metas that lose a parent :(.
      *
-     * @param string $parent_key the parent's key
-     * @param array  $metas      the saved fields
-     * @param array  $new_values the values we're saving
+     * @param string $parent_key   the parent's key
+     * @param array  $metas        the saved fields
+     * @param array  $new_values   the values we're saving
+     * @param string $context_type the context type. Right now, options|meta
      *
      * @since  Method available since Release 3.0.0
      */
-    private function deleteOrphanMeta($parent_key, $metas, $new_values)
+    private function deleteOrphanMeta($parent_key, $metas, $new_values, $context_type)
     {
         $oldFields = static::pregGrepKeys('/^'.$parent_key.'/', $metas);
         $newFields = static::pregGrepKeys('/^'.$parent_key.'/', $new_values);
         $deletableFields = array_diff_key($oldFields, $newFields);
+
         foreach ($deletableFields as $deletableKey => $deletableField) {
-            delete_post_meta($new_values['post_ID'], $deletableKey);
+            if ($context_type === 'options') {
+                delete_option($deletableKey);
+            } else {
+                delete_post_meta($new_values['post_ID'], $deletableKey);
+            }
         }
     }
 
