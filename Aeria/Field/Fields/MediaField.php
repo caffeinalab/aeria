@@ -32,24 +32,26 @@ class MediaField extends BaseField
         }
         $value = (int) $id;
         $attachment = get_post($id);
-        $sizes = isset($this->config['get_sizes']) ? $this->config['get_sizes'] : get_intermediate_image_sizes();
         $result = [
             'meta' => $attachment,
         ];
         if (strpos($attachment->post_mime_type, 'image') !== false) {
+            if (isset($this->config['get_sizes'])) {
+                $sizes = $this->config['get_sizes'];
+            } else {
+                $sizes = array_merge(['full'], get_intermediate_image_sizes());
+            }
             foreach ($sizes as $size) {
                 $result[$size] = wp_get_attachment_image_src($value, $size);
                 $result[$size][3] = $result[$size][2] / $result[$size][1];
             }
         } else {
-            $result['url'] = wp_get_attachment_url($value);
+            $result['full'] = [wp_get_attachment_url($value)];
             $media_meta = wp_get_attachment_metadata($value);
             if (isset($media_meta['width']) && isset($media_meta['height'])) {
-                $result['size'] = [
-                    $media_meta['width'],
-                    $media_meta['height'],
-                    $media_meta['width'] / $media_meta['height'],
-                ];
+                $result['full'][] = $media_meta['width'];
+                $result['full'][] = $media_meta['height'];
+                $result['full'][] = $media_meta['width'] / $media_meta['height'];
             }
         }
 
@@ -83,12 +85,13 @@ class MediaField extends BaseField
         $attachment = get_post($result['value']);
 
         if (is_object($attachment)) {
-            $result['filename'] = basename($attachment->guid);
+            $result['fileName'] = basename($attachment->guid);
             $result['mimeType'] = $attachment->post_mime_type;
             if (strpos($attachment->post_mime_type, 'image') !== false) {
                 $result['url'] = wp_get_attachment_image_src($result['value'])[0];
             } else {
                 $result['showFilename'] = true;
+                $result['naturalSize'] = true;
                 $result['url'] = wp_mime_type_icon($attachment->post_mime_type);
             }
         }

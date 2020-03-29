@@ -35,13 +35,20 @@ export default function withPreventPostUpdate(WrappedComponent) {
         const {models} = frame.state().get('selection')
         const attachments = models.map(element => {
           const attachment = element.toJSON()
-          return {
+          const data = {
             mimeType: attachment.mime,
-            filename: attachment.filename,
-            showFilename: attachment.mime.indexOf('image') < 0,
+            fileName: attachment.filename,
+            showFilename: false,
             value: attachment.id,
             url: attachment.url,
           }
+          if (attachment.mime.indexOf('image') < 0) {
+            data.showFilename = true
+            data.url = attachment.icon
+            data.naturalSize = true
+          }
+
+          return data
         })
 
         if (multiple) {

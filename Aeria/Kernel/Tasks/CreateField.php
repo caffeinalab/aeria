@@ -32,6 +32,7 @@ class CreateField extends Task
         $args['service']['field']->register('repeater', \Aeria\Field\Fields\RepeaterField::class);
         $args['service']['field']->register('gallery', \Aeria\Field\Fields\GalleryField::class);
         $args['service']['field']->register('picture', \Aeria\Field\Fields\PictureField::class);
+        $args['service']['field']->register('media', \Aeria\Field\Fields\MediaField::class);
         $args['service']['field']->register('sections', \Aeria\Field\Fields\SectionsField::class);
         $args['service']['field']->register('select', \Aeria\Field\Fields\SelectField::class);
         $args['service']['field']->register('switch', \Aeria\Field\Fields\SwitchField::class);
