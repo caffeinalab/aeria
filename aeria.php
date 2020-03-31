@@ -10,7 +10,7 @@
  * Plugin Name: Aeria
  * Plugin URI:  https://github.com/caffeinalab/aeria
  * Description: Aeria is a modular, lightweight, fast WordPress Application development kit.
- * Version:     3.1.12
+ * Version:     3.1.13
  * Author:      Caffeina
  * Author URI:  https://caffeina.com
  * Text Domain: aeria

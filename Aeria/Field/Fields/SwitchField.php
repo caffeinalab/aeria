@@ -37,6 +37,24 @@ class SwitchField extends BaseField
     }
 
     /**
+     * Gets the field's value and its errors.
+     *
+     * @param array $saved_fields the FieldGroup's saved fields
+     * @param array $errors       the saving errors
+     *
+     * @return array the field's config, hydrated with values and errors
+     *
+     * @since  Method available since Release 3.0.0
+     */
+    public function getAdmin(array $saved_fields, array $errors)
+    {
+        $savedValues = parent::getAdmin($saved_fields, $errors, true);
+        $savedValues['value'] = is_null($savedValues['value']) ? null : filter_var($savedValues['value'], FILTER_VALIDATE_BOOLEAN);
+
+        return $savedValues;
+    }
+
+    /**
      * Saves the new values to the fields.
      *
      * @param int       $context_ID        the context ID. For posts, post's ID
