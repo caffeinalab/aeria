@@ -26,30 +26,14 @@ class SwitchField extends BaseField
      */
     public function get(array $saved_fields, bool $skip_filter = false)
     {
-        $result = filter_var(parent::get($saved_fields, true), FILTER_VALIDATE_BOOLEAN);
+        $result = parent::get($saved_fields, true);
+
         if (!$skip_filter) {
+            $result = filter_var($result, FILTER_VALIDATE_BOOLEAN);
             $result = apply_filters('aeria_get_switch', $result, $this->config);
         }
 
         return $result;
-    }
-
-    /**
-     * Gets the field's value and its errors.
-     *
-     * @param array $saved_fields the FieldGroup's saved fields
-     * @param array $errors       the saving errors
-     *
-     * @return array the field's config, hydrated with values and errors
-     *
-     * @since  Method available since Release 3.0.0
-     */
-    public function getAdmin(array $saved_fields, array $errors)
-    {
-        $savedValues = parent::getAdmin($saved_fields, $errors, true);
-        $savedValues['value'] = filter_var($savedValues['value'], FILTER_VALIDATE_BOOLEAN);
-
-        return $savedValues;
     }
 
     /**
