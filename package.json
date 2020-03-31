@@ -1,6 +1,6 @@
 {
   "name": "aeria",
-  "version": "3.1.10",
+  "version": "3.1.11",
   "description": "Aeria",
   "scripts": {
     "dev": "webpack --watch --mode development",
@@ -38,8 +38,8 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "@aeria/core": "0.0.14",
-    "@aeria/uikit": "0.0.16",
+    "@aeria/core": "0.0.15",
+    "@aeria/uikit": "0.0.17",
     "lodash.throttle": "^4.1.1",
     "polished": "^3.5.1",
     "react": "^16.13.1",
