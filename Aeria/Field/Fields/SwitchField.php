@@ -15,6 +15,23 @@ namespace Aeria\Field\Fields;
 class SwitchField extends BaseField
 {
     /**
+     * Transform the config array; note that this does not operate on
+     * `$this->config`: this way it can be called from outside.
+     *
+     * @param array $config the field's config
+     *
+     * @return array the transformed config
+     */
+    public static function transformConfig(array $config)
+    {
+        if (!isset($config['defaultValue'])) {
+            $config['defaultValue'] = false;
+        }
+
+        return $config;
+    }
+
+    /**
      * Gets the field's value.
      *
      * @param array $saved_fields the FieldGroup's saved fields
