@@ -16,7 +16,7 @@ use Aeria\Kernel\AbstractClasses\Task;
  */
 class CreateTaxonomy extends Task
 {
-    public $priority = 1;
+    public $priority = 6;
     public $admin_only = false;
 
     /**

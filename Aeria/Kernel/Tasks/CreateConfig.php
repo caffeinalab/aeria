@@ -16,7 +16,7 @@ use Aeria\Kernel\AbstractClasses\Task;
  */
 class CreateConfig extends Task
 {
-    public $priority = 2;
+    public $priority = 3;
     public $admin_only = false;
 
     /**
@@ -28,7 +28,7 @@ class CreateConfig extends Task
      */
     public function do(array $args)
     {
-        $args['config'] = $this->applyAddons($args['config']);
+        $args['config'] = $this->applyAddons($args['config'], $args['service']['render_engine']);
         $args['config'] = $this->manipulateConfig($args['config']);
         $args['config'] = $this->checkSectionIds($args['config']);
         $args['config'] = apply_filters('aeria_transform_config', $args['config']);
@@ -71,7 +71,7 @@ class CreateConfig extends Task
         return $fields;
     }
 
-    private function applyAddons($tree)
+    private function applyAddons($tree, $render_service)
     {
         if (!isset($tree['aeria']) || !isset($tree['aeria']['extension'])) {
             return $tree;
@@ -80,11 +80,25 @@ class CreateConfig extends Task
         foreach ($tree['aeria']['extension'] as $id => $extensions) {
             foreach ($extensions as $kind => $extension) {
                 $namespace = ($kind == 'controller' || $kind == 'route') ? 'global' : 'aeria';
-                $tree[$namespace][$kind][$id] = $this->mergeSpec($tree[$namespace][$kind][$id], $extension);
+                if (!isset($tree[$namespace][$kind]) || !isset($tree[$namespace][$kind][$id])) {
+                    add_action(
+                        'admin_notices',
+                        function () use ($render_service, $kind, $id) {
+                            $render_service->render(
+                                'admin_notice_template',
+                                [
+                                    'type' => 'error',
+                                    'dismissible' => false,
+                                    'message' => "Impossible to extend \"$id\" ($kind) because of missing base configuration",
+                                ]
+                            );
+                        }
+                    );
+
+                    continue;
+                }
             }
         }
-
-        dd($tree);
 
         return $tree;
     }

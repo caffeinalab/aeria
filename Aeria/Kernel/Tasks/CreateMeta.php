@@ -7,25 +7,24 @@ use Aeria\Meta\Meta;
 
 /**
  * This task is in charge of creating Metaboxes.
- * 
+ *
  * @category Kernel
- * @package  Aeria
+ *
  * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class CreateMeta extends Task
 {
-    public $priority = 4;
+    public $priority = 7;
     public $admin_only = true;
+
     /**
      * The main task method. It registers the metaboxes and sections.
      *
      * @param array $args the arguments to be passed to the Task
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function do(array $args)
@@ -42,8 +41,8 @@ class CreateMeta extends Task
                     'add_meta_boxes',
                     function () use ($meta_config, $args, $section_config) {
                         $meta = $args['service']['meta']->create(
-                            $meta_config, 
-                            $section_config, 
+                            $meta_config,
+                            $section_config,
                             $args['service']['render_engine']
                         );
                     }

@@ -17,7 +17,7 @@ use Aeria\Kernel\Loader;
  */
 class CreateRenderer extends Task
 {
-    public $priority = 7;
+    public $priority = 1;
     public $admin_only = false;
 
     /**

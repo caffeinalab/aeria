@@ -8,23 +8,22 @@ use Aeria\Kernel\AbstractClasses\Task;
  * This task is in charge of creating options pages.
  *
  * @category Kernel
- * @package  Aeria
+ *
  * @author   Simone Montali <simone.montali@caffeina.com>
  * @license  https://github.com/caffeinalab/aeria/blob/master/LICENSE  MIT license
- * @link     https://github.com/caffeinalab/aeria
+ *
+ * @see     https://github.com/caffeinalab/aeria
  */
 class CreateOptions extends Task
 {
-    public $priority = 6;
+    public $priority = 4;
     public $admin_only = true;
+
     /**
      * The main task method. It registers the option pages.
      *
      * @param array $args the arguments to be passed to the Task
      *
-     * @return void
-     *
-     * @access public
      * @since  Method available since Release 3.0.0
      */
     public function do(array $args)
@@ -35,24 +34,24 @@ class CreateOptions extends Task
             $section_config = isset($args['config']['aeria']['section']) ? $args['config']['aeria']['section'] : [];
 
             foreach ($args['config']['aeria']['options'] as $name => $data) {
-                $config =[];
+                $config = [];
                 $config = array_merge(
                     ['id' => $name],
                     $data
                 );
 
                 $theOptionPage = [
-                    "title" => $config["title"],
-                    "menu_title" => $config["title"],
-                    "capability" => isset($config["capability"]) ? $config["capability"] : "manage_options",
-                    "menu_slug" => $config["menu_slug"],
-                    "parent" => isset($config["parent"]) ? $config["parent"] : "options-general.php",
-                    "parent_title" => isset($config["parent_title"]) ? $config["parent_title"] : "",
-                    "parent_icon" => isset($config["parent_icon"]) ? $config["parent_icon"] : $default_icon,
-                    "config" => $config,
-                    "sections" => $section_config,
-                    "validator_service" => $args['service']['validator'],
-                    "query_service" => $args['service']['query']
+                    'title' => $config['title'],
+                    'menu_title' => $config['title'],
+                    'capability' => isset($config['capability']) ? $config['capability'] : 'manage_options',
+                    'menu_slug' => $config['menu_slug'],
+                    'parent' => isset($config['parent']) ? $config['parent'] : 'options-general.php',
+                    'parent_title' => isset($config['parent_title']) ? $config['parent_title'] : '',
+                    'parent_icon' => isset($config['parent_icon']) ? $config['parent_icon'] : $default_icon,
+                    'config' => $config,
+                    'sections' => $section_config,
+                    'validator_service' => $args['service']['validator'],
+                    'query_service' => $args['service']['query'],
                 ];
                 $args['service']['options']->register($theOptionPage);
             }
@@ -64,5 +63,4 @@ class CreateOptions extends Task
             }
         );
     }
-
 }

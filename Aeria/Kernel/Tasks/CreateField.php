@@ -16,7 +16,7 @@ use Aeria\Kernel\AbstractClasses\Task;
  */
 class CreateField extends Task
 {
-    public $priority = 1;
+    public $priority = 2;
     public $admin_only = false;
 
     /**
