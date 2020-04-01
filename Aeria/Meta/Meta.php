@@ -58,6 +58,12 @@ class Meta implements ValidateConfInterface
         $context = isset($config['context']) ? $config['context'] : 'advanced';
         $priority = isset($config['priority']) ? $config['priority'] : 'default';
         $templates = isset($config['templates']) ? $config['templates'] : [];
+        $exclude_templates = isset($config['exclude_templates']) ? $config['exclude_templates'] : [];
+        $current_template = get_page_template_slug();
+
+        if (in_array($current_template, $exclude_templates)) {
+            return;
+        }
 
         if (isset($config['post_type']) && count($config['post_type']) === 0) {
             $post_types = false;
@@ -78,7 +84,9 @@ class Meta implements ValidateConfInterface
           );
         }
 
-        if (!isset($wp_meta_boxes[get_post_type()][$context][$priority]['aeria-'.$config['id']]) && in_array(get_page_template_slug(), $templates)) {
+        if (!isset($wp_meta_boxes[get_post_type()][$context][$priority]['aeria-'.$config['id']])
+            && in_array($current_template, $templates)
+        ) {
             add_meta_box(
               'aeria-'.$config['id'],
               $config['title'],
@@ -175,12 +183,14 @@ class Meta implements ValidateConfInterface
         return function ($post_id, $post) use ($metabox, $new_values, $validator_service, $query_service, $sections, $render_service) {
             $postTypes = isset($metabox['post_type']) ? $metabox['post_type'] : [];
             $templates = isset($metabox['templates']) ? $metabox['templates'] : [];
+            $exclude_templates = isset($metabox['exclude_templates']) ? $metabox['exclude_templates'] : [];
             $context = isset($metabox['context']) ? $metabox['context'] : 'advanced';
             $priority = isset($metabox['priority']) ? $metabox['priority'] : 'default';
-
+            $current_template = get_page_template_slug();
             // Since this function is triggered when a post is created too, I'm gonna skip it in that case. I'm gonna skip it even if the post_Type is not supported.
             if ($new_values == []
-                || !(in_array($post->post_type, $postTypes) || in_array(get_page_template_slug(), $templates))
+                || in_array($current_template, $exclude_templates)
+                || !(in_array($post->post_type, $postTypes) || in_array($current_template, $templates))
                 || !isset($new_values['update_aeria_meta'])
             ) {
                 return $post_id;
