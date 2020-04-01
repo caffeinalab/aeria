@@ -45,11 +45,21 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
      */
     public function __construct()
     {
+        $template_dir = get_template_directory();
+        $stylesheet_dir = get_stylesheet_directory();
+
         $this->instanciateDictionary();
-        $this->root_paths[] = get_template_directory().'/aeria-config';
+        $this->root_paths[] = $template_dir.'/aeria-config';
+
+        // extending support to child themes
+        if ($stylesheet_dir !== $template_dir) {
+            $this->root_paths[] = $stylesheet_dir.'/aeria-config';
+        }
+
         $this->root_paths[] = WP_PLUGIN_DIR.'/aeria/resources/Config';
         $custom_paths = [];
         $custom_paths = apply_filters('aeria_register_configs', $custom_paths);
+
         foreach ($custom_paths as $path) {
             $this->setRootPath($path);
         }
