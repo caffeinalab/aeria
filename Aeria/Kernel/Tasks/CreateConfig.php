@@ -28,12 +28,65 @@ class CreateConfig extends Task
      */
     public function do(array $args)
     {
+        $args['config'] = $this->applyAddons($args['config']);
         $args['config'] = $this->manipulateConfig($args['config']);
         $args['config'] = $this->checkSectionIds($args['config']);
         $args['config'] = apply_filters('aeria_transform_config', $args['config']);
         $args['container']->make('config')->load($args['config']);
 
         return $args;
+    }
+
+    private function mergeSpec($spec, $extension)
+    {
+        if (isset($spec['fields']) && isset($extension['fields'])) {
+            $spec = $this->extendsFields($spec['fields'], $extension['fields']);
+            unset($extension['fields']);
+        }
+
+        foreach ($extension as $key => $value) {
+            if (!isset($spec[$key]) || gettype($value) !== gettype($spec[$key])) {
+                $spec[$key] = $value;
+                continue;
+            }
+
+            $is_associative_array = is_array($value) && array_keys($value) !== range(0, count($value) - 1);
+            $spec[$key] = $is_associative_array ? $this->mergeSpec($spec[$key], $value) : $value;
+        }
+
+        return $spec;
+    }
+
+    private function extendsFields($fields, $extensions)
+    {
+        foreach ($extensions as $extension) {
+            foreach ($fields as $index => $spec) {
+                if ($spec['id'] === $extension['id']) {
+                    $fields[$index] = $this->mergeSpec($spec, $extension);
+                    break;
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    private function applyAddons($tree)
+    {
+        if (!isset($tree['aeria']) || !isset($tree['aeria']['extension'])) {
+            return $tree;
+        }
+
+        foreach ($tree['aeria']['extension'] as $id => $extensions) {
+            foreach ($extensions as $kind => $extension) {
+                $namespace = ($kind == 'controller' || $kind == 'route') ? 'global' : 'aeria';
+                $tree[$namespace][$kind][$id] = $this->mergeSpec($tree[$namespace][$kind][$id], $extension);
+            }
+        }
+
+        dd($tree);
+
+        return $tree;
     }
 
     private function checkSectionIds($tree)

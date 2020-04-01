@@ -222,7 +222,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
             ),
             'spec' => $spec,
             'kind' => $this->makeRegExValidator(
-                '/^post-type|taxonomy|meta|section|controller|route|options$/'
+                '/^post-type|taxonomy|meta|section|controller|route|options|extension$/'
             ),
             'enabled' => function ($value) {
                 return [
