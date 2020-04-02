@@ -55,19 +55,32 @@ class Query
      */
     public function getPostTypes($parameters)
     {
-        $searchField = (isset($parameters['s'])) ? $parameters['s'] : null;
-        $public = (isset($parameters['public'])) ? $parameters['public'] : false;
+        $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
+        $public = (isset($parameters['public'])) ? $parameters['public'] : true;
         $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
 
-        $args = [
-            'public' => $public,
-            'query_var' => $searchField,
-        ];
-        $types = get_post_types($args, 'object');
-        $response = [];
-        foreach ($types as $index => $post_type) {
-            $response[$index]['label'] = $post_type->labels->name;
-            $response[$index]['value'] = $post_type->name;
+        $types = array_reduce(get_post_types(['public' => $public], 'object'), function ($carry, $type) {
+            if ((empty($searchField) || preg_match('/'.$searchField.'/', $type->name))) {
+                $carry[] = json_decode(json_encode($type), true);
+            }
+
+            return $carry;
+        }, []);
+
+        $types = aeria_objects_filter($types, $parameters, 'name');
+
+        switch ($sender) {
+            case 'SelectOptions':
+                return array_map(function ($type) {
+                    return array(
+                        'value' => $type['name'],
+                        'label' => $type['labels']['name'],
+                    );
+                }, $types);
+                break;
+            default:
+                return $types;
+                break;
         }
 
         return $response;
@@ -88,16 +101,35 @@ class Query
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
         $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
         $post_type = (isset($parameters['post_type'])) ? $parameters['post_type'] : '';
-        $taxonomies = get_taxonomies([], 'objects');
-        $response = [];
-        foreach ($taxonomies as $index => $taxonomy) {
+        $taxonomies = [];
+
+        foreach (get_taxonomies([], 'objects') as $index => $taxonomy) {
             if ((empty($searchField) || preg_match('/'.$searchField.'/', $taxonomy->name)) && (!empty($post_type) && in_array($post_type, $taxonomy->object_type))) {
-                $response[$index]['label'] = $taxonomy->labels->name;
-                $response[$index]['value'] = $taxonomy->name;
+                $taxonomies[] = json_decode(json_encode($taxonomy), true);
             }
         }
 
-        return $response;
+        $taxonomies = aeria_objects_filter($taxonomies, $parameters, 'name');
+
+        switch ($sender) {
+            case 'SelectOptions':
+                $taxonomies = array_map(function ($taxonomy) {
+                    return [
+                        'value' => $taxonomy['name'],
+                        'label' => $taxonomy['labels']['name'],
+                    ];
+                }, $taxonomies);
+                break;
+            case 'Names':
+                $taxonomies = array_map(function ($taxonomy) {
+                    return $taxonomy['name'];
+                }, $taxonomies);
+                break;
+            default:
+                break;
+        }
+
+        return $taxonomies;
     }
 
     /**
@@ -115,7 +147,7 @@ class Query
         $searchField = (isset($parameters['s'])) ? $parameters['s'] : '';
         $sender = (isset($parameters['sender'])) ? $parameters['sender'] : null;
         $post_type = (isset($parameters['post_type'])) ? $parameters['post_type'] : 'post';
-        $default_taxonomies = array_keys($this->getTaxonomies(['post_type' => $post_type]));
+        $default_taxonomies = $this->getTaxonomies(['post_type' => $post_type, 'sender' => 'Names']);
 
         if (!isset($parameters['taxonomy']) && empty($default_taxonomies)) {
             return [];
@@ -124,25 +156,37 @@ class Query
         $taxonomies = (isset($parameters['taxonomy'])) ? $parameters['taxonomy'] : $default_taxonomies;
         $hide_empty = (isset($parameters['hide_empty'])) ? filter_var($parameters['hide_empty'], FILTER_VALIDATE_BOOLEAN) : true;
 
-        $terms = get_terms(array(
+        $terms = get_terms([
             'search' => $searchField,
             'taxonomy' => $taxonomies,
             'hide_empty' => $hide_empty,
-        ));
+        ]);
+
+        if (is_wp_error($terms)) {
+            return [];
+        }
+
+        $terms = array_map(function ($term) {
+            return json_decode(json_encode($term), true);
+        }, $terms);
+
+        $terms = aeria_objects_filter($terms, $parameters, 'name');
+        $terms = aeria_objects_filter($terms, $parameters, 'slug');
 
         switch ($sender) {
             case 'SelectOptions':
-                return array_map(function ($term) {
-                    return array(
-                    'value' => $term->term_id,
-                    'label' => $term->name,
-                );
-                }, array_values($terms));
+                $terms = array_map(function ($term) {
+                    return [
+                        'value' => $term['term_id'],
+                        'label' => $term['name'],
+                    ];
+                }, $terms);
                 break;
             default:
-                return $terms;
                 break;
-            }
+        }
+
+        return $terms;
     }
 
     /**

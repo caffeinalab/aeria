@@ -24,16 +24,8 @@ class SelectField extends BaseField
      */
     public static function transformConfig(array $config)
     {
-        if ((isset($config['exclude']) || isset($config['include'])) && isset($config['options'])) {
-            $options = array_filter(
-                $config['options'],
-                function ($option) use ($config) {
-                    return isset($config['exclude'])
-                        ? !in_array($option['value'], $config['exclude'])
-                        : in_array($option['value'], $config['include']);
-                }
-            );
-            $config['options'] = array_values($options);
+        if (isset($config['options'])) {
+            $config['options'] = aeria_objects_filter($config['options'], $config);
         }
 
         return parent::transformConfig($config);

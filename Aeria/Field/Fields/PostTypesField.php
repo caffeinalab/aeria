@@ -25,18 +25,10 @@ class PostTypesField extends SelectField
     public static function transformConfig(array $config)
     {
         $config['type'] = 'select';
+        $filter = (isset($config['filter'])) ? $config['filter'] : [];
+        $config['ajax'] = array_merge($filter, ['endpoint' => '/wp-json/aeria/post-types']);
 
-        $post_types = get_post_types(
-            ['public' => true],
-            'objects'
-        );
-
-        $config['options'] = array_map(function ($post_type) {
-            return [
-                'value' => $post_type->name,
-                'label' => $post_type->label,
-            ];
-        }, array_values($post_types));
+        unset($config['filter']);
 
         return parent::transformConfig($config);
     }

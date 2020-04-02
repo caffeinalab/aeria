@@ -58,7 +58,7 @@ if (!function_exists('dd')) {
      */
     function dd(...$args)
     {
-        dump(...$args);
+        var_dump(...$args);
         die();
     }
 }
@@ -284,5 +284,62 @@ if (!function_exists('aeria')) {
         }
 
         return $pivot;
+    }
+}
+
+if (!function_exists('aeria_array_filter')) {
+    /**
+     * Filters a data array.
+     *
+     * @param array $data   the data to be filtered
+     * @param array $config the filter configuration
+     *
+     * @return array the filtered data
+     *
+     * @since  Method available since Release 3.2.1
+     */
+    function aeria_array_filter($data = [], $config = [])
+    {
+        if (empty($data) || (!isset($config['exclude']) && !isset($config['include']))) {
+            return $data;
+        }
+
+        return array_filter(
+            $data,
+            function ($value) use ($config) {
+                return isset($config['exclude'])
+                    ? !in_array($value, $config['exclude'])
+                    : in_array($value, $config['include']);
+            }
+        );
+    }
+}
+
+if (!function_exists('aeria_object_filter')) {
+    /**
+     * Filters a select options array.
+     *
+     * @param array  $objects the select options
+     * @param array  $config  the filter configuration
+     * @param string $key     the filter configuration
+     *
+     * @return array the filtered select options
+     *
+     * @since  Method available since Release 3.2.1
+     */
+    function aeria_objects_filter($objects = [], $config = [], $key = 'value')
+    {
+        if (empty($objects) || (!isset($config['exclude']) && !isset($config['include']))) {
+            return $objects;
+        }
+
+        return array_values(array_filter(
+            $objects,
+            function ($object) use ($config, $key) {
+                return isset($config['exclude'])
+                    ? !in_array($object[$key], $config['exclude'])
+                    : in_array($object[$key], $config['include']);
+            }
+        ));
     }
 }

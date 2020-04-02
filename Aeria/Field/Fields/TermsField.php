@@ -25,30 +25,10 @@ class TermsField extends SelectField
     public static function transformConfig(array $config)
     {
         $config['type'] = 'select';
+        $filter = (isset($config['filter'])) ? $config['filter'] : [];
+        $config['ajax'] = array_merge($filter, ['endpoint' => '/wp-json/aeria/terms']);
 
-        $taxonomy = (isset($config['taxonomy'])) ? $config['taxonomy'] : 'category';
-        $hide_empty = (isset($config['hide_empty'])) ? $config['hide_empty'] : true;
-
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => $hide_empty,
-        ));
-
-        $config['options'] = [];
-
-        if (!empty($terms) && !is_wp_error($terms)) {
-            $config['options'] = array_map(
-                function ($term) {
-                    return array(
-                        'label' => $term->name,
-                        'value' => $term->term_id,
-                    );
-                },
-                array_values($terms)
-            );
-        }
-
-        unset($config['taxonomy']);
+        unset($config['filter']);
 
         return parent::transformConfig($config);
     }
