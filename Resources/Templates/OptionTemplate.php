@@ -1,5 +1,5 @@
 <h1><?=$data['config']['title']; ?></h1>
-<form method="post">
+<form id="form-aeria-options" method="post">
     <?= wp_nonce_field($data['nonceIDs']['action'], $data['nonceIDs']['field']); ?>
     <div id="aeriaApp-<?=$data['config']['id']; ?>" class="aeriaApp">
       <div style="display: none;">

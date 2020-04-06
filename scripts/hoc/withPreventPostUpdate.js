@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react'
 import klona from 'klona'
 import { Validator } from '@aeria/uikit'
+import { isFieldEnabled } from '@aeria/core'
 import { addValidator } from '../utils/prevent-post-update'
 import scrollTo from '../utils/scroll-to'
-
 
 export default function withPreventPostUpdate(WrappedComponent) {
   return class extends PureComponent {
     constructor(props) {
       super(props)
-      this.state = { fields: props.fields}
+      this.state = { fields: props.fields }
       addValidator(this.validate)
     }
 
@@ -38,22 +38,23 @@ export default function withPreventPostUpdate(WrappedComponent) {
       return !!this.lastInvalidField
     }
 
-
     async updateFields(fields) {
       const fieldsUpdate = await Promise.all(
-        fields.map(async field => {
-          const v = new Validator(field)
-          field.error = await v.validate((field.value || field.defaultValue))
+        fields
+          .filter(field => isFieldEnabled(field, fields))
+          .map(async field => {
+            const v = new Validator(field)
+            field.error = await v.validate((field.value || field.defaultValue))
 
-          if (field.children) {
-            field.children = await this.updateFields(field.children)
-          }
+            if (field.children) {
+              field.children = await this.updateFields(field.children)
+            }
 
-          if (field.fields) {
-            field.fields = await this.updateFields(field.fields)
-          }
-          return field
-        })
+            if (field.fields) {
+              field.fields = await this.updateFields(field.fields)
+            }
+            return field
+          })
       )
 
       return fieldsUpdate

@@ -1,6 +1,8 @@
 
+const form = document.getElementById('post') || document.getElementById('form-aeria-options')
 const validators = []
 let preventingSave = false
+let isValid = false
 
 async function validate() {
   const results = await Promise.all(
@@ -8,25 +10,35 @@ async function validate() {
       return await validation()
     })
   )
-  return results.some(r => !r)
+  return results.some(r => r)
 }
 
-async function handleSubmit(e) {
-  const isValid = await validate()
-  if (!isValid) {
-    e.preventDefault()
+function handleSubmit(e) {
+  if (isValid) {
+    return true
   }
+
+  e.preventDefault()
+
+  // preventing wp save alert
+  if (window.jQuery) {
+    jQuery(window).off('beforeunload.edit-post')
+  }
+
+  validate()
+    .then(hasErrors => {
+      isValid = !hasErrors
+      if (isValid) {
+        form.submit()
+      }
+    })
+
+  return false
 }
 
 function addListeners() {
-  const formPost = document.getElementById('post')
-  const saveButton = document.getElementById('publish')
-  if (formPost) {
-    formPost.addEventListener('submit', handleSubmit)
-  }
-
-  if (saveButton) {
-    saveButton.addEventListener('click', handleSubmit)
+  if (form) {
+    form.addEventListener('submit', handleSubmit)
   }
 }
 
@@ -37,4 +49,3 @@ export function addValidator(validator) {
     addListeners()
   }
 }
-
