@@ -41,8 +41,11 @@ export default function withPreventPostUpdate(WrappedComponent) {
     async updateFields(fields) {
       const fieldsUpdate = await Promise.all(
         fields
-          .filter(field => isFieldEnabled(field, fields))
           .map(async field => {
+            if (!isFieldEnabled(field, fields)) {
+              return field
+            }
+
             const v = new Validator(field)
             field.error = await v.validate((field.value || field.defaultValue))
 
@@ -53,6 +56,7 @@ export default function withPreventPostUpdate(WrappedComponent) {
             if (field.fields) {
               field.fields = await this.updateFields(field.fields)
             }
+
             return field
           })
       )

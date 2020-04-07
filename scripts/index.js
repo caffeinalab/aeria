@@ -8,11 +8,8 @@ FieldsManager.use(config.uikit)
 
 config.metaboxes.forEach((metaboxProps, i) => {
   ReactDOM.render((
-    <Module {...config.module}>
-      <Metabox
-        key={i}
-        {...metaboxProps}
-      />
+    <Module {...config.module} key={i}>
+      <Metabox {...metaboxProps} />
     </Module>
   ), document.getElementById('aeriaApp-' + metaboxProps.id))
 
