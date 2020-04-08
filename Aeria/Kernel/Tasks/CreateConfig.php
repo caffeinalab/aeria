@@ -32,6 +32,9 @@ class CreateConfig extends Task
         $args['config'] = $this->manipulateConfig($args['config']);
         $args['config'] = $this->checkSectionIds($args['config']);
         $args['config'] = apply_filters('aeria_transform_config', $args['config']);
+        // After all transformation we can remove sections
+        // that have empty "accepts" (no section types defined)
+        $args['config'] = $this->removeEmptySections($args['config']);
         $args['container']->make('config')->load($args['config']);
 
         return $args;
@@ -116,6 +119,25 @@ class CreateConfig extends Task
         foreach ($tree as $key => $value) {
             $tree[$key]['id'] = $key;
             $tree[$key] = apply_filters('aeria_transform_section_'.$tree[$key]['id'], $tree[$key]);
+        }
+
+        return $tree;
+    }
+
+    private function removeEmptySections($tree)
+    {
+        foreach ($tree as $key => $value) {
+            if (isset($tree[$key]) && is_array($tree[$key])) {
+                $tree[$key] = $this->removeEmptySections($tree[$key]);
+            }
+
+            if (isset($value['type'])
+                && $value['type'] === 'sections'
+                && empty($value['accepts'])
+            ) {
+                unset($tree[$key]);
+                $tree = array_values($tree);
+            }
         }
 
         return $tree;
