@@ -28,6 +28,19 @@ class OptionsPageProcessor extends FieldGroupProcessor
         return 'options';
     }
 
+    private function unserializeData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->unserializeData($value);
+            } else {
+                $data[$key] = stripslashes($value);
+            }
+        }
+
+        return $data;
+    }
+
     /**
      * Gets the saved options from WP.
      *
@@ -37,12 +50,6 @@ class OptionsPageProcessor extends FieldGroupProcessor
      */
     public function getSavedFields()
     {
-        $saved_values = wp_load_alloptions();
-        $sanitized_values = [];
-        foreach ($saved_values as $key => $value) {
-            $sanitized_values[$key] = maybe_unserialize($value);
-        }
-
-        return $sanitized_values;
+        return $this->unserializeData(wp_load_alloptions(false));
     }
 }

@@ -1,5 +1,6 @@
 
 const form = document.getElementById('post') || document.getElementById('form-aeria-options')
+const submitter = document.getElementById('publish')
 const validators = []
 let preventingSave = false
 let isValid = false
@@ -19,10 +20,10 @@ function handleSubmit(e) {
   }
 
   e.preventDefault()
-
-  // preventing wp save alert
+  e.stopPropagation()
+  // // preventing wp save alert
   if (window.jQuery) {
-    jQuery(window).off('beforeunload.edit-post')
+    jQuery(window).off('beforeunload')
   }
 
   validate()
@@ -36,9 +37,30 @@ function handleSubmit(e) {
   return false
 }
 
+function handleClick(e) {
+  if (isValid) {
+    return true
+  }
+  e.preventDefault()
+  e.stopPropagation()
+
+  validate()
+    .then(hasErrors => {
+      isValid = !hasErrors
+      if (isValid) {
+        submitter.click()
+      }
+    })
+
+  return false
+}
+
 function addListeners() {
   if (form) {
     form.addEventListener('submit', handleSubmit)
+  }
+  if (submitter) {
+    submitter.addEventListener('click', handleClick)
   }
 }
 

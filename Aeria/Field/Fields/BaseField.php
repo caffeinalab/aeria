@@ -248,10 +248,10 @@ class BaseField extends Node implements FieldInterface
     {
         switch ($context_type) {
         case 'options':
-            $query_service->deleteOption($this->key);
+            delete_option($this->key);
             break;
         case 'meta':
-            $query_service->deleteMeta($context_ID, $this->key);
+            delete_post_meta($context_ID, $this->key);
             break;
 
         default:

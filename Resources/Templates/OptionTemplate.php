@@ -10,5 +10,5 @@
         window.aeriaMetaboxes = window.aeriaMetaboxes || [];
         window.aeriaMetaboxes.push(<?=wp_json_encode($data['config']); ?>);
     </script>
-    <?= submit_button(); ?>
+    <?= submit_button(null, 'primary', 'submit_form'); ?>
 </form>

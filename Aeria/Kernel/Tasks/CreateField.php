@@ -41,6 +41,7 @@ class CreateField extends Task
         $args['service']['field']->register('terms', \Aeria\Field\Fields\TermsField::class);
         $args['service']['field']->register('maps', \Aeria\Field\Fields\MapField::class);
         $args['service']['field']->register('daterange', \Aeria\Field\Fields\DateRangeField::class);
+        $args['service']['field']->register('fieldset', \Aeria\Field\Fields\FieldsetField::class);
         // example of multiple registered fields with the same handler; not
         // really needed in this case, as they use the default BaseField, but
         // colud be useful; `register` accepts a third value: `override`.

@@ -40,7 +40,7 @@ class CreateConfig extends Task
     private function mergeSpec($spec, $extension)
     {
         if (isset($spec['fields']) && isset($extension['fields'])) {
-            $spec = $this->extendsFields($spec['fields'], $extension['fields']);
+            $spec['fields'] = $this->extendsFields($spec['fields'], $extension['fields']);
             unset($extension['fields']);
         }
 
@@ -59,16 +59,22 @@ class CreateConfig extends Task
 
     private function extendsFields($fields, $extensions)
     {
+        $newFields = [];
         foreach ($extensions as $extension) {
+            $isNewField = true;
             foreach ($fields as $index => $spec) {
                 if ($spec['id'] === $extension['id']) {
                     $fields[$index] = $this->mergeSpec($spec, $extension);
+                    $isNewField = false;
                     break;
                 }
             }
+            if ($isNewField) {
+                $newFields[] = $extension;
+            }
         }
 
-        return $fields;
+        return array_merge($fields, $newFields);
     }
 
     private function applyAddons($tree, $render_service)
@@ -96,6 +102,8 @@ class CreateConfig extends Task
                     );
 
                     continue;
+                } else {
+                    $tree[$namespace][$kind][$id] = $this->mergeSpec($tree[$namespace][$kind][$id], $extension);
                 }
             }
         }
