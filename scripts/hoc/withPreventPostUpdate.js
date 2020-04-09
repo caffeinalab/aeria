@@ -53,7 +53,7 @@ export default function withPreventPostUpdate(WrappedComponent) {
               field.children = await this.updateFields(field.children)
             }
 
-            if (field.fields) {
+            if (!field.children && field.fields) {
               field.fields = await this.updateFields(field.fields)
             }
 
@@ -66,6 +66,10 @@ export default function withPreventPostUpdate(WrappedComponent) {
 
     updateErrorState(fields, parentIndex, includeFieldIndex = false) {
       return fields.some((field, index) => {
+        if (!isFieldEnabled(field, fields)) {
+          return false
+        }
+
         if (field.error) {
           this.lastInvalidField = field.id
 
@@ -80,7 +84,7 @@ export default function withPreventPostUpdate(WrappedComponent) {
           return true
         }
 
-        if (field.fields && this.updateErrorState(field.fields, index, !!field.type)) {
+        if (!field.children && field.fields && this.updateErrorState(field.fields, index, !!field.type)) {
           if (field.type) {
             this.lastInvalidField = `${field.id}-${this.lastInvalidField}`
           } else {

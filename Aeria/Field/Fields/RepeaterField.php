@@ -82,7 +82,7 @@ class RepeaterField extends BaseField
                     $this->key, $field_config, $this->sections, $i
                 )->getAdmin($metas, $errors);
             }
-            $children[] = $child;
+            $children[] = ['fields' => $child];
         }
 
         return array_merge(
