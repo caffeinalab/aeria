@@ -65,7 +65,7 @@ class RelationField extends SelectField
 
         $values = apply_filters('aeria_get_relation', $values, $this->original_config);
 
-        if (is_null($values)) {
+        if (is_null($values) || empty($values)) {
             return null;
         }
 
