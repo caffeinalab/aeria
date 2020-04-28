@@ -29,6 +29,9 @@ class CreateConfig extends Task
     public function do(array $args)
     {
         $args['config'] = $this->applyAddons($args['config'], $args['service']['render_engine']);
+        if (isset($args['config']['aeria']) || isset($args['config']['aeria']['group'])) {
+            $args['config'] = $this->applyGroups($args['config'], $args['config']['aeria']['group']);
+        }
         $args['config'] = $this->manipulateConfig($args['config']);
         $args['config'] = $this->checkSectionIds($args['config']);
         $args['config'] = apply_filters('aeria_transform_config', $args['config']);
@@ -137,6 +140,41 @@ class CreateConfig extends Task
             ) {
                 unset($tree[$key]);
                 $tree = array_values($tree);
+            }
+        }
+
+        return $tree;
+    }
+
+    private function applyGroups($tree, $groups)
+    {
+        foreach ($tree as $key => $value) {
+            if ($key === 'fields') {
+                $new_tree = [];
+                foreach ($tree[$key] as $fieldKey => $field_config) {
+                    if ($field_config['type'] === 'group'
+                        && isset($groups[$field_config['id']])
+                    ) {
+                        foreach ($groups[$field_config['id']]['fields'] as $new_field) {
+                            $filtered_config = $field_config;
+                            unset($filtered_config['type']);
+                            unset($filtered_config['id']);
+
+                            if (isset($filtered_config['prefix'])) {
+                                $new_field['id'] = $filtered_config['prefix'].$new_field['id'];
+                                unset($filtered_config['prefix']);
+                            }
+
+                            $new_tree[] = array_merge($new_field, $filtered_config);
+                        }
+                    } else {
+                        $new_tree[] = $field_config;
+                    }
+                }
+                $tree[$key] = $new_tree;
+            }
+            if (is_array($tree[$key])) {
+                $tree[$key] = $this->applyGroups($tree[$key], $groups);
             }
         }
 
