@@ -181,7 +181,7 @@ class CreateConfig extends Task
         return $tree;
     }
 
-    private function manipulateConfig($tree)
+    private function manipulateConfig($tree, $context = '')
     {
         foreach ($tree as $key => $value) {
             if ($key === 'section') {
@@ -189,28 +189,29 @@ class CreateConfig extends Task
             }
             if ($key === 'fields') {
                 foreach ($tree[$key] as $fieldKey => $field_config) {
-                    $tree[$key][$fieldKey] = $this->getRealFields($field_config);
+                    $tree[$key][$fieldKey] = $this->getRealFields($field_config, $context);
                 }
             }
             if (is_array($tree[$key])) {
-                $tree[$key] = $this->manipulateConfig($tree[$key]);
+                $tree[$key] = $this->manipulateConfig($tree[$key], $context.$key.'-');
             }
         }
 
         return $tree;
     }
 
-    private function getRealFields($field_config)
+    private function getRealFields($field_config, $context = '')
     {
         $fields_registry = aeria('field');
 
         if (isset($field_config['fields'])) {
-            $field_config['fields'] = $this->getRealFields($field_config['fields']);
+            $field_config['fields'] = $this->getRealFields($field_config['fields'], $context.($field_config['id'] ? $field_config['id'].'-' : ''));
         }
 
         if (isset($field_config['id'])) {
             $field_config = apply_filters('aeria_before_transform_field_base', $field_config);
             $field_config = apply_filters('aeria_before_transform_field_'.$field_config['id'], $field_config);
+            $field_config = apply_filters('aeria_before_transform_field_'.$context.$field_config['id'], $field_config);
         }
 
         if (!isset($field_config['type'])) {
@@ -231,6 +232,7 @@ class CreateConfig extends Task
 
         $new_field_config = apply_filters('aeria_after_transform_field_base', $new_field_config);
         $new_field_config = apply_filters('aeria_after_transform_field_'.$new_field_config['id'], $new_field_config);
+        $new_field_config = apply_filters('aeria_after_transform_field_'.$context.$new_field_config['id'], $new_field_config);
 
         return $new_field_config;
     }
