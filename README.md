@@ -1,8 +1,8 @@
 # Aeria v3
 
-Aeria is a lightweight, fast and modular Wordpress development kit. 
+Aeria is a lightweight, fast and modular WordPress development kit. 
 
-It offers a modern interface from within Wordpress giving content managers and editors the potential to customise the website with all kinds of components. 
+It offers a modern interface from within WordPress giving content managers and editors the potential to customise the website with all kinds of components. 
 
 > We spent a huge amount of time with the UX team to design a user interface that would be the most user friendly and simple so that it was easy for anyone to add and edit custom content. 
 
@@ -12,7 +12,7 @@ Developing with Aeria is so easy. Through simple and intuitive JSON configuratio
 
 Steps to use it
 
-1. Download and install the plugin to your Wordpress website.
+1. Download and install the plugin to your WordPress website.
 2. Enable the plugin from the WP dashboard.
 3. Start writing your post type definitions.
 4. Get to the dashboard and experience the modern UI.
@@ -21,42 +21,55 @@ Steps to use it
 
 ### Updates
 
-It is possible to update Aeria through Wordpress as any other Wordpress plugin.
+It is possible to update Aeria through WordPress as any other WordPress plugin.
 
 
 ## Configuration
-* [Getting started](https://github.com/caffeinalab/aeria/wiki/configuration_getting-started)
-* [Post type](https://github.com/caffeinalab/aeria/wiki/post-type)
-* [Metabox](https://github.com/caffeinalab/aeria/wiki/metabox)
-* [Taxonomy](https://github.com/caffeinalab/aeria/wiki/taxonomy)
-* [Section](https://github.com/caffeinalab/aeria/wiki/section)
-* [Router](https://github.com/caffeinalab/aeria/wiki/router)
-* [Controller](https://github.com/caffeinalab/aeria/wiki/controller)
-* [Options page](https://github.com/caffeinalab/aeria/wiki/options-page)
+* [Getting started](configuration_getting-started)
+* [Post type](post-type)
+* [Metabox](metabox)
+* [Taxonomy](taxonomy)
+* [Section](section)
+* [Router](route)
+* [Controller](controller)
+* [Options page](options)
+* [Group](group)
+* [Extension](extension)
 
 ## Fields
-* [Getting started](https://github.com/caffeinalab/aeria/wiki/fields_getting-started)
-* [Text](https://github.com/caffeinalab/aeria/wiki/text)
-* [Textarea](https://github.com/caffeinalab/aeria/wiki/textarea)
-* [Wysiwyg](https://github.com/caffeinalab/aeria/wiki/wysiwyg)
-* [Switch](https://github.com/caffeinalab/aeria/wiki/switch)
-* [Select](https://github.com/caffeinalab/aeria/wiki/select)
-* [Picture](https://github.com/caffeinalab/aeria/wiki/picture)
-* [Gallery](https://github.com/caffeinalab/aeria/wiki/gallery)
-* [Repeater](https://github.com/caffeinalab/aeria/wiki/repeater)
-* [Sections](https://github.com/caffeinalab/aeria/wiki/sections)
-* [Field validation](https://github.com/caffeinalab/aeria/wiki/validators)
+* [Getting started](fields_getting-started)
+* [DateRange](daterange)
+* [Date](date)
+* [Email](email)
+* [Fieldset](fieldset)
+* [Gallery](gallery)
+* [Group](group_field)
+* [Hidden](hidden)
+* [Maps](maps)
+* [Picture](picture)
+* [Post Types](post_types)
+* [Relation](relation)
+* [Repeater](repeater)
+* [Sections](sections)
+* [Select](select)
+* [Switch](switch)
+* [Terms](terms)
+* [Text](text)
+* [Textarea](textarea)
+* [URL](url)
+* [Wysiwyg](wysiwyg)
+* [Field validation](validators)
 
 ## Actions
-* [Admin Enqueue Script](https://github.com/caffeinalab/aeria/wiki/admin-enqueue-script)
-* [APIs](https://github.com/caffeinalab/aeria/wiki/APIs)
-* [Kernel](https://github.com/caffeinalab/aeria/wiki/kernel)
-* [Render Engine](https://github.com/caffeinalab/aeria/wiki/render-engine)
+* [Admin Enqueue Script](admin-enqueue-script)
+* [APIs](APIs)
+* [Kernel](kernel)
+* [Render Engine](render-engine)
 
 ## Functions
-* [Getting started](https://github.com/caffeinalab/aeria/wiki/functions_getting-started)
-* [get_aeria_fields](https://github.com/caffeinalab/aeria/wiki/get_aeria_fields)
-* [get_aeria_field](https://github.com/caffeinalab/aeria/wiki/get_aeria_field)
-* [get_aeria_metabox](https://github.com/caffeinalab/aeria/wiki/get_aeria_metabox)
-* [get_aeria_options](https://github.com/caffeinalab/aeria/wiki/get_aeria_options)
+* [Getting started](functions_getting-started)
+* [get_aeria_fields](get_aeria_fields)
+* [get_aeria_field](get_aeria_field)
+* [get_aeria_metabox](get_aeria_metabox)
+* [get_aeria_options](get_aeria_options)
 
