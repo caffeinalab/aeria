@@ -60,6 +60,9 @@ It is possible to update Aeria through WordPress as any other WordPress plugin.
 * [Wysiwyg](https://github.com/caffeinalab/aeria/wiki/wysiwyg)
 * [Field validation](https://github.com/caffeinalab/aeria/wiki/validators)
 
+## Filters
+* [Aeria filters](https://github.com/caffeinalab/aeria/wiki/filters)
+
 ## Actions
 * [Admin Enqueue Script](https://github.com/caffeinalab/aeria/wiki/admin-enqueue-script)
 * [APIs](https://github.com/caffeinalab/aeria/wiki/APIs)
