@@ -29,7 +29,7 @@ class CreateConfig extends Task
     public function do(array $args)
     {
         $args['config'] = $this->applyAddons($args['config'], $args['service']['render_engine']);
-        if (isset($args['config']['aeria']) || isset($args['config']['aeria']['group'])) {
+        if (isset($args['config']['aeria']) && isset($args['config']['aeria']['group'])) {
             $args['config'] = $this->applyGroups($args['config'], $args['config']['aeria']['group']);
         }
         $args['config'] = $this->manipulateConfig($args['config']);
