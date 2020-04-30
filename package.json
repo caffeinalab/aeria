@@ -1,6 +1,6 @@
 {
   "name": "aeria",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "description": "Aeria",
   "scripts": {
     "dev": "webpack --watch --mode development",
