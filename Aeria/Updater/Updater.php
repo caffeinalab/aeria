@@ -22,24 +22,17 @@ class Updater
      */
     public function __construct()
     {
+        // set config
+        $this->config = [
+            'slug' => 'aeria/aeria.php',
+            'proper_folder_name' => 'aeria',
+        ];
         // define the alternative API for updating checking
         add_filter('pre_set_site_transient_update_plugins', array($this, 'checkVersion'));
-        // Define the alternative response for information checking
+        // define the alternative response for information checking
         add_filter('plugins_api', array($this, 'setPluginInfo'), 10, 3);
         // reactivate plugin
         add_filter('upgrader_post_install', array($this, 'postInstall'), 10, 3);
-    }
-
-    /**
-     * Saves the provided config.
-     *
-     * @param array $config the configuration
-     *
-     * @since  Method available since Release 3.0.0
-     */
-    public function config($config)
-    {
-        $this->config = $config;
     }
 
     /**
