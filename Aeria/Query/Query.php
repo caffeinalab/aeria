@@ -232,8 +232,10 @@ class Query
             'post_type' => $postType,
             'post_parent' => $parentID,
             'tax_query' => [
-                'taxonomy' => $taxonomy,
-                'terms' => $taxonomyTerms,
+                [
+                    'taxonomy' => $taxonomy,
+                    'terms' => $taxonomyTerms
+                ]
             ],
             'orderby' => $orderBy,
             'order' => $order,
