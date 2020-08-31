@@ -207,6 +207,7 @@ class Query
         $parentID = (isset($parameters['parent_id'])) ? $parameters['parent_id'] : null;
         $taxonomy = (isset($parameters['taxonomy'])) ? $parameters['taxonomy'] : null;
         $taxonomyTerms = (isset($parameters['taxonomy_terms'])) ? $parameters['taxonomy_terms'] : null;
+        $taxonomyField = (isset($parameters['taxonomy_field'])) ? $parameters['taxonomy_field'] : 'term_id';
         $orderBy = (isset($parameters['orderby'])) ? $parameters['orderby'] : null;
         $order = (isset($parameters['order'])) ? $parameters['order'] : null;
         $numberPosts = (isset($parameters['numberposts'])) ? $parameters['numberposts'] : -1;
@@ -231,16 +232,21 @@ class Query
             's' => $searchField,
             'post_type' => $postType,
             'post_parent' => $parentID,
-            'tax_query' => [
-                [
-                    'taxonomy' => $taxonomy,
-                    'terms' => $taxonomyTerms
-                ]
-            ],
             'orderby' => $orderBy,
             'order' => $order,
             'numberposts' => $numberPosts,
         ];
+        
+        if (isset($taxonomy) || isset($taxonomyTerms)) {
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => $taxonomy,
+                    'slug' => $taxonomyField,
+                    'terms' => $taxonomyTerms,
+                ],
+            ];
+        }
+        
         $posts = get_posts($args);
         $response = [];
         foreach ($posts as $index => $post) {
