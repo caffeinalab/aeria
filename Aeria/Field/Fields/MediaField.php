@@ -43,7 +43,9 @@ class MediaField extends BaseField
             }
             foreach ($sizes as $size) {
                 $result[$size] = wp_get_attachment_image_src($value, $size);
-                $result[$size][3] = $result[$size][2] / $result[$size][1];
+                if ($result[$size][2] && $result[$size][1]) {
+                    $result[$size][3] = $result[$size][2] / $result[$size][1];
+                }
             }
         } else {
             $result['full'] = [wp_get_attachment_url($value)];
