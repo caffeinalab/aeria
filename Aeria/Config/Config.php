@@ -125,7 +125,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
                 },
                 'show_in_menu' => function ($value) {
                     return [
-                        'result' => is_bool($value),
+                        'result' => is_bool($value) || is_string($value),
                         'message' => 'show_in_menu should be a bool',
                     ];
                 },
