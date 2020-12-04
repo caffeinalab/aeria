@@ -56,7 +56,7 @@ class Config implements ExtensibleInterface, JsonSerializable, ValidateConfInter
             $this->root_paths[] = $stylesheet_dir.'/aeria-config';
         }
 
-        $this->root_paths[] = WP_PLUGIN_DIR.'/aeria/resources/Config';
+        $this->root_paths[] = WP_PLUGIN_DIR.'/aeria/Resources/Config';
         $custom_paths = [];
         $custom_paths = apply_filters('aeria_register_configs', $custom_paths);
 
