@@ -211,6 +211,7 @@ class Query
         $orderBy = (isset($parameters['orderby'])) ? $parameters['orderby'] : null;
         $order = (isset($parameters['order'])) ? $parameters['order'] : null;
         $numberPosts = (isset($parameters['numberposts'])) ? $parameters['numberposts'] : -1;
+        $suppress_filters = (isset($parameters['suppress_filters']) && $parameters['suppress_filters'] == "false") ? false : true;
 
         switch ($sender) {
         case 'SelectOptions':
@@ -235,6 +236,7 @@ class Query
             'orderby' => $orderBy,
             'order' => $order,
             'numberposts' => $numberPosts,
+            'suppress_filters' => $suppress_filters,
         ];
         
         if (isset($taxonomy) || isset($taxonomyTerms)) {
